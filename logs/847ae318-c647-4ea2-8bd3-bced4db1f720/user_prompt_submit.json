@@ -1,0 +1,10 @@
+[
+  {
+    "session_id": "847ae318-c647-4ea2-8bd3-bced4db1f720",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/847ae318-c647-4ea2-8bd3-bced4db1f720.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "Analyze the repository at /Users/alexkamysz/AI/scout_plan_build_mvp and create an LSP-style comprehensive reference document. Focus on:\n\nFILE STRUCTURE:\n- Complete directory tree with annotations\n- Purpose of each major directory\n- Key configuration files\n\nPYTHON CODE MAPPING (adws/ directory):\nFor each .py file, identify:\n- Main classes and their methods\n- Top-level functions\n- Import statements and dependencies\n- Integration points with other modules\n\nDATA FLOW:\n- How ADW workflows connect (plan->build->test->review)\n- State management patterns\n- GitHub integration flow\n- Agent invocation patterns\n\nKEY PATTERNS:\n- Error handling approaches\n- Logging mechanisms\n- Configuration management\n- Security measures\n\nOutput a structured markdown document with clear sections that another agent could parse."
+  }
+]

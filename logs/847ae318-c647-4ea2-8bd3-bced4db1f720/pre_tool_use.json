@@ -1,0 +1,72 @@
+[
+  {
+    "session_id": "847ae318-c647-4ea2-8bd3-bced4db1f720",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/847ae318-c647-4ea2-8bd3-bced4db1f720.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/utils.py"
+    }
+  },
+  {
+    "session_id": "847ae318-c647-4ea2-8bd3-bced4db1f720",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/847ae318-c647-4ea2-8bd3-bced4db1f720.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la /Users/alexkamysz/AI/scout_plan_build_mvp/adws/ | grep \"\\.py$\"",
+      "description": "List Python files in adws directory"
+    }
+  },
+  {
+    "session_id": "847ae318-c647-4ea2-8bd3-bced4db1f720",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/847ae318-c647-4ea2-8bd3-bced4db1f720.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/docs"
+    }
+  },
+  {
+    "session_id": "847ae318-c647-4ea2-8bd3-bced4db1f720",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/847ae318-c647-4ea2-8bd3-bced4db1f720.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "find /Users/alexkamysz/AI/scout_plan_build_mvp -name \"*.toml\" -o -name \"*.json\" -o -name \"*.yaml\" -o -name \"*.yml\" | grep -v node_modules | grep -v \".git\" | head -20",
+      "description": "Find configuration files"
+    }
+  },
+  {
+    "session_id": "847ae318-c647-4ea2-8bd3-bced4db1f720",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/847ae318-c647-4ea2-8bd3-bced4db1f720.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/docs/SCOUT_PLAN_BUILD_WORKFLOW.md",
+      "limit": 80
+    }
+  },
+  {
+    "session_id": "847ae318-c647-4ea2-8bd3-bced4db1f720",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/847ae318-c647-4ea2-8bd3-bced4db1f720.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la /Users/alexkamysz/AI/scout_plan_build_mvp/docs/",
+      "description": "List documentation files"
+    }
+  }
+]

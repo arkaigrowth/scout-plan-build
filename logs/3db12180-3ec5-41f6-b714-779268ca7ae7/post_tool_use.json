@@ -1,0 +1,244 @@
+[
+  {
+    "session_id": "3db12180-3ec5-41f6-b714-779268ca7ae7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/3db12180-3ec5-41f6-b714-779268ca7ae7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+      "pattern": "adws/*",
+      "path": "/Users/alexkamysz/AI/scout_plan_build_mvp"
+    },
+    "tool_response": {
+      "filenames": [
+        "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_document.py",
+        "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/README.md",
+        "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_build.py",
+        "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_plan.py",
+        "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_patch.py",
+        "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_plan_build.py",
+        "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_plan_build_test.py",
+        "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_plan_build_review.py",
+        "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_review.py",
+        "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_test.py",
+        "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_sdlc.py",
+        "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_plan_build_test_review.py",
+        "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_plan_build_document.py",
+        "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_common.py"
+      ],
+      "durationMs": 9,
+      "numFiles": 14,
+      "truncated": false
+    }
+  },
+  {
+    "session_id": "3db12180-3ec5-41f6-b714-779268ca7ae7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/3db12180-3ec5-41f6-b714-779268ca7ae7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "find /Users/alexkamysz/AI/scout_plan_build_mvp -type f -name \"*.py\" | head -20",
+      "description": "Explore Python files in the repository"
+    },
+    "tool_response": {
+      "stdout": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_build.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_patch.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_plan_build.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/git_ops.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/__init__.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/data_types.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/r2_uploader.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/utils.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/agent.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/github.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/workflow_ops.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/state.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_common.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_triggers/trigger_webhook.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_triggers/__init__.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_triggers/trigger_cron.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_plan_build_document.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_sdlc.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_test.py\n/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_review.py",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false
+    }
+  },
+  {
+    "session_id": "3db12180-3ec5-41f6-b714-779268ca7ae7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/3db12180-3ec5-41f6-b714-779268ca7ae7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+      "pattern": "*.toml",
+      "path": "/Users/alexkamysz/AI/scout_plan_build_mvp"
+    },
+    "tool_response": {
+      "filenames": [],
+      "durationMs": 2,
+      "numFiles": 0,
+      "truncated": false
+    }
+  },
+  {
+    "session_id": "3db12180-3ec5-41f6-b714-779268ca7ae7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/3db12180-3ec5-41f6-b714-779268ca7ae7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+      "pattern": ".*example",
+      "path": "/Users/alexkamysz/AI/scout_plan_build_mvp"
+    },
+    "tool_response": {
+      "filenames": [],
+      "durationMs": 3,
+      "numFiles": 0,
+      "truncated": false
+    }
+  },
+  {
+    "session_id": "3db12180-3ec5-41f6-b714-779268ca7ae7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/3db12180-3ec5-41f6-b714-779268ca7ae7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "find . -maxdepth 2 -type d | sort",
+      "description": "Show directory tree up to 2 levels"
+    },
+    "tool_response": {
+      "stdout": ".\n./.claude\n./.claude/agents\n./.claude/commands\n./.claude/hooks\n./adws\n./adws/__pycache__\n./adws/adw_modules\n./adws/adw_tests\n./adws/adw_triggers\n./agents\n./agents/Add plan-summarize command and standardize spec schema + versioning across the repo\n./agents/scout_files\n./ai_docs\n./ai_docs/build_reports\n./ai_docs/reviews\n./app\n./app/server\n./ARCHIVE_OLD\n./ARCHIVE_OLD/scout_plan_build_adw_shims_patch\n./ARCHIVE_OLD/scout_plan_build_mvp_patch\n./docs\n./logs\n./logs/01f04745-d20d-4c0d-82fa-95ddbed03ea5\n./logs/033adaea-fad6-41b2-96e1-d67de4576360\n./logs/1d89f921-66fd-4c1b-bab3-478e788cb89b\n./logs/3c53bdef-3f50-46fe-aceb-ebf1c0560312\n./logs/3db12180-3ec5-41f6-b714-779268ca7ae7\n./logs/50555d2d-7509-4872-bd48-0aa39007f33a\n./logs/53df88a3-2dbc-41d7-be19-cf6139ed46e4\n./logs/548b7246-d4fb-4d30-80d1-e7ab35e9575e\n./logs/847ae318-c647-4ea2-8bd3-bced4db1f720\n./logs/b3382834-1429-41b1-aa86-3c1bf9137bc2\n./logs/cc7f55d6-b83d-49e7-b513-1705834f2c54\n./scripts\n./specs",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false
+    }
+  },
+  {
+    "session_id": "3db12180-3ec5-41f6-b714-779268ca7ae7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/3db12180-3ec5-41f6-b714-779268ca7ae7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/README.md"
+    },
+    "tool_response": {
+      "type": "text",
+      "file": {
+        "filePath": "/Users/alexkamysz/AI/scout_plan_build_mvp/README.md",
+        "content": "# Scout\u2013Plan\u2013Build MVP (Claude Code + Anthropic Agents SDK)\n\nThis is a minimal, runnable scaffold that reconstructs IndyDevDan\u2019s **Scout \u2192 Plan \u2192 Build** workflow and bridges it into an **ADW** (AI Developer Workflow) style pipeline suitable for **Claude Code**. It includes:\n\n- Slash-command style prompts for `/scout`, `/plan_w_docs`, `/build`, and the orchestrator `/scout_plan_build`.\n- Clear, opinionated instructions for running in **Claude Code** (with hooks) and optionally with the **Anthropic Agents SDK** for delegated/parallelized tasks.\n- Documentation describing architecture, setup, and next steps.\n\n> Scope: This is an MVP scaffold to kickstart end-to-end loops. You can iterate inside Claude Code to flesh out agents, add tests, and wire to your real ADW apps.\n",
+        "numLines": 10,
+        "startLine": 1,
+        "totalLines": 10
+      }
+    }
+  },
+  {
+    "session_id": "3db12180-3ec5-41f6-b714-779268ca7ae7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/3db12180-3ec5-41f6-b714-779268ca7ae7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/README.md"
+    },
+    "tool_response": {
+      "type": "text",
+      "file": {
+        "filePath": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/README.md",
+        "content": "# AI Developer Workflow (ADW) System\n\nADW automates software development by integrating GitHub issues with Claude Code CLI to classify issues, generate plans, implement solutions, and create pull requests.\n\n## Key Concepts\n\n### ADW ID\nEach workflow run is assigned a unique 8-character identifier (e.g., `a1b2c3d4`). This ID:\n- Tracks all phases of a workflow (plan \u2192 build \u2192 test \u2192 review \u2192 document)\n- Appears in GitHub comments, commits, and PR titles\n- Creates an isolated workspace at `agents/{adw_id}/`\n- Enables resuming workflows and debugging\n\n### State Management\nADW uses persistent state files (`agents/{adw_id}/adw_state.json`) to:\n- Share data between workflow phases\n- Enable workflow composition and chaining\n- Track essential workflow data:\n  - `adw_id`: Unique workflow identifier\n  - `issue_number`: GitHub issue being processed\n  - `branch_name`: Git branch for changes\n  - `plan_file`: Path to implementation plan\n  - `issue_class`: Issue type (`/chore`, `/bug`, `/feature`)\n\n### Workflow Composition\nWorkflows can be:\n- Run individually (e.g., just planning or just testing)\n- Chained via pipes: `adw_plan.py 123 | adw_build.py`\n- Combined in orchestrator scripts (e.g., `adw_sdlc.py` runs all phases)\n\n## Quick Start\n\n### 1. Set Environment Variables\n\n```bash\nexport GITHUB_REPO_URL=\"https://github.com/owner/repository\"\nexport ANTHROPIC_API_KEY=\"sk-ant-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"\nexport CLAUDE_CODE_PATH=\"/path/to/claude\"  # Optional, defaults to \"claude\"\nexport GITHUB_PAT=\"ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx\"  # Optional, only if using different account than 'gh auth login'\n```\n\n### 2. Install Prerequisites\n\n```bash\n# GitHub CLI\nbrew install gh              # macOS\n# or: sudo apt install gh    # Ubuntu/Debian\n# or: winget install --id GitHub.cli  # Windows\n\n# Claude Code CLI\n# Follow instructions at https://docs.anthropic.com/en/docs/claude-code\n\n# Python dependency manager (uv)\ncurl -LsSf https://astral.sh/uv/install.sh | sh  # macOS/Linux\n# or: powershell -c \"irm https://astral.sh/uv/install.ps1 | iex\"  # Windows\n\n# Authenticate GitHub\ngh auth login\n```\n\n### 3. Run ADW\n\n```bash\ncd adws/\n\n# Process a single issue manually (plan + build)\nuv run adw_plan_build.py 123\n\n# Process a single issue with testing (plan + build + test)\nuv run adw_plan_build_test.py 123\n\n# Process with review (plan + build + test + review)\nuv run adw_plan_build_test_review.py 123\n\n# Process with review but skip tests (plan + build + review)\nuv run adw_plan_build_review.py 123\n\n# Process with documentation but skip tests and review (plan + build + document)\nuv run adw_plan_build_document.py 123\n\n# Complete SDLC workflow (plan + build + test + review + document)\nuv run adw_sdlc.py 123\n\n# Run individual phases\nuv run adw_plan.py 123     # Planning phase only\nuv run adw_build.py 123 <adw-id>   # Build phase only (requires existing plan)\nuv run adw_test.py 123 <adw-id>    # Test phase only\nuv run adw_review.py 123 <adw-id>  # Review phase only\nuv run adw_document.py 123 <adw-id>  # Documentation phase only\n\n# Run continuous monitoring (polls every 20 seconds)\nuv run adw_triggers/trigger_cron.py\n\n# Start webhook server (for instant GitHub events)\nuv run adw_triggers/trigger_webhook.py\n```\n\n## ADW Workflow Scripts\n\n### Individual Phase Scripts\n\n#### adw_plan.py - Planning Phase\nCreates implementation plans for GitHub issues.\n\n**Requirements:**\n- GitHub issue number\n- Issue must be open and accessible\n\n**Usage:**\n```bash\nuv run adw_plan.py <issue-number> [adw-id]\n```\n\n**What it does:**\n1. Fetches issue details from GitHub\n2. Classifies issue type (`/chore`, `/bug`, `/feature`)\n3. Creates feature branch with semantic naming\n4. Generates detailed implementation plan\n5. Commits plan as `{adw_id}_plan_spec.md`\n6. Creates/updates pull request\n7. Outputs state JSON for chaining\n\n#### adw_build.py - Implementation Phase\nImplements solutions based on existing plans.\n\n**Requirements:**\n- Existing plan file (from `adw_plan.py` or manual)\n- Can receive state via stdin or find plan automatically\n\n**Usage:**\n```bash\n# Standalone (finds plan automatically)\nuv run adw_build.py\n\n# With piped state\nuv run adw_plan.py 456 | uv run adw_build.py\n\n# With explicit arguments\nuv run adw_build.py <issue-number> <adw-id>\n```\n\n**What it does:**\n1. Locates existing plan file\n2. Implements solution per plan specifications\n3. Commits implementation changes\n4. Updates pull request\n\n#### adw_test.py - Testing Phase\nRuns test suites and handles test failures.\n\n**Requirements:**\n- Working directory with test suite\n- Optional: E2E test setup\n\n**Usage:**\n```bash\nuv run adw_test.py <issue-number> [adw-id] [--skip-e2e]\n```\n\n**What it does:**\n1. Runs application test suite\n2. Optionally runs E2E tests (browser automation)\n3. Auto-resolves test failures (up to 3 attempts)\n4. Reports results to GitHub issue\n5. Commits test results\n\n#### adw_review.py - Review Phase\nReviews implementation against specifications.\n\n**Requirements:**\n- Existing specification file\n- Completed implementation\n- ADW ID is required\n\n**Usage:**\n```bash\nuv run adw_review.py <issue-number> <adw-id> [--skip-resolution]\n```\n\n**What it does:**\n1. Locates specification file\n2. Reviews implementation for spec compliance\n3. Captures screenshots of functionality\n4. Identifies issues (blockers, tech debt, skippable)\n5. Auto-resolves blockers (unless `--skip-resolution`)\n6. Uploads screenshots to cloud storage\n7. Posts detailed review report\n\n#### adw_document.py - Documentation Phase\nGenerates comprehensive documentation.\n\n**Requirements:**\n- Completed review phase (needs review artifacts)\n- ADW ID is mandatory\n\n**Usage:**\n```bash\nuv run adw_document.py <issue-number> <adw-id>\n```\n\n**What it does:**\n1. Analyzes implementation and review results\n2. Generates technical documentation\n3. Creates user-facing guides\n4. Includes screenshots from review\n5. Commits to `app_docs/` directory\n\n#### adw_patch.py - Direct Patch Workflow\nQuick patches triggered by 'adw_patch' keyword.\n\n**Requirements:**\n- Issue or comment containing 'adw_patch' keyword\n- Clear change request in the content\n\n**Usage:**\n```bash\nuv run adw_patch.py <issue-number> [adw-id]\n```\n\n**What it does:**\n1. Searches for 'adw_patch' in issue/comments\n2. Creates targeted patch plan\n3. Implements specific changes\n4. Commits and creates PR\n5. Skips full planning phase\n\n### Orchestrator Scripts\n\n#### adw_plan_build.py - Plan + Build\nCombines planning and implementation phases.\n\n**Usage:**\n```bash\nuv run adw_plan_build.py <issue-number> [adw-id]\n```\n\n**Equivalent to:**\n```bash\nuv run adw_plan.py 456 | uv run adw_build.py\n```\n\n#### adw_plan_build_test.py - Plan + Build + Test\nFull pipeline with automated testing.\n\n**Usage:**\n```bash\nuv run adw_plan_build_test.py <issue-number> [adw-id]\n```\n\n**Phases:**\n1. Planning (creates implementation spec)\n2. Building (implements solution)\n3. Testing (runs test suite, auto-fixes failures)\n\n\n#### adw_plan_build_test_review.py - Plan + Build + Test + Review\nComplete pipeline with quality review.\n\n**Usage:**\n```bash\nuv run adw_plan_build_test_review.py <issue-number> [adw-id]\n```\n\n**Phases:**\n1. Planning (creates implementation spec)\n2. Building (implements solution)\n3. Testing (ensures functionality)\n4. Review (validates against spec, auto-fixes issues)\n\n#### adw_plan_build_review.py - Plan + Build + Review\nPipeline with review but skipping tests.\n\n**Usage:**\n```bash\nuv run adw_plan_build_review.py <issue-number> [adw-id]\n```\n\n**Phases:**\n1. Planning (creates implementation spec)\n2. Building (implements solution)\n3. Review (validates against spec without test results)\n\n**Note:** Review phase evaluates implementation against specification but without test verification. Best for non-critical changes or when testing is handled separately.\n\n#### adw_plan_build_document.py - Plan + Build + Document\nFast documentation pipeline skipping tests and review.\n\n**Usage:**\n```bash\nuv run adw_plan_build_document.py <issue-number> [adw-id]\n```\n\n**Phases:**\n1. Planning (creates implementation spec)\n2. Building (implements solution)\n3. Document (generates documentation without screenshots)\n\n**Warning:** Documentation quality may be limited without review artifacts (no screenshots). Consider using `adw_sdlc.py` for comprehensive documentation with visuals.\n\n#### adw_sdlc.py - Complete SDLC\nFull Software Development Life Cycle automation.\n\n**Usage:**\n```bash\nuv run adw_sdlc.py <issue-number> [adw-id]\n```\n\n**Phases:**\n1. **Plan**: Creates detailed implementation spec\n2. **Build**: Implements the solution\n3. **Test**: Runs comprehensive test suite\n4. **Review**: Validates implementation vs spec\n5. **Document**: Generates technical and user docs\n\n**Output:**\n- Feature implementation\n- Passing tests\n- Review report with screenshots\n- Complete documentation in `app_docs/`\n\n### Automation Triggers\n\n#### trigger_cron.py - Polling Monitor\nContinuously monitors GitHub for triggers.\n\n**Usage:**\n```bash\nuv run adw_triggers/trigger_cron.py\n```\n\n**Triggers on:**\n- New issues with no comments\n- Any issue where latest comment is exactly \"adw\"\n- Polls every 20 seconds\n\n**Workflow selection:**\n- Uses `adw_plan_build.py` by default\n- Excludes `adw_build` (implementation-only) workflows\n\n#### trigger_webhook.py - Real-time Events\nWebhook server for instant GitHub event processing.\n\n**Usage:**\n```bash\nuv run adw_triggers/trigger_webhook.py\n```\n\n**Configuration:**\n- Default port: 8001\n- Endpoints:\n  - `/gh-webhook` - GitHub event receiver\n  - `/health` - Health check\n- GitHub webhook settings:\n  - Payload URL: `https://your-domain.com/gh-webhook`\n  - Content type: `application/json`\n  - Events: Issues, Issue comments\n\n**Security:**\n- Validates GitHub webhook signatures\n- Requires `GITHUB_WEBHOOK_SECRET` environment variable\n\n## How ADW Works\n\n1. **Issue Classification**: Analyzes GitHub issue and determines type:\n   - `/chore` - Maintenance, documentation, refactoring\n   - `/bug` - Bug fixes and corrections\n   - `/feature` - New features and enhancements\n\n2. **Planning**: `sdlc_planner` agent creates implementation plan with:\n   - Technical approach\n   - Step-by-step tasks\n   - File modifications\n   - Testing requirements\n\n3. **Implementation**: `sdlc_implementor` agent executes the plan:\n   - Analyzes codebase\n   - Implements changes\n   - Runs tests\n   - Ensures quality\n\n4. **Integration**: Creates git commits and pull request:\n   - Semantic commit messages\n   - Links to original issue\n   - Implementation summary\n\n## Common Usage Scenarios\n\n### Process a bug report\n```bash\n# User reports bug in issue #789\nuv run adw_plan_build.py 789\n# ADW analyzes, creates fix, and opens PR\n```\n\n### Run full pipeline\n```bash\n# Complete pipeline with testing\nuv run adw_plan_build_test.py 789\n# ADW plans, builds, and tests the solution\n```\n\n### Run complete SDLC\n```bash\n# Full SDLC with review and documentation\nuv run adw_sdlc.py 789\n# ADW plans, builds, tests, reviews, and documents the solution\n# Creates comprehensive documentation in app_docs/\n```\n\n### Run individual phases\n```bash\n# Plan only\nuv run adw_plan.py 789\n\n# Build based on existing plan\nuv run adw_build.py\n\n# Test the implementation\nuv run adw_test.py 789\n```\n\n### Enable automatic processing\n```bash\n# Start cron monitoring\nuv run adw_triggers/trigger_cron.py\n# New issues are processed automatically\n# Users can comment \"adw\" to trigger processing\n```\n\n### Deploy webhook for instant response\n```bash\n# Start webhook server\nuv run adw_triggers/trigger_webhook.py\n# Configure in GitHub settings\n# Issues processed immediately on creation\n```\n\n## Troubleshooting\n\n### Environment Issues\n```bash\n# Check required variables\nenv | grep -E \"(GITHUB|ANTHROPIC|CLAUDE)\"\n\n# Verify GitHub auth\ngh auth status\n\n# Test Claude Code\nclaude --version\n```\n\n### Common Errors\n\n**\"Claude Code CLI is not installed\"**\n```bash\nwhich claude  # Check if installed\n# Reinstall from https://docs.anthropic.com/en/docs/claude-code\n```\n\n**\"Missing GITHUB_PAT\"** (Optional - only needed if using different account than 'gh auth login')\n```bash\nexport GITHUB_PAT=$(gh auth token)\n```\n\n**\"Agent execution failed\"**\n```bash\n# Check agent output\ncat agents/*/sdlc_planner/raw_output.jsonl | tail -1 | jq .\n```\n\n### Debug Mode\n```bash\nexport ADW_DEBUG=true\nuv run adw_plan_build.py 123  # Verbose output\n```\n\n## Configuration\n\n### ADW Tracking\nEach workflow run gets a unique 8-character ID (e.g., `a1b2c3d4`) that appears in:\n- Issue comments: `a1b2c3d4_ops: \u2705 Starting ADW workflow`\n- Output files: `agents/a1b2c3d4/sdlc_planner/raw_output.jsonl`\n- Git commits and PRs\n\n### Model Selection\nEdit `adw_modules/agent.py` line 129 to change model:\n- `model=\"sonnet\"` - Faster, lower cost (default)\n- `model=\"opus\"` - Better for complex tasks\n\n### Modular Architecture\nThe system uses a modular architecture with composable scripts:\n\n- **State Management**: `ADWState` class enables chaining workflows via JSON piping\n- **Git Operations**: Centralized git operations in `git_ops.py`  \n- **Workflow Operations**: Core business logic in `workflow_ops.py`\n- **Agent Integration**: Standardized Claude Code CLI interface in `agent.py`\n\n### Script Chaining\nScripts can be chained using pipes to pass state:\n```bash\n# Chain planning and building\nuv run adw_plan.py 123 | uv run adw_build.py\n\n# Chain full pipeline\nuv run adw_plan.py 123 | uv run adw_build.py | uv run adw_test.py\n\n# Or use the convenience script\nuv run adw_plan_build_test.py 123\n\n# State is automatically passed between scripts\n```\n\n### Workflow Output Structure\n\nEach ADW workflow creates an isolated workspace:\n\n```\nagents/\n\u2514\u2500\u2500 {adw_id}/                     # Unique workflow directory\n    \u251c\u2500\u2500 adw_state.json            # Persistent state file\n    \u251c\u2500\u2500 {adw_id}_plan_spec.md     # Implementation plan\n    \u251c\u2500\u2500 planner/                  # Planning agent output\n    \u2502   \u2514\u2500\u2500 raw_output.jsonl      # Claude Code session\n    \u251c\u2500\u2500 implementor/              # Implementation agent output\n    \u2502   \u2514\u2500\u2500 raw_output.jsonl\n    \u251c\u2500\u2500 tester/                   # Test agent output\n    \u2502   \u2514\u2500\u2500 raw_output.jsonl\n    \u251c\u2500\u2500 reviewer/                 # Review agent output\n    \u2502   \u251c\u2500\u2500 raw_output.jsonl\n    \u2502   \u2514\u2500\u2500 review_img/           # Screenshots directory\n    \u251c\u2500\u2500 documenter/               # Documentation agent output\n    \u2502   \u2514\u2500\u2500 raw_output.jsonl\n    \u2514\u2500\u2500 patch_*/                  # Patch resolution attempts\n\napp_docs/                         # Generated documentation\n\u2514\u2500\u2500 features/\n    \u2514\u2500\u2500 {feature_name}/\n        \u251c\u2500\u2500 overview.md\n        \u251c\u2500\u2500 technical-guide.md\n        \u2514\u2500\u2500 images/\n```\n\n## Security Best Practices\n\n- Store tokens as environment variables, never in code\n- Use GitHub fine-grained tokens with minimal permissions\n- Set up branch protection rules\n- Require PR reviews for ADW changes\n- Monitor API usage and set billing alerts\n\n## Technical Details\n\n### Core Components\n- `adw_modules/agent.py` - Claude Code CLI integration\n- `adw_modules/data_types.py` - Pydantic models for type safety\n- `adw_modules/github.py` - GitHub API operations\n- `adw_modules/git_ops.py` - Git operations (branching, commits, PRs)\n- `adw_modules/state.py` - State management for workflow chaining\n- `adw_modules/workflow_ops.py` - Core workflow operations (planning, building)\n- `adw_modules/utils.py` - Utility functions\n- `adw_plan.py` - Planning phase workflow\n- `adw_build.py` - Implementation phase workflow\n- `adw_test.py` - Testing phase workflow\n- `adw_review.py` - Review phase workflow\n- `adw_document.py` - Documentation phase workflow\n- `adw_plan_build.py` - Main workflow orchestration (plan & build)\n- `adw_plan_build_test.py` - Full pipeline orchestration (plan & build & test)\n- `adw_plan_build_test_review.py` - Complete pipeline with review (plan & build & test & review)\n- `adw_plan_build_review.py` - Pipeline with review, skipping tests (plan & build & review)\n- `adw_plan_build_document.py` - Documentation pipeline, skipping tests and review (plan & build & document)\n- `adw_sdlc.py` - Complete SDLC workflow (plan & build & test & review & document)\n\n### Branch Naming\n```\n{type}-{issue_number}-{adw_id}-{slug}\n```\nExample: `feat-456-e5f6g7h8-add-user-authentication`\n",
+        "numLines": 578,
+        "startLine": 1,
+        "totalLines": 578
+      }
+    }
+  },
+  {
+    "session_id": "3db12180-3ec5-41f6-b714-779268ca7ae7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/3db12180-3ec5-41f6-b714-779268ca7ae7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la /Users/alexkamysz/AI/scout_plan_build_mvp/ | grep -E \"\\.toml|\\.yaml|\\.yml|\\.json|\\.example|\\.env\"",
+      "description": "List configuration files"
+    },
+    "tool_response": {
+      "stdout": "",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false,
+      "returnCodeInterpretation": "No matches found"
+    }
+  },
+  {
+    "session_id": "3db12180-3ec5-41f6-b714-779268ca7ae7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/3db12180-3ec5-41f6-b714-779268ca7ae7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "find adws -name \"*.py\" -type f | sort",
+      "description": "List all Python files in adws directory"
+    },
+    "tool_response": {
+      "stdout": "adws/adw_build.py\nadws/adw_common.py\nadws/adw_document.py\nadws/adw_modules/__init__.py\nadws/adw_modules/agent.py\nadws/adw_modules/data_types.py\nadws/adw_modules/git_ops.py\nadws/adw_modules/github.py\nadws/adw_modules/r2_uploader.py\nadws/adw_modules/state.py\nadws/adw_modules/utils.py\nadws/adw_modules/workflow_ops.py\nadws/adw_patch.py\nadws/adw_plan_build_document.py\nadws/adw_plan_build_review.py\nadws/adw_plan_build_test_review.py\nadws/adw_plan_build_test.py\nadws/adw_plan_build.py\nadws/adw_plan.py\nadws/adw_review.py\nadws/adw_sdlc.py\nadws/adw_test.py\nadws/adw_tests/__init__.py\nadws/adw_tests/health_check.py\nadws/adw_tests/sandbox_poc.py\nadws/adw_tests/test_adw_test_e2e.py\nadws/adw_tests/test_agents.py\nadws/adw_tests/test_r2_uploader.py\nadws/adw_triggers/__init__.py\nadws/adw_triggers/trigger_cron.py\nadws/adw_triggers/trigger_webhook.py",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false
+    }
+  },
+  {
+    "session_id": "3db12180-3ec5-41f6-b714-779268ca7ae7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/3db12180-3ec5-41f6-b714-779268ca7ae7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "head -15 /Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_plan.py /Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_build.py /Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_test.py 2>/dev/null | grep -E \"^==>|^#|def main\" | head -30",
+      "description": "Extract docstrings from key ADW files"
+    },
+    "tool_response": {
+      "stdout": "==> /Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_plan.py <==\n#!/usr/bin/env -S uv run\n# /// script\n# dependencies = [\"python-dotenv\", \"pydantic\"]\n# ///\n==> /Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_build.py <==\n#!/usr/bin/env -S uv run\n# /// script\n# dependencies = [\"python-dotenv\", \"pydantic\"]\n# ///\n==> /Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_test.py <==\n#!/usr/bin/env -S uv run\n# /// script\n# dependencies = [\"python-dotenv\", \"pydantic\"]\n# ///",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false
+    }
+  },
+  {
+    "session_id": "3db12180-3ec5-41f6-b714-779268ca7ae7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/3db12180-3ec5-41f6-b714-779268ca7ae7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/data_types.py",
+      "limit": 50
+    },
+    "tool_response": {
+      "type": "text",
+      "file": {
+        "filePath": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/data_types.py",
+        "content": "\"\"\"Data types for GitHub API responses and Claude Code agent.\"\"\"\n\nfrom datetime import datetime\nfrom typing import Optional, List, Literal\nfrom pydantic import BaseModel, Field\n\n# Supported slash commands for issue classification\n# These should align with your custom slash commands in .claude/commands that you want to run\nIssueClassSlashCommand = Literal[\"/chore\", \"/bug\", \"/feature\"]\n\n# ADW workflow types\nADWWorkflow = Literal[\n    \"adw_plan\",  # Planning only\n    \"adw_build\",  # Building only (excluded from webhook)\n    \"adw_test\",  # Testing only\n    \"adw_review\",  # Review only\n    \"adw_document\",  # Documentation only\n    \"adw_patch\",  # Direct patch from issue\n    \"adw_plan_build\",  # Plan + Build\n    \"adw_plan_build_test\",  # Plan + Build + Test\n    \"adw_plan_build_test_review\",  # Plan + Build + Test + Review\n    \"adw_sdlc\",  # Complete SDLC: Plan + Build + Test + Review + Document\n]\n\n# All slash commands used in the ADW system\n# Includes issue classification commands and ADW-specific commands\nSlashCommand = Literal[\n    # Issue classification commands\n    \"/chore\",\n    \"/bug\",\n    \"/feature\",\n    # ADW workflow commands\n    \"/classify_issue\",\n    \"/classify_adw\",\n    \"/generate_branch_name\",\n    \"/commit\",\n    \"/pull_request\",\n    \"/implement\",\n    \"/test\",\n    \"/resolve_failed_test\",\n    \"/test_e2e\",\n    \"/resolve_failed_e2e_test\",\n    \"/review\",\n    \"/patch\",\n    \"/document\",\n]\n\n\nclass GitHubUser(BaseModel):\n    \"\"\"GitHub user model.\"\"\"",
+        "numLines": 50,
+        "startLine": 1,
+        "totalLines": 234
+      }
+    }
+  },
+  {
+    "session_id": "3db12180-3ec5-41f6-b714-779268ca7ae7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/3db12180-3ec5-41f6-b714-779268ca7ae7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PostToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "wc -l adws/adw_modules/*.py adws/adw_*.py 2>/dev/null | tail -20",
+      "description": "Count lines in key Python files"
+    },
+    "tool_response": {
+      "stdout": "     158 adws/adw_modules/git_ops.py\n     308 adws/adw_modules/github.py\n     125 adws/adw_modules/r2_uploader.py\n     141 adws/adw_modules/state.py\n     213 adws/adw_modules/utils.py\n     654 adws/adw_modules/workflow_ops.py\n     241 adws/adw_build.py\n      75 adws/adw_common.py\n     383 adws/adw_document.py\n     326 adws/adw_patch.py\n     108 adws/adw_plan_build_document.py\n     101 adws/adw_plan_build_review.py\n      99 adws/adw_plan_build_test_review.py\n      86 adws/adw_plan_build_test.py\n      71 adws/adw_plan_build.py\n     282 adws/adw_plan.py\n     750 adws/adw_review.py\n     132 adws/adw_sdlc.py\n    1088 adws/adw_test.py\n    5873 total",
+      "stderr": "",
+      "interrupted": false,
+      "isImage": false
+    }
+  }
+]

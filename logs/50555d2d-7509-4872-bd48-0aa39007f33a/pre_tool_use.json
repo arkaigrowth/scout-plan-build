@@ -1,0 +1,40 @@
+[
+  {
+    "session_id": "50555d2d-7509-4872-bd48-0aa39007f33a",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/50555d2d-7509-4872-bd48-0aa39007f33a.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la /Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/",
+      "description": "List modules in adws directory"
+    }
+  },
+  {
+    "session_id": "50555d2d-7509-4872-bd48-0aa39007f33a",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/50555d2d-7509-4872-bd48-0aa39007f33a.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_review.py",
+      "limit": 80
+    }
+  },
+  {
+    "session_id": "50555d2d-7509-4872-bd48-0aa39007f33a",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/50555d2d-7509-4872-bd48-0aa39007f33a.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "head -50 /Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/agent.py",
+      "description": "Show agent execution pattern"
+    }
+  }
+]
+  }
+]

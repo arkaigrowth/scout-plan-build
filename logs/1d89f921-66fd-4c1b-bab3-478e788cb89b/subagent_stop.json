@@ -1,0 +1,10 @@
+[
+  {
+    "session_id": "1d89f921-66fd-4c1b-bab3-478e788cb89b",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/1d89f921-66fd-4c1b-bab3-478e788cb89b.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "SubagentStop",
+    "stop_hook_active": false
+  }
+]

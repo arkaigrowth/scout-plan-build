@@ -1,0 +1,56 @@
+[
+  {
+    "parentUuid": null,
+    "isSidechain": false,
+    "userType": "external",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "sessionId": "66c10e2c-fa72-42cd-98e5-555685e08f47",
+    "version": "2.0.22",
+    "gitBranch": "",
+    "type": "user",
+    "message": {
+      "role": "user",
+      "content": "Just say 'Token limit fix successful\\!' - this is a test"
+    },
+    "uuid": "32d9795f-f334-4bae-9c8c-63594285f724",
+    "timestamp": "2025-10-21T02:23:34.573Z"
+  },
+  {
+    "parentUuid": "32d9795f-f334-4bae-9c8c-63594285f724",
+    "isSidechain": false,
+    "userType": "external",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "sessionId": "66c10e2c-fa72-42cd-98e5-555685e08f47",
+    "version": "2.0.22",
+    "gitBranch": "",
+    "message": {
+      "model": "claude-haiku-4-5-20251001",
+      "id": "msg_012aPBEcMPTiZ96KFPXF6XSj",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        {
+          "type": "text",
+          "text": "Token limit fix successful!"
+        }
+      ],
+      "stop_reason": null,
+      "stop_sequence": null,
+      "usage": {
+        "input_tokens": 2,
+        "cache_creation_input_tokens": 30419,
+        "cache_read_input_tokens": 0,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 30419,
+          "ephemeral_1h_input_tokens": 0
+        },
+        "output_tokens": 1,
+        "service_tier": "standard"
+      }
+    },
+    "requestId": "req_011CUKYmFWEjBD5EXSptMJ8T",
+    "type": "assistant",
+    "uuid": "3762404a-a611-4e96-aa0e-60fd246c324d",
+    "timestamp": "2025-10-21T02:23:37.650Z"
+  }
+]

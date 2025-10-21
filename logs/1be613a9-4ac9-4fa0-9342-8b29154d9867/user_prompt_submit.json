@@ -1,0 +1,10 @@
+[
+  {
+    "session_id": "1be613a9-4ac9-4fa0-9342-8b29154d9867",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/1be613a9-4ac9-4fa0-9342-8b29154d9867.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "For /Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/ directory, analyze each Python file:\n\nFor workflow_ops.py, agent.py, github.py, git_ops.py, state.py:\n- List all top-level functions with signatures\n- List all classes with their methods\n- Note key imports\n- Identify integration points\n\nFormat as structured markdown with function/method signatures. Keep concise."
+  }
+]

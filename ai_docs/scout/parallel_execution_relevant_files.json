@@ -1,0 +1,269 @@
+{
+  "metadata": {
+    "search_query": "Find code related to Task agent coordination, parallel execution, timeout handling, and result aggregation in the Scout→Plan→Build workflow",
+    "agents_used": 4,
+    "timestamp": "2025-10-27T02:50:00Z",
+    "scout_phase": "parallel_execution_implementation"
+  },
+  "summary": {
+    "total_files_identified": 27,
+    "execution_pattern": "100% SERIAL - No parallelization exists",
+    "critical_finding": "All workflow orchestration uses sequential subprocess.run() calls",
+    "speedup_potential": "1.4-3x with phase-level parallelization",
+    "immediate_opportunity": "Parallelize Test + Review + Document phases after Build completes"
+  },
+  "files_by_category": {
+    "task_coordination": [
+      {
+        "path": "adws/adw_modules/agent.py",
+        "priority": "CRITICAL",
+        "role": "Central agent execution engine - executes Task agents via Claude Code CLI",
+        "key_functions": ["prompt_claude_code()", "execute_template()", "parse_jsonl_output()"],
+        "current_pattern": "serial",
+        "notes": "10-minute timeout, JSONL stream parsing, model selection"
+      },
+      {
+        "path": "adws/adw_modules/data_types.py",
+        "priority": "HIGH",
+        "role": "Agent request/response data structures",
+        "key_types": ["AgentPromptRequest", "AgentTemplateRequest", "AgentPromptResponse"],
+        "current_pattern": "serial",
+        "notes": "Pydantic models, supports 15+ slash commands"
+      },
+      {
+        "path": "adws/adw_modules/workflow_ops.py",
+        "priority": "HIGH",
+        "role": "High-level workflow coordination between agents",
+        "key_functions": ["classify_issue()", "build_plan()", "implement_plan()", "create_commit()"],
+        "current_pattern": "serial",
+        "notes": "Comprehensive validation, custom exceptions"
+      },
+      {
+        "path": "adws/adw_modules/state.py",
+        "priority": "HIGH",
+        "role": "Persistent state management across agent lifecycles",
+        "key_features": ["ADWState class", "update()", "save()", "load()", "from_stdin()/to_stdout()"],
+        "current_pattern": "serial",
+        "notes": "JSON-based state in agents/{adw_id}/adw_state.json"
+      },
+      {
+        "path": ".claude/commands/scout_improved.md",
+        "priority": "MEDIUM",
+        "role": "Scout command using Task agents (working version)",
+        "pattern": "Task(subagent_type='explore', prompt='...')",
+        "current_pattern": "serial",
+        "notes": "Replaces broken external tools with working Task agents"
+      }
+    ],
+    "parallel_execution_opportunities": [
+      {
+        "path": "adws/adw_sdlc.py",
+        "priority": "CRITICAL",
+        "role": "Complete SDLC workflow orchestrator",
+        "current_pattern": "SERIAL - Plan→Build→Test→Review→Document",
+        "parallelizable": "Test + Review + Document can run in parallel after Build",
+        "speedup": "1.4-1.5x",
+        "lines": "52-126"
+      },
+      {
+        "path": "adws/adw_plan_build_test_review.py",
+        "priority": "HIGH",
+        "role": "Chain: Plan→Build→Test→Review",
+        "current_pattern": "SERIAL",
+        "parallelizable": "Test + Review can run in parallel",
+        "speedup": "1.3x",
+        "lines": "44+"
+      },
+      {
+        "path": "adws/adw_plan_build.py",
+        "priority": "MEDIUM",
+        "role": "Chain: Plan→Build",
+        "current_pattern": "SERIAL",
+        "parallelizable": "Limited (Plan blocks Build)",
+        "speedup": "None",
+        "lines": "44-67"
+      },
+      {
+        "path": "adws/adw_test.py",
+        "priority": "MEDIUM",
+        "role": "Test phase executor",
+        "current_pattern": "SERIAL - unit tests run sequentially",
+        "parallelizable": "Unit tests can run in parallel",
+        "speedup": "2-3x within phase",
+        "notes": "Unit + integration + E2E tests"
+      },
+      {
+        "path": "benchmarks/parallel_test_suite.py",
+        "priority": "REFERENCE",
+        "role": "Reference implementation showing how parallelization COULD work",
+        "current_pattern": "PARALLEL (asyncio.gather())",
+        "parallelizable": "N/A - already demonstrates parallel patterns",
+        "lines": "338-365, 407-445",
+        "notes": "Comprehensive benchmark with sequential vs parallel tests"
+      }
+    ],
+    "timeout_handling": [
+      {
+        "path": "adws/adw_modules/agent.py",
+        "priority": "HIGH",
+        "timeout": "600s (10 minutes)",
+        "handling": "subprocess.TimeoutExpired → AgentError",
+        "recovery": "Raise with context",
+        "lines": "272, 339-345"
+      },
+      {
+        "path": "adws/scout_simple.py",
+        "priority": "LOW",
+        "timeout": "5s",
+        "handling": "Generic subprocess timeout",
+        "recovery": "Continue with partial results",
+        "lines": "47"
+      },
+      {
+        "path": "adws/adw_triggers/trigger_webhook.py",
+        "priority": "MEDIUM",
+        "timeout": "10s (GitHub constraint), 30s (health check)",
+        "handling": "Async background processing",
+        "recovery": "Immediate response, async workflow",
+        "lines": "10-11, 137"
+      },
+      {
+        "path": "adws/adw_modules/exceptions.py",
+        "priority": "CRITICAL",
+        "role": "Complete exception hierarchy with recovery strategies",
+        "exceptions": [
+          "TokenLimitError",
+          "RateLimitError",
+          "AgentError",
+          "WorkflowError",
+          "GitOperationError",
+          "GitHubAPIError",
+          "ValidationError",
+          "StateError",
+          "EnvironmentError",
+          "FileSystemError"
+        ],
+        "features": ["handle_error()", "get_recovery_strategy()", "exponential backoff (documented)"],
+        "notes": "Structured context tracking, correlation IDs, timestamp tracking"
+      }
+    ],
+    "result_aggregation": [
+      {
+        "path": "adws/scout_simple.py",
+        "priority": "MEDIUM",
+        "pattern": "Set-based deduplication + sorted()",
+        "method": "set() to eliminate duplicates, sorted() for determinism",
+        "output": "ai_docs/scout/relevant_files.json"
+      },
+      {
+        "path": "adws/adw_modules/agent.py",
+        "priority": "HIGH",
+        "pattern": "JSONL streaming with result extraction",
+        "method": "Line-by-line parsing, extract result messages",
+        "notes": "parse_jsonl_output() function"
+      },
+      {
+        "path": "benchmarks/parallel_test_suite.py",
+        "priority": "REFERENCE",
+        "pattern": "asyncio.gather() for parallel result collection",
+        "method": "await asyncio.gather(*tasks)",
+        "lines": "338-365",
+        "notes": "Demonstrates concurrent result aggregation"
+      },
+      {
+        "path": "adws/adw_modules/memory_manager.py",
+        "priority": "MEDIUM",
+        "pattern": "Cross-workflow result caching",
+        "method": "Singleton memory manager with add/search",
+        "notes": "Optional mem0 integration for learnings"
+      },
+      {
+        "path": "adws/adw_modules/state.py",
+        "priority": "HIGH",
+        "pattern": "Selective field aggregation",
+        "method": "update() with whitelist filtering",
+        "notes": "State persistence with ADW ID"
+      }
+    ]
+  },
+  "critical_gaps": [
+    {
+      "gap": "No asyncio integration",
+      "impact": "All operations are blocking",
+      "solution": "Add asyncio.gather() for parallel phase execution"
+    },
+    {
+      "gap": "No worker pool implementation",
+      "impact": "Cannot run parallel tasks",
+      "solution": "Use ProcessPoolExecutor or asyncio tasks"
+    },
+    {
+      "gap": "No git worktree pool",
+      "impact": "Cannot safely parallelize due to workspace conflicts",
+      "solution": "Implement git worktree pool for workspace isolation"
+    },
+    {
+      "gap": "Exponential backoff documented but not implemented",
+      "impact": "Rate limit recovery is manual",
+      "solution": "Implement retry decorator with exponential backoff"
+    }
+  ],
+  "implementation_roadmap": [
+    {
+      "phase": "1. Immediate (4-6 hours)",
+      "target": "Phase-level parallelization",
+      "files": ["adws/adw_sdlc.py", "adws/adw_plan_build_test_review.py"],
+      "approach": "Add asyncio.gather() for Test + Review + Document phases",
+      "expected_speedup": "1.4-1.5x"
+    },
+    {
+      "phase": "2. Short-term (1-2 days)",
+      "target": "Git worktree pool",
+      "files": ["NEW: adws/adw_modules/worktree_pool.py"],
+      "approach": "Create isolated workspaces for each parallel operation",
+      "expected_speedup": "Enable safe parallelization"
+    },
+    {
+      "phase": "3. Medium-term (3-5 days)",
+      "target": "Task-level parallelization within phases",
+      "files": ["adws/adw_build.py", "adws/adw_test.py"],
+      "approach": "Break phases into parallel subtasks",
+      "expected_speedup": "2-3x within phases"
+    },
+    {
+      "phase": "4. Long-term (1-2 weeks)",
+      "target": "Full async architecture",
+      "files": ["All adws/*.py files"],
+      "approach": "Migrate from subprocess.run() to async Task execution",
+      "expected_speedup": "2-3x overall pipeline"
+    }
+  ],
+  "files_sorted_alphabetically": [
+    ".claude/commands/scout_improved.md",
+    "adws/adw_build.py",
+    "adws/adw_modules/agent.py",
+    "adws/adw_modules/data_types.py",
+    "adws/adw_modules/exceptions.py",
+    "adws/adw_modules/git_ops.py",
+    "adws/adw_modules/github.py",
+    "adws/adw_modules/memory_manager.py",
+    "adws/adw_modules/state.py",
+    "adws/adw_modules/utils.py",
+    "adws/adw_modules/validators.py",
+    "adws/adw_modules/workflow_ops.py",
+    "adws/adw_plan.py",
+    "adws/adw_plan_build.py",
+    "adws/adw_plan_build_document.py",
+    "adws/adw_plan_build_review.py",
+    "adws/adw_plan_build_test.py",
+    "adws/adw_plan_build_test_review.py",
+    "adws/adw_review.py",
+    "adws/adw_sdlc.py",
+    "adws/adw_test.py",
+    "adws/adw_triggers/trigger_webhook.py",
+    "adws/scout_simple.py",
+    "ai_docs/reference/ERROR_HANDLING_GUIDE.md",
+    "benchmarks/parallel_test_suite.py",
+    "docs/WORKFLOW_ARCHITECTURE.md"
+  ]
+}

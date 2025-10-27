@@ -206,14 +206,19 @@ def main():
     """Main entry point."""
     load_dotenv()
     
+    # Check for --no-commit flag
+    no_commit = "--no-commit" in sys.argv
+    if no_commit:
+        sys.argv.remove("--no-commit")
+
     # Parse arguments
     # INTENTIONAL: adw-id is REQUIRED - we cannot create documentation without prior workflow
     if len(sys.argv) < 3:
-        print("Usage: uv run adw_document.py <issue-number> <adw-id>")
+        print("Usage: uv run adw_document.py <issue-number> <adw-id> [--no-commit]")
         print("\nError: adw-id is required to locate the review and implementation artifacts")
         print("Documentation can only be generated after plan/build/test/review workflows")
         sys.exit(1)
-    
+
     issue_number = sys.argv[1]
     adw_id = sys.argv[2]
     
@@ -321,19 +326,27 @@ def main():
                 )
                 sys.exit(1)
             
-            # Commit the changes
-            logger.info(f"Committing documentation: {commit_msg.split(chr(10))[0]}")
-            success, error = commit_changes(commit_msg)
-            if not success:
-                logger.error(f"Failed to commit changes: {error}")
+            # Handle commit and git finalization based on no_commit flag
+            if no_commit:
+                logger.info("Skipping commit (--no-commit flag)")
                 make_issue_comment(
                     issue_number,
-                    format_issue_message(adw_id, "ops", f"❌ Failed to commit documentation: {error}")
+                    format_issue_message(adw_id, "ops", "⏭️ Skipping commit as requested via --no-commit flag")
                 )
-                sys.exit(1)
-            
-            # Finalize git operations (push and PR)
-            finalize_git_operations(state, logger)
+            else:
+                # Commit the changes
+                logger.info(f"Committing documentation: {commit_msg.split(chr(10))[0]}")
+                success, error = commit_changes(commit_msg)
+                if not success:
+                    logger.error(f"Failed to commit changes: {error}")
+                    make_issue_comment(
+                        issue_number,
+                        format_issue_message(adw_id, "ops", f"❌ Failed to commit documentation: {error}")
+                    )
+                    sys.exit(1)
+
+                # Finalize git operations (push and PR)
+                finalize_git_operations(state, logger)
             
             message = f"Documentation has been created at `{result.documentation_path}` and committed."
         else:

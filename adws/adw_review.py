@@ -418,10 +418,15 @@ def main():
     if skip_resolution:
         sys.argv.remove("--skip-resolution")
 
+    # Check for --no-commit flag
+    no_commit = "--no-commit" in sys.argv
+    if no_commit:
+        sys.argv.remove("--no-commit")
+
     # Parse command line args
     # adw-id is REQUIRED for review to find the correct state and spec
     if len(sys.argv) < 3:
-        print("Usage: uv run adw_review.py <issue-number> <adw-id> [--skip-resolution]")
+        print("Usage: uv run adw_review.py <issue-number> <adw-id> [--skip-resolution] [--no-commit]")
         print("\nError: adw-id is required to locate the spec file and state")
         sys.exit(1)
 
@@ -612,7 +617,7 @@ def main():
                     AGENT_REVIEW_PATCH_IMPLEMENTOR, review_issue, issue_command, adw_id, logger
                 )
 
-                if not error:
+                if not error and not no_commit:
                     success, error = commit_changes(commit_msg)
                     if success:
                         logger.info(f"Committed resolution: {commit_msg}")
@@ -700,27 +705,35 @@ def main():
         )
         sys.exit(1)
 
-    # Commit the review results
-    success, error = commit_changes(commit_msg)
-
-    if not success:
-        logger.error(f"Error committing review: {error}")
+    # Handle commit and git finalization based on no_commit flag
+    if no_commit:
+        logger.info("Skipping commit (--no-commit flag)")
         make_issue_comment(
             issue_number,
-            format_issue_message(
-                adw_id, AGENT_REVIEWER, f"❌ Error committing review: {error}"
-            ),
+            format_issue_message(adw_id, AGENT_REVIEWER, "⏭️ Skipping commit as requested via --no-commit flag"),
         )
-        sys.exit(1)
+    else:
+        # Commit the review results
+        success, error = commit_changes(commit_msg)
 
-    logger.info(f"Committed review: {commit_msg}")
-    make_issue_comment(
-        issue_number,
-        format_issue_message(adw_id, AGENT_REVIEWER, "✅ Review committed"),
-    )
+        if not success:
+            logger.error(f"Error committing review: {error}")
+            make_issue_comment(
+                issue_number,
+                format_issue_message(
+                    adw_id, AGENT_REVIEWER, f"❌ Error committing review: {error}"
+                ),
+            )
+            sys.exit(1)
 
-    # Finalize git operations (push and PR)
-    finalize_git_operations(state, logger)
+        logger.info(f"Committed review: {commit_msg}")
+        make_issue_comment(
+            issue_number,
+            format_issue_message(adw_id, AGENT_REVIEWER, "✅ Review committed"),
+        )
+
+        # Finalize git operations (push and PR)
+        finalize_git_operations(state, logger)
 
     logger.info("Review phase completed successfully")
     make_issue_comment(

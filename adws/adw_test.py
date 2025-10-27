@@ -90,26 +90,32 @@ def check_env_vars(logger: Optional[logging.Logger] = None) -> None:
 def parse_args(
     state: Optional[ADWState] = None,
     logger: Optional[logging.Logger] = None,
-) -> Tuple[Optional[str], Optional[str], bool]:
+) -> Tuple[Optional[str], Optional[str], bool, bool]:
     """Parse command line arguments.
-    Returns (issue_number, adw_id, skip_e2e) where issue_number and adw_id may be None.
+    Returns (issue_number, adw_id, skip_e2e, no_commit) where issue_number and adw_id may be None.
     """
     skip_e2e = False
+    no_commit = False
 
     # Check for --skip-e2e flag in args
     if "--skip-e2e" in sys.argv:
         skip_e2e = True
         sys.argv.remove("--skip-e2e")
 
+    # Check for --no-commit flag in args
+    if "--no-commit" in sys.argv:
+        no_commit = True
+        sys.argv.remove("--no-commit")
+
     # If we have state from stdin, we might not need issue number from args
     if state:
         # In piped mode, we might have no args at all
         if len(sys.argv) >= 2:
             # If an issue number is provided, use it
-            return sys.argv[1], None, skip_e2e
+            return sys.argv[1], None, skip_e2e, no_commit
         else:
             # Otherwise, we'll get issue from state
-            return None, None, skip_e2e
+            return None, None, skip_e2e, no_commit
 
     # Standalone mode - need at least issue number
     if len(sys.argv) < 2:
@@ -134,7 +140,7 @@ def parse_args(
     issue_number = sys.argv[1]
     adw_id = sys.argv[2] if len(sys.argv) > 2 else None
 
-    return issue_number, adw_id, skip_e2e
+    return issue_number, adw_id, skip_e2e, no_commit
 
 
 def format_issue_message(
@@ -841,7 +847,7 @@ def main():
     load_dotenv()
 
     # Parse arguments
-    arg_issue_number, arg_adw_id, skip_e2e = parse_args(None)
+    arg_issue_number, arg_adw_id, skip_e2e, no_commit = parse_args(None)
 
     # Initialize state and issue number
     issue_number = arg_issue_number
@@ -1008,48 +1014,56 @@ def main():
                 f"Final E2E test results: {e2e_passed_count} passed, {e2e_failed_count} failed"
             )
 
-    # Commit the test results (whether tests passed or failed)
-    logger.info("\n=== Committing test results ===")
-    make_issue_comment(
-        issue_number,
-        format_issue_message(adw_id, AGENT_TESTER, "✅ Committing test results"),
-    )
-
-    # Fetch issue details if we haven't already
-    if not issue:
-        issue = fetch_issue(issue_number, repo_path)
-
-    # Get issue classification if we need it for commit
-    if not issue_class:
-        issue_class, error = classify_issue(issue, adw_id, logger)
-        if error:
-            logger.warning(
-                f"Error classifying issue: {error}, defaulting to /chore for test commit"
-            )
-            issue_class = "/chore"
-        state.update(issue_class=issue_class)
-        state.save("adw_test")
-
-    commit_msg, error = create_commit(AGENT_TESTER, issue, issue_class, adw_id, logger)
-
-    if error:
-        logger.error(f"Error committing test results: {error}")
+    # Handle commit and git finalization based on no_commit flag
+    if no_commit:
+        logger.info("\n=== Skipping commit (--no-commit flag) ===")
         make_issue_comment(
             issue_number,
-            format_issue_message(
-                adw_id, AGENT_TESTER, f"❌ Error committing test results: {error}"
-            ),
+            format_issue_message(adw_id, AGENT_TESTER, "⏭️ Skipping commit as requested via --no-commit flag"),
         )
-        # Don't exit on commit error, continue to report final status
     else:
-        logger.info(f"Test results committed: {commit_msg}")
+        # Commit the test results (whether tests passed or failed)
+        logger.info("\n=== Committing test results ===")
+        make_issue_comment(
+            issue_number,
+            format_issue_message(adw_id, AGENT_TESTER, "✅ Committing test results"),
+        )
 
-    # Log comprehensive test results to the issue
-    log_test_results(state, results, e2e_results, logger)
+        # Fetch issue details if we haven't already
+        if not issue:
+            issue = fetch_issue(issue_number, repo_path)
 
-    # Finalize git operations (push and create/update PR)
-    logger.info("\n=== Finalizing git operations ===")
-    finalize_git_operations(state, logger)
+        # Get issue classification if we need it for commit
+        if not issue_class:
+            issue_class, error = classify_issue(issue, adw_id, logger)
+            if error:
+                logger.warning(
+                    f"Error classifying issue: {error}, defaulting to /chore for test commit"
+                )
+                issue_class = "/chore"
+            state.update(issue_class=issue_class)
+            state.save("adw_test")
+
+        commit_msg, error = create_commit(AGENT_TESTER, issue, issue_class, adw_id, logger)
+
+        if error:
+            logger.error(f"Error committing test results: {error}")
+            make_issue_comment(
+                issue_number,
+                format_issue_message(
+                    adw_id, AGENT_TESTER, f"❌ Error committing test results: {error}"
+                ),
+            )
+            # Don't exit on commit error, continue to report final status
+        else:
+            logger.info(f"Test results committed: {commit_msg}")
+
+        # Log comprehensive test results to the issue
+        log_test_results(state, results, e2e_results, logger)
+
+        # Finalize git operations (push and create/update PR)
+        logger.info("\n=== Finalizing git operations ===")
+        finalize_git_operations(state, logger)
 
     # Update state with test results
     # Note: test_results is not part of core state, but save anyway to track completion

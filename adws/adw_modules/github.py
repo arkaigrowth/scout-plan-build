@@ -96,15 +96,6 @@ def fetch_issue(issue_number: str, repo_path: str) -> GitHubIssue:
         EnvironmentError: If gh CLI is not installed
         GitHubAPIError: If issue fetch fails
     """
-    # Return mock issue for testing
-    if issue_number == "999":
-        return GitHubIssue(
-            number=999,
-            title="Add simple parallel execution for Test/Review/Document phases",
-            body="Implement subprocess.Popen() based parallel execution with --no-commit flags",
-            labels=["enhancement", "performance"],
-            state="open"
-        )
 
     # Use JSON output for structured data
     cmd = [
@@ -177,10 +168,6 @@ def make_issue_comment(issue_id: str, comment: str) -> None:
     Raises:
         GitHubAPIError: If comment posting fails
     """
-    # Skip GitHub operations for local testing
-    if issue_id == "999":
-        print(f"[MOCK GitHub Comment] Issue #{issue_id}: {comment[:200]}...")
-        return
 
     try:
         # Get repo information from git remote

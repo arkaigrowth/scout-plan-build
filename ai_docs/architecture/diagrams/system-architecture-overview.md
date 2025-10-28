@@ -13,15 +13,23 @@ The Scout→Plan→Build MVP framework implements a three-layer architecture tha
 ## 1. Three-Layer Architecture Overview
 
 ```mermaid
+%%{init: {'theme': 'dark', 'themeVariables': {
+  'background': '#0b0f14',
+  'primaryTextColor': '#e5e7eb',
+  'lineColor': '#64748b',
+  'clusterBkg': '#0b0f14',
+  'clusterBorder': '#334155',
+  'edgeLabelBackground': '#0b0f14'
+}}}%%
 graph TB
-    subgraph "Layer 1: User Interface / Commands"
+    subgraph Layer1["Layer 1: User Interface / Commands"]
         UC[User Commands]
         SC["/scout, /plan, /build"]
         GH[GitHub Issues]
         CLI[CLI Interface]
     end
 
-    subgraph "Layer 2: Orchestration / ADW Core"
+    subgraph Layer2["Layer 2: Orchestration / ADW Core"]
         ADW[ADW Orchestrator]
         STATE[ADWState Manager]
         WF[Workflow Engine]
@@ -29,7 +37,7 @@ graph TB
         VAL[Validators]
     end
 
-    subgraph "Layer 3: Infrastructure / External Systems"
+    subgraph Layer3["Layer 3: Infrastructure / External Systems"]
         GIT[Git Operations]
         GHAPI[GitHub API]
         CLAUDE[Claude API]
@@ -74,87 +82,147 @@ graph TB
 ## 2. Complete Workflow Data Flow
 
 ```mermaid
-flowchart LR
-    subgraph Input
+%%{init: {'theme': 'dark', 'themeVariables': {
+  'background': '#0b0f14',
+  'primaryTextColor': '#e5e7eb',
+  'lineColor': '#64748b',
+  'clusterBkg': '#0b0f14',
+  'clusterBorder': '#334155',
+  'edgeLabelBackground': '#0b0f14'
+}}}%%
+flowchart TD
+    %% Input Layer
+    subgraph InputLayer["📥 Input Layer"]
         USER[User Request]
         ISSUE[GitHub Issue]
     end
 
-    subgraph Scout Phase
+    %% Scout Phase
+    subgraph ScoutPhase["🔍 Phase 1: Scout - File Discovery"]
         SCOUT[Scout Command]
-        GLOB[File Discovery]
-        GREP[Pattern Search]
-        MERGE[Merge Results]
-        JSON1[relevant_files.json]
+        SCOUT_OPS["Parallel Operations"]
+        GLOB[File Discovery<br/>Glob Patterns]
+        GREP[Pattern Search<br/>Code Analysis]
+        MERGE[Merge & Deduplicate]
+        JSON1[📄 relevant_files.json]
     end
 
-    subgraph Plan Phase
+    %% Plan Phase
+    subgraph PlanPhase["📋 Phase 2: Plan - Spec Generation"]
         PLAN[Plan Command]
-        CLASSIFY[Issue Classifier]
-        PLANNER[Plan Generator]
-        VALIDATE1[Schema Validator]
-        SPEC[spec/*.md]
+        CLASSIFY[Issue Classifier<br/>Complexity Analysis]
+        PLANNER[Plan Generator<br/>Implementation Strategy]
+        VALIDATE1[Schema Validator<br/>v1.1.0 Compliance]
+        SPEC[📄 specs/issue-*.md]
     end
 
-    subgraph Build Phase
+    %% Build Phase
+    subgraph BuildPhase["🔨 Phase 3: Build - Implementation"]
         BUILD[Build Command]
-        IMPLEMENT[Implementor Agent]
-        CODE[Code Changes]
-        VALIDATE2[Code Validator]
+        IMPLEMENT[Implementor Agent<br/>Code Generation]
+        CODE[Code Changes<br/>File Modifications]
+        VALIDATE2[Code Validator<br/>Syntax & Quality]
     end
 
-    subgraph Parallel Phase
-        PARALLEL{Parallel Execution}
-        TEST[Test Agent]
-        REVIEW[Review Agent]
-        DOC[Document Agent]
-        COMMIT[Aggregated Commit]
+    %% Parallel Phase (Highlighted)
+    subgraph ParallelPhase["⚡ Phase 4: Parallel Quality Assurance"]
+        direction LR
+        PARALLEL{Parallel<br/>Execution<br/>--parallel flag}
+
+        subgraph ParallelOps["Concurrent Operations"]
+            TEST[🧪 Test Agent<br/>--no-commit]
+            REVIEW[👀 Review Agent<br/>--no-commit]
+            DOC[📝 Document Agent<br/>--no-commit]
+        end
+
+        COMMIT[Aggregated Commit<br/>Single Git Operation]
     end
 
-    subgraph Output
+    %% Output Layer
+    subgraph OutputLayer["📤 Output Layer"]
         BRANCH[Feature Branch]
+        OUTPUTS["Final Deliverables"]
         PR[Pull Request]
         DOCS[Documentation]
     end
 
+    %% Flow Connections - Input to Scout
     USER --> SCOUT
     ISSUE --> SCOUT
 
-    SCOUT --> GLOB
-    SCOUT --> GREP
+    %% Scout Internal Flow
+    SCOUT --> SCOUT_OPS
+    SCOUT_OPS --> GLOB
+    SCOUT_OPS --> GREP
     GLOB --> MERGE
     GREP --> MERGE
     MERGE --> JSON1
 
+    %% Scout to Plan
     JSON1 --> PLAN
+
+    %% Plan Internal Flow
     PLAN --> CLASSIFY
     CLASSIFY --> PLANNER
     PLANNER --> VALIDATE1
     VALIDATE1 --> SPEC
 
+    %% Plan to Build
     SPEC --> BUILD
+
+    %% Build Internal Flow
     BUILD --> IMPLEMENT
     IMPLEMENT --> CODE
     CODE --> VALIDATE2
 
+    %% Build to Parallel Phase
     VALIDATE2 --> PARALLEL
-    PARALLEL -->|--no-commit| TEST
-    PARALLEL -->|--no-commit| REVIEW
-    PARALLEL -->|--no-commit| DOC
 
+    %% Parallel Execution
+    PARALLEL -.->|subprocess| TEST
+    PARALLEL -.->|subprocess| REVIEW
+    PARALLEL -.->|subprocess| DOC
+
+    %% Parallel to Commit
     TEST --> COMMIT
     REVIEW --> COMMIT
     DOC --> COMMIT
 
+    %% Commit to Output
     COMMIT --> BRANCH
-    BRANCH --> PR
-    COMMIT --> DOCS
+    BRANCH --> OUTPUTS
+    OUTPUTS --> PR
+    OUTPUTS --> DOCS
 
-    style PARALLEL fill:#90ee90
-    style TEST fill:#90ee90
-    style REVIEW fill:#90ee90
-    style DOC fill:#90ee90
+    %% Styling
+    style InputLayer fill:#1e3a5f,stroke:#64748b,stroke-width:2px
+    style ScoutPhase fill:#1e3a5f,stroke:#64748b,stroke-width:2px
+    style PlanPhase fill:#1e3a5f,stroke:#64748b,stroke-width:2px
+    style BuildPhase fill:#1e3a5f,stroke:#64748b,stroke-width:2px
+    style ParallelPhase fill:#1e4d2b,stroke:#90ee90,stroke-width:3px
+    style OutputLayer fill:#1e3a5f,stroke:#64748b,stroke-width:2px
+
+    style PARALLEL fill:#90ee90,color:#000
+    style ParallelOps fill:#1e4d2b,stroke:#90ee90
+    style TEST fill:#90ee90,color:#000
+    style REVIEW fill:#90ee90,color:#000
+    style DOC fill:#90ee90,color:#000
+    style COMMIT fill:#90ee90,color:#000
+
+    style JSON1 fill:#ffd700,color:#000
+    style SPEC fill:#ffd700,color:#000
 ```
+
+### Flow Summary
+
+The workflow follows a clear vertical progression through four main phases:
+
+1. **Scout Phase** (3-4 min): Parallel file discovery using Glob and Grep
+2. **Plan Phase** (2-3 min): Sequential spec generation with validation
+3. **Build Phase** (3-4 min): Sequential implementation and code validation
+4. **Parallel Phase** (3-4 min): Test + Review + Document running concurrently
+
+**Key Innovation**: The parallel phase runs three quality assurance operations simultaneously with `--no-commit` flags, then aggregates results into a single commit. This achieves **40-50% time reduction** (from 12-17 min to 8-11 min) while avoiding git conflicts.
 
 ---
 
@@ -170,7 +238,7 @@ flowchart LR
 
 ```mermaid
 graph TD
-    subgraph "Command Interface"
+    subgraph CommandInterface["Command Interface"]
         CMD[Slash Commands]
         SCOUT_CMD[/scout]
         PLAN_CMD[/plan_w_docs]
@@ -178,13 +246,13 @@ graph TD
         PR_CMD[/pull_request]
     end
 
-    subgraph "Input Sources"
+    subgraph InputSources["Input Sources"]
         MANUAL[Manual CLI]
         WEBHOOK[GitHub Webhooks]
         ISSUE[GitHub Issues]
     end
 
-    subgraph "Command Router"
+    subgraph CommandRouter["Command Router"]
         PARSER[Argument Parser]
         VALIDATOR[Input Validator]
         ROUTER[Route to ADW]
@@ -232,7 +300,7 @@ graph TD
 
 ```mermaid
 graph TB
-    subgraph "ADW Orchestrator"
+    subgraph ADWOrchestrator["ADW Orchestrator"]
         SDLC[adw_sdlc.py]
         PLAN_M[adw_plan.py]
         BUILD_M[adw_build.py]
@@ -241,13 +309,13 @@ graph TB
         DOC_M[adw_document.py]
     end
 
-    subgraph "Workflow Management"
+    subgraph WorkflowManagement["Workflow Management"]
         WF_OPS[workflow_ops.py]
         STATE[state.py]
         AGENT[agent.py]
     end
 
-    subgraph "Validation & Security"
+    subgraph ValidationSecurity["Validation & Security"]
         VAL[validators.py]
         EXC[exceptions.py]
         TYPES[data_types.py]
@@ -355,31 +423,31 @@ stateDiagram-v2
 
 ```mermaid
 graph LR
-    subgraph "ADW Core"
+    subgraph ADWCore["ADW Core"]
         CORE[Workflow Engine]
     end
 
-    subgraph "Git Operations"
+    subgraph GitOperations["Git Operations"]
         BRANCH[Branch Management]
         COMMIT[Commit Creation]
         PUSH[Push to Remote]
         WORKTREE[Worktree Support]
     end
 
-    subgraph "GitHub API"
+    subgraph GitHubAPI["GitHub API"]
         ISSUES[Issue Management]
         PRS[Pull Requests]
         COMMENTS[Comments]
         WEBHOOKS[Webhooks]
     end
 
-    subgraph "Claude API"
+    subgraph ClaudeAPI["Claude API"]
         HAIKU[Claude Haiku]
         SONNET[Claude Sonnet]
         OPUS[Claude Opus]
     end
 
-    subgraph "Storage"
+    subgraph Storage["Storage"]
         FS[Local File System]
         R2[R2 Remote Storage]
         STATE_DB[State Persistence]
@@ -486,19 +554,19 @@ gantt
 
 ```mermaid
 graph TD
-    subgraph "Resource Utilization"
+    subgraph ResourceUtilization["Resource Utilization"]
         CPU[CPU Usage]
         MEM[Memory Usage]
         IO[I/O Operations]
     end
 
-    subgraph "Sequential: 1 Core Active"
+    subgraph Sequential["Sequential: 1 Core Active"]
         S_CPU[25% CPU]
         S_MEM[1GB RAM]
         S_IO[Serial I/O]
     end
 
-    subgraph "Parallel: 3 Cores Active"
+    subgraph Parallel["Parallel: 3 Cores Active"]
         P_CPU[75% CPU]
         P_MEM[3GB RAM]
         P_IO[Parallel I/O]
@@ -556,20 +624,20 @@ sequenceDiagram
 
 ```mermaid
 graph TD
-    subgraph "Agent Types"
+    subgraph AgentTypes["Agent Types"]
         PLANNER[Planner Agent]
         IMPL[Implementor Agent]
         TEST[Test Agent]
         REVIEW[Review Agent]
     end
 
-    subgraph "Claude Models"
+    subgraph ClaudeModels["Claude Models"]
         HAIKU[Claude Haiku<br/>Fast, Efficient]
         SONNET[Claude Sonnet<br/>Balanced]
         OPUS[Claude Opus<br/>Powerful]
     end
 
-    subgraph "Usage Pattern"
+    subgraph UsagePattern["Usage Pattern"]
         SCOUT_U[Scout: Haiku]
         PLAN_U[Plan: Sonnet]
         BUILD_U[Build: Sonnet/Opus]
@@ -649,19 +717,19 @@ The parallel execution feature was implemented using the framework itself:
 
 ```mermaid
 graph TD
-    subgraph "Current State"
+    subgraph CurrentState["Current State"]
         CS[File-based State]
         CP[Subprocess Parallel]
         CC[CLI Commands]
     end
 
-    subgraph "Next Phase"
+    subgraph NextPhase["Next Phase"]
         NS[Redis State Cache]
         NP[Async Parallel]
         NC[Web API]
     end
 
-    subgraph "Future Vision"
+    subgraph FutureVision["Future Vision"]
         FS[Distributed State]
         FP[Multi-Node Parallel]
         FC[Event-Driven]

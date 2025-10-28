@@ -1,0 +1,1084 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Scout→Plan→Build Architecture Diagrams - Interactive visualization of the AI-driven software development framework">
+    <meta name="keywords" content="architecture, software development, AI workflow, diagrams, system design">
+    <meta name="author" content="Scout→Plan→Build MVP Team">
+
+    <!-- Open Graph tags for sharing -->
+    <meta property="og:title" content="Scout→Plan→Build Architecture Diagrams">
+    <meta property="og:description" content="Interactive architecture visualization with 40-50% performance improvements through parallel execution">
+    <meta property="og:type" content="website">
+
+    <title>Scout→Plan→Build Architecture Diagrams</title>
+
+    <!-- Mermaid.js from CDN -->
+    <script type="module">
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'dark',
+            themeVariables: {
+                darkMode: true,
+                background: '#0b0f14',
+                primaryColor: '#3b82f6',
+                primaryTextColor: '#e5e7eb',
+                primaryBorderColor: '#64748b',
+                lineColor: '#64748b',
+                secondaryColor: '#1e293b',
+                tertiaryColor: '#334155',
+                clusterBkg: '#1e293b',
+                clusterBorder: '#475569',
+                edgeLabelBackground: '#0b0f14',
+                noteTextColor: '#e5e7eb',
+                noteBkgColor: '#1e293b',
+                noteBorderColor: '#64748b'
+            },
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis'
+            },
+            sequence: {
+                useMaxWidth: true,
+                wrap: true
+            },
+            gantt: {
+                useMaxWidth: true
+            }
+        });
+        window.mermaid = mermaid;
+    </script>
+
+    <style>
+        /* CSS Variables for easy theme switching */
+        :root {
+            --bg-primary: #0b0f14;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #e5e7eb;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent-primary: #3b82f6;
+            --accent-secondary: #10b981;
+            --border-color: #334155;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%);
+            padding: 2rem 2rem 1rem;
+            border-bottom: 2px solid var(--accent-primary);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+
+        .performance-badge {
+            display: inline-block;
+            background: var(--success-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Navigation */
+        nav {
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 140px;
+            z-index: 99;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+
+        nav::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        nav::-webkit-scrollbar-track {
+            background: var(--bg-tertiary);
+        }
+
+        nav::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            display: inline-block;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover {
+            background: var(--bg-tertiary);
+            color: var(--accent-primary);
+        }
+
+        .nav-links a.active {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Diagram Section */
+        .diagram-section {
+            background: var(--bg-secondary);
+            border-radius: 1rem;
+            padding: 2rem;
+            margin-bottom: 3rem;
+            box-shadow: var(--shadow);
+            scroll-margin-top: 180px;
+        }
+
+        .diagram-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .diagram-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .diagram-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.8;
+        }
+
+        .diagram-metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .metric-card {
+            background: var(--bg-tertiary);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        .metric-label {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .metric-value {
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+        /* Diagram Container */
+        .diagram-container {
+            background: var(--bg-tertiary);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+            border: 1px solid var(--border-color);
+        }
+
+        .diagram-container::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .diagram-container::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        .diagram-container::-webkit-scrollbar-thumb {
+            background: var(--accent-primary);
+            border-radius: 4px;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--accent-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-primary);
+        }
+
+        /* Key Insights */
+        .insights {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .insight-card {
+            background: var(--bg-tertiary);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            border-top: 3px solid var(--accent-secondary);
+        }
+
+        .insight-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--accent-secondary);
+        }
+
+        .insight-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg-secondary);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            margin-top: 4rem;
+        }
+
+        footer a {
+            color: var(--accent-primary);
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: var(--success-color);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 0.5rem;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(100px);
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Loading State */
+        .loading {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--bg-tertiary);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            header {
+                padding: 1.5rem 1rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            .diagram-section {
+                padding: 1.5rem;
+            }
+
+            .diagram-title {
+                font-size: 1.4rem;
+            }
+
+            nav {
+                padding: 0.75rem 1rem;
+                top: 115px;
+            }
+
+            .nav-links {
+                gap: 0.5rem;
+            }
+
+            .nav-links a {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+
+            header, nav, .action-buttons, footer {
+                display: none;
+            }
+
+            .diagram-section {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+        }
+
+        /* Error State */
+        .error-state {
+            background: var(--bg-tertiary);
+            border-left: 4px solid var(--danger-color);
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+        }
+
+        .error-title {
+            color: var(--danger-color);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>⚡ Scout→Plan→Build Architecture</h1>
+        <p class="subtitle">Interactive System Architecture Visualization</p>
+        <div class="performance-badge">40-50% Performance Improvement Through Parallel Execution</div>
+    </header>
+
+    <nav>
+        <ul class="nav-links">
+            <li><a href="#overview" class="active">System Overview</a></li>
+            <li><a href="#pipeline">Pipeline Flow</a></li>
+            <li><a href="#parallel">Parallel Execution</a></li>
+            <li><a href="#components">Component UML</a></li>
+        </ul>
+    </nav>
+
+    <div class="container">
+        <!-- 1. System Architecture Overview -->
+        <section id="overview" class="diagram-section">
+            <div class="diagram-header">
+                <h2 class="diagram-title">1. System Architecture Overview</h2>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyDiagram('overview-diagram')">
+                        📋 Copy Diagram
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadSVG('overview-diagram', 'system-overview')">
+                        ⬇️ Download SVG
+                    </button>
+                </div>
+            </div>
+            <p class="diagram-description">
+                Three-layer architecture orchestrating AI-driven software development workflows.
+                The system separates concerns between user interface (Layer 1), orchestration logic (Layer 2),
+                and external infrastructure (Layer 3).
+            </p>
+            <div class="diagram-metrics">
+                <div class="metric-card">
+                    <div class="metric-label">Architecture Layers</div>
+                    <div class="metric-value">3</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Core Modules</div>
+                    <div class="metric-value">8</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Integration Points</div>
+                    <div class="metric-value">5</div>
+                </div>
+            </div>
+            <div class="diagram-container">
+                <div id="overview-diagram" class="mermaid">
+graph TB
+    subgraph "Layer 1: User Interface / Commands"
+        UC[User Commands]
+        SC["/scout, /plan, /build"]
+        GH[GitHub Issues]
+        CLI[CLI Interface]
+    end
+
+    subgraph "Layer 2: Orchestration / ADW Core"
+        ADW[ADW Orchestrator]
+        STATE[ADWState Manager]
+        WF[Workflow Engine]
+        AGENT[Agent Coordinator]
+        VAL[Validators]
+    end
+
+    subgraph "Layer 3: Infrastructure / External Systems"
+        GIT[Git Operations]
+        GHAPI[GitHub API]
+        CLAUDE[Claude API]
+        FS[File System]
+        R2[R2 Storage]
+    end
+
+    UC --> SC
+    GH --> SC
+    SC --> ADW
+    ADW --> STATE
+    ADW --> WF
+    WF --> AGENT
+    AGENT --> VAL
+
+    WF --> GIT
+    WF --> GHAPI
+    AGENT --> CLAUDE
+    STATE --> FS
+    ADW --> R2
+
+    style UC fill:#e1f5fe
+    style SC fill:#e1f5fe
+    style GH fill:#e1f5fe
+    style CLI fill:#e1f5fe
+
+    style ADW fill:#fff3e0
+    style STATE fill:#fff3e0
+    style WF fill:#fff3e0
+    style AGENT fill:#fff3e0
+    style VAL fill:#fff3e0
+
+    style GIT fill:#f3e5f5
+    style GHAPI fill:#f3e5f5
+    style CLAUDE fill:#f3e5f5
+    style FS fill:#f3e5f5
+    style R2 fill:#f3e5f5
+                </div>
+            </div>
+            <div class="insights">
+                <div class="insight-card">
+                    <div class="insight-title">Layer 1: User Interface</div>
+                    <div class="insight-text">Handles all user input through slash commands, CLI, and GitHub webhooks with comprehensive validation.</div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-title">Layer 2: Orchestration</div>
+                    <div class="insight-text">Core business logic coordinating workflows, state management, and agent execution.</div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-title">Layer 3: Infrastructure</div>
+                    <div class="insight-text">External integrations with Git, GitHub, Claude AI, and storage systems.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. Pipeline Flow -->
+        <section id="pipeline" class="diagram-section">
+            <div class="diagram-header">
+                <h2 class="diagram-title">2. Scout→Plan→Build Pipeline</h2>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyDiagram('pipeline-diagram')">
+                        📋 Copy Diagram
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadSVG('pipeline-diagram', 'pipeline-flow')">
+                        ⬇️ Download SVG
+                    </button>
+                </div>
+            </div>
+            <p class="diagram-description">
+                Complete workflow from GitHub issue to pull request, showing the reality of implementation
+                versus documented aspirations. Highlights the 40% scout phase success rate and the
+                successful parallel execution innovation.
+            </p>
+            <div class="diagram-metrics">
+                <div class="metric-card">
+                    <div class="metric-label">Scout Success Rate</div>
+                    <div class="metric-value">40%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Plan Success Rate</div>
+                    <div class="metric-value">80%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Build Success Rate</div>
+                    <div class="metric-value">70%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Parallel Success</div>
+                    <div class="metric-value">100%</div>
+                </div>
+            </div>
+            <div class="diagram-container">
+                <div id="pipeline-diagram" class="mermaid">
+flowchart TB
+    classDef working fill:#90EE90,stroke:#2E7D32,stroke-width:2px
+    classDef broken fill:#FFB6C1,stroke:#C62828,stroke-width:2px
+    classDef partial fill:#FFE4B5,stroke:#F57C00,stroke-width:2px
+    classDef parallel fill:#E1F5FE,stroke:#0288D1,stroke-width:3px
+
+    Start([GitHub Issue]):::working --> Scout
+
+    subgraph Scout["🔍 SCOUT PHASE (40%)"]
+        ScoutTry[Try External Tools]:::broken
+        ScoutFallback[Fallback: Native Tools]:::working
+        ScoutTry --> ScoutFallback
+    end
+
+    Scout --> Plan
+
+    subgraph Plan["📋 PLAN PHASE (80%)"]
+        FetchIssue[Fetch Issue]:::working
+        GenSpec[Generate Spec]:::working
+        SaveSpec[Save Spec]:::working
+        FetchIssue --> GenSpec --> SaveSpec
+    end
+
+    Plan --> Build
+
+    subgraph Build["🔨 BUILD PHASE (70%)"]
+        LoadSpec[Load Spec]:::working
+        Implement[Implement Code]:::working
+        LoadSpec --> Implement
+    end
+
+    Build --> ParallelQ{--parallel?}
+
+    subgraph Parallel["⚡ PARALLEL (100%)"]
+        Test[Test Phase<br/>3-4 min]:::parallel
+        Review[Review Phase<br/>2-3 min]:::parallel
+        Doc[Document Phase<br/>2-3 min]:::parallel
+        Aggregate[Single Commit]:::working
+        Test --> Aggregate
+        Review --> Aggregate
+        Doc --> Aggregate
+    end
+
+    subgraph Sequential["🔄 SEQUENTIAL"]
+        TestS[Test]:::working
+        ReviewS[Review]:::working
+        DocS[Document]:::working
+        TestS --> ReviewS --> DocS
+    end
+
+    ParallelQ -->|Yes| Parallel
+    ParallelQ -->|No| Sequential
+
+    Parallel --> PR[Create PR]:::working
+    Sequential --> PR
+    PR --> End([PR Ready]):::working
+                </div>
+            </div>
+            <div class="insights">
+                <div class="insight-card">
+                    <div class="insight-title">External Tool Reality</div>
+                    <div class="insight-text">Scout phase external tools (gemini, opencode) don't exist. System falls back to native find/grep successfully.</div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-title">Plan Phase Reliability</div>
+                    <div class="insight-text">Most reliable phase at 80% success. Uses spec schema v1.1.0 with comprehensive validation.</div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-title">Parallel Innovation</div>
+                    <div class="insight-text">40-50% speedup through simple subprocess.Popen() parallelization with --no-commit flags.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. Parallel Execution -->
+        <section id="parallel" class="diagram-section">
+            <div class="diagram-header">
+                <h2 class="diagram-title">3. Parallel Execution Sequence</h2>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyDiagram('parallel-diagram')">
+                        📋 Copy Diagram
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadSVG('parallel-diagram', 'parallel-execution')">
+                        ⬇️ Download SVG
+                    </button>
+                </div>
+            </div>
+            <p class="diagram-description">
+                Detailed sequence showing how Test, Review, and Document phases run concurrently with
+                --no-commit flags, followed by a single aggregated commit to avoid git conflicts.
+                This simple 30-line solution replaced 150+ lines of async code.
+            </p>
+            <div class="diagram-metrics">
+                <div class="metric-card">
+                    <div class="metric-label">Sequential Time</div>
+                    <div class="metric-value">12-17 min</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Parallel Time</div>
+                    <div class="metric-value">8-11 min</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Time Saved</div>
+                    <div class="metric-value">40-50%</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Code Complexity</div>
+                    <div class="metric-value">30 lines</div>
+                </div>
+            </div>
+            <div class="diagram-container">
+                <div id="parallel-diagram" class="mermaid">
+sequenceDiagram
+    participant SDLC as adw_sdlc.py
+    participant Test as adw_test.py
+    participant Review as adw_review.py
+    participant Doc as adw_document.py
+    participant Git
+
+    Note over SDLC: Plan Phase (2-3 min)
+    SDLC->>SDLC: Generate spec
+
+    Note over SDLC: Build Phase (3-4 min)
+    SDLC->>SDLC: Implement code
+
+    rect rgb(220, 255, 220)
+        Note over SDLC,Doc: PARALLEL EXECUTION (3-4 min)
+
+        par Test Process
+            SDLC->>Test: Popen(--no-commit)
+            Test->>Test: Run tests
+            Note over Test: Skip git commit
+            Test-->>SDLC: Exit code
+        and Review Process
+            SDLC->>Review: Popen(--no-commit)
+            Review->>Review: Analyze code
+            Note over Review: Skip git commit
+            Review-->>SDLC: Exit code
+        and Document Process
+            SDLC->>Doc: Popen(--no-commit)
+            Doc->>Doc: Generate docs
+            Note over Doc: Skip git commit
+            Doc-->>SDLC: Exit code
+        end
+
+        SDLC->>SDLC: wait() for all
+    end
+
+    rect rgb(255, 240, 200)
+        Note over SDLC,Git: Single Aggregated Commit
+        SDLC->>Git: git add .
+        SDLC->>Git: git commit
+        SDLC->>Git: git push
+    end
+                </div>
+            </div>
+            <div class="insights">
+                <div class="insight-card">
+                    <div class="insight-title">Simple > Complex</div>
+                    <div class="insight-text">30 lines of subprocess.Popen() beat 150+ lines of async code with same performance gain.</div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-title">Git Conflict Solution</div>
+                    <div class="insight-text">--no-commit flags prevent parallel commit conflicts. Single aggregated commit at end.</div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-title">User-Driven Design</div>
+                    <div class="insight-text">User feedback "Are we overengineering?" led to simpler, better solution.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. Component Interaction UML -->
+        <section id="components" class="diagram-section">
+            <div class="diagram-header">
+                <h2 class="diagram-title">4. Component Interaction (UML)</h2>
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="copyDiagram('uml-diagram')">
+                        📋 Copy Diagram
+                    </button>
+                    <button class="btn btn-secondary" onclick="downloadSVG('uml-diagram', 'component-uml')">
+                        ⬇️ Download SVG
+                    </button>
+                </div>
+            </div>
+            <p class="diagram-description">
+                Complete module architecture showing relationships between WorkflowOps, ADWState, Agent,
+                GitOps, GitHub, and supporting modules. Highlights Pydantic validation and security
+                improvements throughout the system.
+            </p>
+            <div class="diagram-metrics">
+                <div class="metric-card">
+                    <div class="metric-label">Core Modules</div>
+                    <div class="metric-value">8</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Pydantic Models</div>
+                    <div class="metric-value">20+</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Exception Types</div>
+                    <div class="metric-value">10</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-label">Security Validators</div>
+                    <div class="metric-value">12</div>
+                </div>
+            </div>
+            <div class="diagram-container">
+                <div id="uml-diagram" class="mermaid">
+classDiagram
+    class WorkflowOps {
+        +format_issue_message()
+        +extract_adw_info()
+        +classify_issue()
+        +build_plan()
+        +implement_plan()
+        +generate_branch_name()
+        +create_commit()
+        +create_pull_request()
+    }
+
+    class ADWState {
+        -adw_id: str
+        -data: Dict
+        +update(kwargs)
+        +get(key, default)
+        +save(workflow_step)
+        +load(adw_id)
+        +to_stdout()
+    }
+
+    class Agent {
+        +CLAUDE_PATH: str
+        +get_model_for_slash_command()
+        +prompt_claude_code()
+        +execute_template()
+        +parse_jsonl_output()
+    }
+
+    class GitOps {
+        +get_current_branch()
+        +push_branch()
+        +create_branch()
+        +commit_changes()
+        +finalize_git_operations()
+    }
+
+    class GitHub {
+        +fetch_issue()
+        +make_issue_comment()
+        +mark_issue_in_progress()
+        +fetch_open_issues()
+    }
+
+    class Validators {
+        +validate_and_sanitize_prompt()
+        +validate_file_path()
+        +validate_branch_name()
+        +validate_commit_message()
+        +validate_subprocess_command()
+    }
+
+    class DataTypes {
+        <<interface>>
+        +GitHubIssue
+        +AgentPromptRequest
+        +ADWStateData
+        +TestResult
+        +ReviewResult
+    }
+
+    class Exceptions {
+        <<abstract>>
+        +ADWError
+        +ValidationError
+        +StateError
+        +GitOperationError
+        +AgentError
+    }
+
+    WorkflowOps --> Agent : uses
+    WorkflowOps --> GitHub : uses
+    WorkflowOps --> ADWState : manages
+    WorkflowOps --> GitOps : coordinates
+    WorkflowOps --> DataTypes : validates with
+    WorkflowOps --> Validators : secures with
+
+    Agent --> DataTypes : uses models
+    GitOps --> GitHub : uses
+    ADWState --> DataTypes : validates with
+    Validators --> DataTypes : creates models
+                </div>
+            </div>
+            <div class="insights">
+                <div class="insight-card">
+                    <div class="insight-title">WorkflowOps Orchestration</div>
+                    <div class="insight-text">Central coordinator managing agent invocations, state persistence, and git operations.</div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-title">State Management</div>
+                    <div class="insight-text">File-based persistence with stdin/stdout piping for transient state across workflow steps.</div>
+                </div>
+                <div class="insight-card">
+                    <div class="insight-title">Security Hardening</div>
+                    <div class="insight-text">Comprehensive Pydantic validation prevents injection attacks, path traversal, and DoS.</div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Scout→Plan→Build MVP Framework</p>
+        <p>
+            <a href="https://github.com" target="_blank">GitHub Repository</a> |
+            <a href="#overview">Back to Top</a>
+        </p>
+        <p style="margin-top: 1rem; font-size: 0.9rem;">
+            Generated on 2025-01-27 | Framework Version: MVP with Parallel Execution
+        </p>
+    </footer>
+
+    <!-- Toast notification for copy feedback -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // Navigation active state
+        document.addEventListener('DOMContentLoaded', () => {
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const sections = document.querySelectorAll('.diagram-section');
+
+            // Intersection Observer for active nav highlighting
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const id = entry.target.getAttribute('id');
+                        navLinks.forEach(link => {
+                            link.classList.remove('active');
+                            if (link.getAttribute('href') === `#${id}`) {
+                                link.classList.add('active');
+                            }
+                        });
+                    }
+                });
+            }, { threshold: 0.5 });
+
+            sections.forEach(section => observer.observe(section));
+
+            // Smooth scrolling
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const targetId = link.getAttribute('href');
+                    const targetSection = document.querySelector(targetId);
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            });
+        });
+
+        // Copy diagram to clipboard
+        async function copyDiagram(diagramId) {
+            const diagram = document.getElementById(diagramId);
+            const diagramText = diagram.textContent.trim();
+
+            try {
+                await navigator.clipboard.writeText(diagramText);
+                showToast('Diagram code copied to clipboard!');
+            } catch (err) {
+                showToast('Failed to copy diagram', 'error');
+                console.error('Copy failed:', err);
+            }
+        }
+
+        // Download diagram as SVG
+        function downloadSVG(diagramId, filename) {
+            const diagram = document.getElementById(diagramId);
+            const svg = diagram.querySelector('svg');
+
+            if (!svg) {
+                showToast('Diagram not rendered yet', 'error');
+                return;
+            }
+
+            const svgData = new XMLSerializer().serializeToString(svg);
+            const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+            const svgUrl = URL.createObjectURL(svgBlob);
+
+            const downloadLink = document.createElement('a');
+            downloadLink.href = svgUrl;
+            downloadLink.download = `${filename}.svg`;
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+            URL.revokeObjectURL(svgUrl);
+
+            showToast('SVG downloaded successfully!');
+        }
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.background = type === 'error' ? 'var(--danger-color)' : 'var(--success-color)';
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Handle Mermaid rendering errors
+        window.addEventListener('error', (e) => {
+            if (e.message.includes('mermaid')) {
+                console.error('Mermaid rendering error:', e);
+                document.querySelectorAll('.mermaid').forEach(el => {
+                    if (!el.querySelector('svg')) {
+                        el.innerHTML = `
+                            <div class="error-state">
+                                <div class="error-title">Diagram Rendering Error</div>
+                                <p>The diagram could not be rendered. This may be due to:</p>
+                                <ul>
+                                    <li>Network connectivity issues loading Mermaid.js</li>
+                                    <li>Invalid diagram syntax</li>
+                                    <li>Browser compatibility issues</li>
+                                </ul>
+                                <p>Try refreshing the page or checking the browser console for details.</p>
+                            </div>
+                        `;
+                    }
+                });
+            }
+        }, true);
+
+        // Print functionality
+        function printDiagrams() {
+            window.print();
+        }
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Ctrl/Cmd + P for print
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                e.preventDefault();
+                printDiagrams();
+            }
+        });
+    </script>
+</body>
+</html>

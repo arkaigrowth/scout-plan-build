@@ -24,11 +24,11 @@ flowchart TB
     IssueCheck --> |Has ADW ID| UseExisting[Use Existing ADW ID]:::working
     IssueCheck --> |No ADW ID| GenerateID[Generate ADW ID<br/>Format: 8-char hash]:::working
 
-    UseExisting --> Scout
-    GenerateID --> Scout
+    UseExisting --> ScoutPhase
+    GenerateID --> ScoutPhase
 
     %% Scout Phase (Reality Check)
-    subgraph Scout["🔍 SCOUT PHASE (Partial Working)"]
+    subgraph ScoutPhase["🔍 SCOUT PHASE (Partial Working)"]
         direction TB
         ScoutAttempt[Attempt External Tools<br/>gemini/opencode/codex]:::broken
         ScoutFallback[Fallback to Native Tools<br/>find + grep commands]:::working
@@ -39,7 +39,7 @@ flowchart TB
         TaskAgent --> ScoutOutput
     end
 
-    Scout --> PlanPhase
+    ScoutPhase --> PlanPhase
 
     %% Plan Phase
     subgraph PlanPhase["📋 PLAN PHASE (80% Working)"]
@@ -130,10 +130,10 @@ flowchart TB
     FinalPhase --> End([PR Ready for Review]):::working
 
     %% Error Handling Paths
-    ScoutAttempt -.->|Error| ErrorHandler
-    BuildValidate -.->|Max Retries| ErrorHandler
+    ScoutAttempt -.->|Error| ErrorHandlerSub
+    BuildValidate -.->|Max Retries| ErrorHandlerSub
 
-    subgraph ErrorHandler["❌ ERROR HANDLING"]
+    subgraph ErrorHandlerSub["❌ ERROR HANDLING"]
         LogError[Log to Issue]:::error
         SaveState[Save Error State]:::error
         Rollback[Git Reset if Needed]:::gitOp
@@ -142,7 +142,7 @@ flowchart TB
         SaveState --> Rollback
     end
 
-    ErrorHandler --> End
+    ErrorHandlerSub --> End
 ```
 
 ## Phase-by-Phase Breakdown

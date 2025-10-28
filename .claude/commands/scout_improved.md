@@ -11,7 +11,7 @@ Search the codebase for files needed to complete the task using a fast, token-ef
 # Variables
 USER_PROMPT: $1
 SCALE: $2 (defaults to 4)
-RELEVANT_FILE_OUTPUT_DIR: "agents/scout_files"
+RELEVANT_FILE_OUTPUT_DIR: "ai_docs/scout"
 
 # Instructions
 - We're executing a three step engineering workflow to deliver on the `USER_PROMPT`.

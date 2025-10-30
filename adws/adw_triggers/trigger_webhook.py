@@ -20,8 +20,10 @@ Environment Requirements:
 import os
 import subprocess
 import sys
+import hmac
+import hashlib
 from typing import Optional
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, HTTPException
 from dotenv import load_dotenv
 import uvicorn
 
@@ -38,6 +40,7 @@ load_dotenv()
 
 # Configuration
 PORT = int(os.getenv("PORT", "8001"))
+WEBHOOK_SECRET = os.getenv("GITHUB_WEBHOOK_SECRET")
 
 # Create FastAPI app
 app = FastAPI(
@@ -46,16 +49,65 @@ app = FastAPI(
 
 print(f"Starting ADW Webhook Trigger on port {PORT}")
 
+if not WEBHOOK_SECRET:
+    print("⚠️ WARNING: GITHUB_WEBHOOK_SECRET not set - webhook authentication DISABLED")
+    print("   Set GITHUB_WEBHOOK_SECRET environment variable for production use")
+
+
+def verify_webhook_signature(payload_body: bytes, signature_header: str) -> bool:
+    """
+    Verify GitHub webhook signature using HMAC SHA-256.
+
+    Args:
+        payload_body: Raw request body as bytes
+        signature_header: Value of X-Hub-Signature-256 header
+
+    Returns:
+        True if signature is valid, False otherwise
+    """
+    if not WEBHOOK_SECRET:
+        # If no secret configured, skip verification (dev mode)
+        return True
+
+    if not signature_header:
+        return False
+
+    # GitHub signature format: "sha256=<signature>"
+    try:
+        hash_algorithm, signature = signature_header.split("=", 1)
+    except ValueError:
+        return False
+
+    if hash_algorithm != "sha256":
+        return False
+
+    # Compute expected signature
+    expected = hmac.new(
+        WEBHOOK_SECRET.encode("utf-8"), payload_body, hashlib.sha256
+    ).hexdigest()
+
+    # Use constant-time comparison to prevent timing attacks
+    return hmac.compare_digest(expected, signature)
+
 
 @app.post("/gh-webhook")
 async def github_webhook(request: Request):
     """Handle GitHub webhook events."""
     try:
+        # SECURITY: Verify webhook signature
+        signature = request.headers.get("X-Hub-Signature-256", "")
+        body = await request.body()
+
+        if not verify_webhook_signature(body, signature):
+            print("⚠️ Webhook signature verification FAILED - rejecting request")
+            raise HTTPException(status_code=401, detail="Invalid webhook signature")
+
         # Get event type from header
         event_type = request.headers.get("X-GitHub-Event", "")
 
-        # Parse webhook payload
-        payload = await request.json()
+        # Parse webhook payload (use body we already read)
+        import json
+        payload = json.loads(body)
 
         # Extract event details
         action = payload.get("action", "")

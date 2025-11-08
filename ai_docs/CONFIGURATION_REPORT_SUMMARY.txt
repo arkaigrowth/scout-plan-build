@@ -1,0 +1,508 @@
+================================================================================
+CONFIGURATION & SETUP PATTERNS ANALYSIS - SCOUT PLAN BUILD MVP
+================================================================================
+
+ANALYSIS DATE: 2025-10-23
+REPORT FILES CREATED:
+  1. ai_docs/CONFIGURATION_SETUP_PATTERNS.md (Comprehensive - 700+ lines)
+  2. ai_docs/CONFIGURATION_QUICK_REFERENCE.md (Quick guide - 200+ lines)
+  3. ai_docs/CONFIGURATION_REPORT_SUMMARY.txt (This file)
+
+================================================================================
+EXECUTIVE SUMMARY
+================================================================================
+
+The scout_plan_build_mvp repository implements a sophisticated configuration
+and validation system with these key characteristics:
+
+CONFIGURATION TIERS:
+  - Required: 2 variables (ANTHROPIC_API_KEY, GITHUB_REPO_URL)
+  - Highly Recommended: 1 variable (CLAUDE_CODE_MAX_OUTPUT_TOKENS)
+  - Optional: GitHub integration, R2 storage, sandbox access
+
+VALIDATION APPROACH:
+  - All input uses Pydantic models for type safety
+  - 10+ specialized validators for different data types
+  - Security-first design (path traversal, shell injection prevention)
+  - Whitelist-based command and path validation
+
+INTEGRATION POINTS:
+  - GitHub: gh CLI + optional GITHUB_PAT
+  - R2 Storage: boto3 with graceful degradation
+  - Claude Code: subprocess execution with filtered environment
+  - Error Handling: Structured exception hierarchy with recovery strategies
+
+================================================================================
+KEY CONFIGURATION CATEGORIES
+================================================================================
+
+1. ENVIRONMENT VARIABLES (.env.sample)
+   - Location: /Users/alexkamysz/AI/scout_plan_build_mvp/.env.sample
+   - Required: ANTHROPIC_API_KEY, GITHUB_REPO_URL
+   - Important: CLAUDE_CODE_MAX_OUTPUT_TOKENS (default 8192 → too low)
+   - Optional: GITHUB_PAT, R2 storage, E2B sandbox
+
+2. PYDANTIC VALIDATION (adws/adw_modules/validators.py)
+   - SafeUserInput: Prompt validation (100KB max)
+   - SafeFilePath: Directory traversal prevention
+   - SafeGitBranch: Branch name validation
+   - SafeCommitMessage: Shell injection prevention
+   - SafeSlashCommand: Whitelist validation (14 commands allowed)
+   - ... and 5 more specialized validators
+
+3. GITHUB INTEGRATION (adws/adw_modules/github.py)
+   - Tool: gh CLI (must be installed)
+   - Environment: GH_TOKEN from GITHUB_PAT
+   - Fallback: Local gh auth if PAT not set
+   - Operations: Fetch issues, post comments, manage labels
+
+4. R2 STORAGE (adws/adw_modules/r2_uploader.py)
+   - Type: Cloudflare R2 (S3-compatible)
+   - Configuration: All-or-nothing (4 required variables)
+   - Behavior: Graceful degradation if incomplete
+   - Default domain: tac-public-imgs.iddagents.com
+
+5. AGENT CONFIGURATION (adws/adw_modules/agent.py)
+   - CLI: Claude Code (must be in PATH)
+   - Model mapping: Slash commands → Sonnet/Opus
+   - Execution: Subprocess with filtered environment
+   - Timeout: 10 minutes per execution
+
+6. EXCEPTION HIERARCHY (adws/adw_modules/exceptions.py)
+   - Base: ADWError with timestamp + context
+   - Categories: Validation, Git, GitHub, Agent, Workflow, Resource, System
+   - Recovery: get_recovery_strategy(error) provides repair steps
+   - Logging: handle_error() integrates with GitHub comments
+
+7. DATA TYPES (adws/adw_modules/data_types.py)
+   - State: ADWStateData (agents/{adw_id}/adw_state.json)
+   - Results: ReviewResult, TestResult, DocumentationResult
+   - Workflows: 10 workflow types (adw_plan, adw_build, adw_sdlc, etc.)
+
+================================================================================
+CRITICAL SETUP SEQUENCE
+================================================================================
+
+STEP 1: Copy .env template
+  cp .env.sample .env
+
+STEP 2: Set ANTHROPIC_API_KEY (REQUIRED)
+  - Blocks ALL agent execution if missing
+  - Value: sk-ant-... (from Anthropic console)
+
+STEP 3: Set GITHUB_REPO_URL (REQUIRED)
+  - Blocks GitHub operations if missing
+  - Value: https://github.com/owner/repo (exact format matters)
+
+STEP 4: Set CLAUDE_CODE_MAX_OUTPUT_TOKENS (CRITICAL)
+  - Default: 8192 (causes "token limit exceeded" errors)
+  - Recommended: 32768 or higher
+
+STEP 5: Verify CLI tools installed
+  - git (version control)
+  - gh (GitHub CLI - brew install gh)
+  - claude (Claude Code CLI)
+
+STEP 6: Authenticate GitHub
+  - gh auth login (local machine)
+  - OR set GITHUB_PAT (CI/automation)
+
+OPTIONAL: Configure R2 storage
+  - All 4 CLOUDFLARE_* variables must be set
+  - Missing any = feature silently disabled
+
+================================================================================
+MOST COMMON CONFIGURATION MISTAKES
+================================================================================
+
+MISTAKE #1: Token Limit Too Low
+  Problem: Agent execution fails with "token limit exceeded"
+  Root Cause: CLAUDE_CODE_MAX_OUTPUT_TOKENS=8192 (default)
+  Solution: Set to 32768 in .env
+
+MISTAKE #2: Missing GITHUB_PAT in Automation
+  Problem: gh commands fail in CI/GitHub Actions
+  Root Cause: gh tries local auth (doesn't work in automation)
+  Solution: Set GITHUB_PAT with personal access token
+
+MISTAKE #3: Path Traversal Security Errors
+  Problem: SafeFilePath validation fails
+  Root Cause: Trying to access files outside allowed prefixes
+  Solution: Use only: specs/, agents/, ai_docs/, docs/, scripts/, adws/, app/
+
+MISTAKE #4: Partial R2 Configuration
+  Problem: Uploads silently fail with no error
+  Root Cause: Missing one of 4 CLOUDFLARE_* variables
+  Solution: Verify all 4 variables are set or disable R2 entirely
+
+MISTAKE #5: Invalid Slash Commands
+  Problem: AgentError - "Invalid slash command"
+  Root Cause: Using command not in ALLOWED_COMMANDS whitelist
+  Solution: Use only: /plan_w_docs, /build_adw, /scout, /test, /review, /document
+
+MISTAKE #6: Reserved Branch Names
+  Problem: SafeGitBranch validation fails
+  Root Cause: Using "main", "master", or "head"
+  Solution: Use semantic names: feature/issue-123-description
+
+MISTAKE #7: Shell Injection in Commit Messages
+  Problem: SafeCommitMessage validation fails
+  Root Cause: Commit message contains &&, |, $(), etc.
+  Solution: Use plain text, avoid shell syntax
+
+MISTAKE #8: State File Corruption
+  Problem: ADWStateData parsing fails
+  Root Cause: adw_id field missing from state JSON
+  Solution: State files MUST have adw_id (other fields optional)
+
+================================================================================
+VALIDATION RULE SUMMARIES
+================================================================================
+
+ALLOWED PATH PREFIXES:
+  specs/              - Specification documents
+  agents/             - Runtime state and artifacts
+  ai_docs/            - AI-generated documentation
+  docs/               - Human-written documentation
+  scripts/            - Utility scripts
+  adws/               - Core ADW system files
+  app/                - Application code
+
+ALLOWED SLASH COMMANDS (14 total):
+  /chore, /bug, /feature                          # Issue types
+  /classify_issue, /classify_adw                  # Classification
+  /generate_branch_name, /commit, /pull_request   # Git operations
+  /implement, /test, /resolve_failed_test         # Implementation
+  /test_e2e, /resolve_failed_e2e_test            # E2E testing
+  /review, /patch, /document                      # Review & docs
+
+BRANCH NAME RULES:
+  ✓ Allow: Alphanumeric, hyphens (-), underscores (_), slashes (/)
+  ✗ Deny: Reserved names (main, master, head)
+  ✗ Deny: Starting/ending with special characters
+  ✗ Deny: Double slashes (//)
+
+FILE PATH RULES:
+  ✓ Allow: Relative paths within ALLOWED_PATH_PREFIXES
+  ✗ Deny: Absolute paths (/etc, /sys, /root, etc.)
+  ✗ Deny: Directory traversal (..)
+  ✗ Deny: Null bytes (\x00)
+
+COMMIT MESSAGE RULES:
+  ✓ Allow: Plain text, up to 5000 characters
+  ✗ Deny: Shell metacharacters (;, |, &, $, `)
+  ✗ Deny: Command substitution patterns
+  ✗ Deny: Null bytes
+
+================================================================================
+AGENT MODEL MAPPING
+================================================================================
+
+OPUS (Heavy) - Use for complex tasks:
+  /implement        - Implementation tasks
+  /feature          - New feature development
+  /bug              - Complex bug fixes
+  /patch            - Code patches
+  /review           - Code reviews
+
+SONNET (Light) - Use for simple/classification tasks:
+  /classify_issue   - Issue classification
+  /classify_adw     - ADW classification
+  /test             - Test execution
+  /document         - Documentation generation
+  /generate_branch_name - Branch naming
+
+RECOMMENDATION: Most workflows use sonnet to reduce costs. Upgrade to opus
+only for complex implementation/review tasks where quality is critical.
+
+================================================================================
+ENVIRONMENT VARIABLES AT A GLANCE
+================================================================================
+
+REQUIRED (Setup FIRST):
+  ANTHROPIC_API_KEY = Your API key (sk-ant-...)
+  GITHUB_REPO_URL = Full repo URL (https://github.com/owner/repo)
+
+HIGHLY RECOMMENDED (Setup SECOND):
+  CLAUDE_CODE_MAX_OUTPUT_TOKENS = 32768 (prevents token limit errors)
+
+OPTIONAL BUT IMPORTANT:
+  GITHUB_PAT = GitHub personal access token (for CI/automation)
+  CLAUDE_CODE_PATH = Path to claude CLI (default: "claude")
+  CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR = true (default)
+
+OPTIONAL (R2 STORAGE - ALL OR NOTHING):
+  CLOUDFLARE_ACCOUNT_ID = Account ID
+  CLOUDFLARE_R2_ACCESS_KEY_ID = API token access key
+  CLOUDFLARE_R2_SECRET_ACCESS_KEY = API token secret
+  CLOUDFLARE_R2_BUCKET_NAME = Bucket name
+  CLOUDFLARE_R2_PUBLIC_DOMAIN = Custom domain (optional)
+
+OPTIONAL (ADVANCED):
+  E2B_API_KEY = Agent Cloud Sandbox key
+  AGENT_CLOUD_SANDBOX_URL = Sandbox URL
+  CLOUDFLARED_TUNNEL_TOKEN = Tunnel token
+
+================================================================================
+FILES CONTAINING CONFIGURATION LOGIC
+================================================================================
+
+PRIMARY CONFIGURATION FILES:
+
+1. .env.sample (22 lines)
+   - Environment variable template
+   - Detailed comments for each variable
+   - Shows required vs optional
+
+2. adws/adw_modules/validators.py (442 lines)
+   - 10 Pydantic validator classes
+   - Security constants (max lengths, allowed prefixes)
+   - Input sanitization functions
+   - Whitelist enforcement
+
+3. adws/adw_modules/agent.py (398 lines)
+   - Claude Code CLI integration
+   - Model selection mapping (SLASH_COMMAND_MODEL_MAP)
+   - Agent execution with subprocess
+   - JSONL output parsing
+
+4. adws/adw_modules/github.py (366 lines)
+   - gh CLI wrapper functions
+   - GitHub environment setup (GH_TOKEN)
+   - Pydantic models for GitHub API responses
+   - Issue operations (fetch, comment, label)
+
+5. adws/adw_modules/exceptions.py (496 lines)
+   - ADWError base class with context
+   - 9 specific exception types
+   - Error recovery strategies
+   - GitHub integration for error reporting
+
+6. adws/adw_modules/data_types.py (234 lines)
+   - Pydantic models for all data types
+   - ADWStateData (state persistence)
+   - Workflow type definitions
+   - Validation aliases for API responses
+
+7. adws/adw_modules/utils.py (215 lines)
+   - get_safe_subprocess_env() - filtered environment
+   - make_adw_id() - generates workflow IDs
+   - setup_logger() - logging configuration
+   - parse_json() - JSON parsing with markdown support
+
+8. adws/adw_modules/r2_uploader.py (126 lines)
+   - R2Uploader class with graceful degradation
+   - boto3 S3 client initialization
+   - File and screenshot upload methods
+
+CONFIGURATION CONSTANTS LOCATIONS:
+
+- Validation limits: validators.py (lines 21-27)
+- Path whitelist: validators.py (lines 30-38)
+- Shell metacharacters: validators.py (line 41)
+- Allowed commands: validators.py (lines 362-369)
+- Agent model map: agent.py (lines 32-58)
+- Logger setup: utils.py (lines 20-73)
+- Safe environment: utils.py (lines 161-215)
+
+================================================================================
+DEPENDENCY CHAIN & INITIALIZATION ORDER
+================================================================================
+
+LOAD ORDER (Critical):
+
+1. Python loads .env file (via python-dotenv)
+2. Pydantic models initialize with field validators
+3. Agent checks Claude Code installed
+4. GitHub operations check gh CLI installed
+5. R2 uploader attempts initialization (graceful fail if incomplete)
+
+VARIABLE AVAILABILITY:
+
+Global scope (.env):
+  ├─ os.environ → Python code reads these
+  ├─ subprocess env dict → Filtered for agent execution
+  └─ gh CLI env → GH_TOKEN from GITHUB_PAT
+
+Agent subprocess:
+  ├─ ANTHROPIC_API_KEY (required)
+  ├─ GITHUB_PAT/GH_TOKEN (optional)
+  ├─ CLAUDE_CODE_MAX_OUTPUT_TOKENS (recommended)
+  ├─ System variables (PATH, HOME, SHELL)
+  └─ Custom variables explicitly added
+
+INITIALIZATION FAILURES:
+
+Missing ANTHROPIC_API_KEY:
+  → Agent execution fails silently
+  → EnvironmentError raised
+
+Missing GITHUB_REPO_URL:
+  → Falls back to git remote
+  → GitHubAPIError if no remote
+
+CLAUDE_CODE_MAX_OUTPUT_TOKENS too low:
+  → TokenLimitError during execution
+  → Workflow fails with "token limit exceeded"
+
+Missing gh CLI:
+  → EnvironmentError on first GitHub operation
+  → gh auth required
+
+Incomplete R2 config:
+  → R2Uploader.enabled = False
+  → Uploads silently skip (no error)
+
+================================================================================
+SKILLS RECOMMENDATIONS
+================================================================================
+
+Based on this analysis, these Claude Skills would be valuable:
+
+1. ENVIRONMENT VALIDATION CHECKER
+   - Validates complete setup
+   - Reports missing variables
+   - Tests CLI tool availability
+   - Returns: Setup status report
+
+2. CONFIGURATION GENERATOR
+   - Generates .env from template
+   - Customizes for integration types
+   - Validates format
+   - Returns: Annotated .env file
+
+3. ERROR RECOVERY GUIDE
+   - Maps error to ADWError type
+   - Provides recovery steps
+   - Shows examples
+   - Returns: Step-by-step recovery
+
+4. VALIDATION SCHEMA REFERENCE
+   - Describes validation rules
+   - Shows allowed values
+   - Provides examples
+   - Returns: Constraint reference
+
+5. AGENT CONFIGURATION ADVISOR
+   - Recommends model/settings
+   - Optimizes token usage
+   - Suggests parallelization
+   - Returns: Configuration recommendation
+
+6. R2 SETUP WIZARD
+   - Configures storage
+   - Tests boto3 connection
+   - Validates bucket access
+   - Returns: Working R2 config
+
+7. STATE FILE INSPECTOR
+   - Debugs corrupted state
+   - Validates schema
+   - Suggests repairs
+   - Returns: State validation report
+
+8. GITHUB INTEGRATION TESTER
+   - Tests gh CLI
+   - Validates auth
+   - Checks repo access
+   - Returns: Integration status
+
+================================================================================
+VALIDATION ENTRY POINTS
+================================================================================
+
+All user input is validated through Pydantic models:
+
+PROMPTS:
+  SafeUserInput → validates user prompts (100KB max)
+
+FILE OPERATIONS:
+  SafeFilePath → validates paths (whitelist + traversal prevention)
+
+GIT OPERATIONS:
+  SafeGitBranch → validates branch names
+  SafeCommitMessage → validates commit messages
+
+GITHUB OPERATIONS:
+  SafeIssueNumber → validates GitHub issue numbers
+
+IDENTIFIERS:
+  SafeADWID → validates ADW IDs (ADW-XXXXX format)
+  SafeAgentName → validates agent names
+
+COMMANDS:
+  SafeSlashCommand → validates slash commands (whitelist)
+  SafeCommandArgs → validates subprocess arguments
+
+URLS:
+  SafeDocsUrl → validates documentation URLs (http/https only)
+
+================================================================================
+SETUP CHECKLIST
+================================================================================
+
+CRITICAL (Do First):
+  [ ] Copy .env.sample to .env
+  [ ] Set ANTHROPIC_API_KEY
+  [ ] Set GITHUB_REPO_URL
+  [ ] Set CLAUDE_CODE_MAX_OUTPUT_TOKENS=32768
+  [ ] Verify: git, gh, claude installed
+  [ ] Run: gh auth login
+
+IMPORTANT (Do Next):
+  [ ] Test: gh issue list (GitHub auth working)
+  [ ] Test: claude --version (Claude CLI working)
+  [ ] Test: git remote -v (Git configured)
+  [ ] Verify: ANTHROPIC_API_KEY format (sk-ant-...)
+  [ ] Verify: GITHUB_REPO_URL format (https://github.com/owner/repo)
+
+OPTIONAL (As Needed):
+  [ ] Set GITHUB_PAT (if using automation)
+  [ ] Configure R2 (all 4 CLOUDFLARE_* vars)
+  [ ] Test: python -c "from adws..." (imports working)
+  [ ] Create: test spec and run workflow
+  [ ] Validate: specs against schema
+
+PRODUCTION:
+  [ ] Use secrets management (GitHub Secrets, etc.)
+  [ ] Enable API token rotation
+  [ ] Monitor: CLAUDE_CODE_MAX_OUTPUT_TOKENS usage
+  [ ] Log: All workflow executions
+  [ ] Test: Disaster recovery (state file rebuild)
+
+================================================================================
+FURTHER READING
+================================================================================
+
+Detailed Documentation:
+  - Full Analysis: ai_docs/CONFIGURATION_SETUP_PATTERNS.md
+  - Quick Guide: ai_docs/CONFIGURATION_QUICK_REFERENCE.md
+  - This Summary: ai_docs/CONFIGURATION_REPORT_SUMMARY.txt
+
+Source Code:
+  - Validators: adws/adw_modules/validators.py
+  - Exceptions: adws/adw_modules/exceptions.py
+  - Agent Config: adws/adw_modules/agent.py
+  - GitHub Integration: adws/adw_modules/github.py
+  - Data Types: adws/adw_modules/data_types.py
+  - Utilities: adws/adw_modules/utils.py
+  - R2 Storage: adws/adw_modules/r2_uploader.py
+
+Project Documentation:
+  - README: README.md
+  - Spec Schema: docs/SPEC_SCHEMA.md
+  - Project Instructions: CLAUDE.md
+  - Local Overrides: CLAUDE.local.md
+
+================================================================================
+END OF REPORT
+================================================================================
+
+Generated: 2025-10-23
+Repository: /Users/alexkamysz/AI/scout_plan_build_mvp
+Analysis Tool: Claude Code File Search & Analysis
+
+For questions about configuration, refer to the comprehensive documentation
+or examine the source files directly. All configuration patterns follow
+security-first design principles with clear validation and error handling.
+

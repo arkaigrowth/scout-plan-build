@@ -1,0 +1,293 @@
+# Scout-Plan-Build Framework Installation Manifest
+# Version: 1.0.0
+# This manifest defines what gets installed in a declarative way
+
+version: "1.0.0"
+framework_version: "2024.11.1"
+
+metadata:
+  name: "Scout-Plan-Build Framework"
+  description: "AI-assisted development workflow automation"
+  author: "Alex Kamysz"
+  license: "MIT"
+  repository: "https://github.com/yourusername/scout_plan_build_mvp"
+
+# Required environment
+requirements:
+  git:
+    version: ">=2.0"
+    command: "git --version"
+    optional: false
+
+  python:
+    version: ">=3.10"
+    command: "python --version"
+    optional: false
+
+  uv:
+    version: ">=0.1.0"
+    command: "uv --version"
+    optional: true
+    fallback: "pip"
+
+  gh:
+    version: ">=2.0"
+    command: "gh --version"
+    optional: true
+    note: "Required for GitHub integration"
+
+# What to install
+components:
+  core_modules:
+    source: "adws/"
+    destination: "adws/"
+    description: "Python workflow orchestrators"
+    required: true
+    files: all
+
+  slash_commands:
+    source: ".claude/commands/"
+    destination: ".claude/commands/"
+    description: "Workflow slash commands"
+    required: true
+    files:
+      - scout.md
+      - plan_w_docs.md
+      - plan_w_docs_improved.md
+      - build_adw.md
+
+  hooks:
+    source: ".claude/hooks/"
+    destination: ".claude/hooks/"
+    description: "Event hooks for observability"
+    required: false
+    files: all
+
+  skills:
+    source: ".claude/skills/"
+    destination: ".claude/skills/"
+    description: "Advanced workflow skills"
+    required: false
+    files: all
+
+  scripts:
+    source: "scripts/"
+    destination: "scripts/"
+    description: "Utility scripts"
+    required: true
+    files:
+      - validate_pipeline.sh
+      - workflow.sh
+      - worktree_manager.sh
+
+# Directories to create
+directories:
+  - path: "specs/"
+    description: "Implementation plans and specifications"
+    gitkeep: true
+
+  - path: "agents/scout_files/"
+    description: "Scout discovery results"
+    gitkeep: true
+
+  - path: "ai_docs/build_reports/"
+    description: "Build execution reports"
+    gitkeep: true
+
+  - path: "ai_docs/reviews/"
+    description: "Code review reports"
+    gitkeep: true
+
+  - path: "ai_docs/scout/"
+    description: "Scout analysis results"
+    gitkeep: true
+
+  - path: ".claude/memory/"
+    description: "Workflow memory and learning"
+    gitkeep: true
+
+  - path: ".claude/state/"
+    description: "Workflow state persistence"
+    gitkeep: true
+
+# Configuration files to generate
+configurations:
+  - file: ".env"
+    template: ".env.template"
+    required: true
+    overwrite: false
+    description: "Environment variables"
+
+  - file: ".adw_config.json"
+    auto_generate: true
+    required: true
+    description: "Framework configuration"
+    content: |
+      {
+        "project": {
+          "name": "${REPO_NAME}",
+          "type": "auto-detect"
+        },
+        "paths": {
+          "specs": "specs/",
+          "agents": "agents/",
+          "ai_docs": "ai_docs/",
+          "app_code": ".",
+          "allowed": ["specs", "agents", "ai_docs", "app", "src", "lib"]
+        },
+        "workflow": {
+          "use_github": true,
+          "auto_branch": true,
+          "branch_prefix": "feature/"
+        }
+      }
+
+  - file: "CLAUDE.md"
+    template: "CLAUDE_template.md"
+    auto_generate: true
+    overwrite: false
+    description: "Project instructions for Claude"
+
+  - file: "test_installation.py"
+    source: "scripts/test_installation.py"
+    required: true
+    description: "Installation validation script"
+
+# Post-installation validation
+validation:
+  checks:
+    - name: "Core modules directory exists"
+      test: "test -d adws"
+      critical: true
+
+    - name: "Scout module executable"
+      test: "test -f adws/scout_simple.py"
+      critical: true
+
+    - name: "Plan command installed"
+      test: "test -f .claude/commands/plan_w_docs.md"
+      critical: true
+
+    - name: "Build command installed"
+      test: "test -f .claude/commands/build_adw.md"
+      critical: true
+
+    - name: "Config file exists"
+      test: "test -f .adw_config.json"
+      critical: true
+
+    - name: "Pipeline validation script"
+      test: "test -x scripts/validate_pipeline.sh"
+      critical: false
+
+    - name: "Python imports work"
+      test: "python -c 'import sys; sys.path.insert(0, \"adws\"); from adw_modules import utils'"
+      critical: true
+
+# Environment setup
+environment:
+  variables:
+    - name: "CLAUDE_CODE_MAX_OUTPUT_TOKENS"
+      value: "32768"
+      required: true
+      description: "Prevents token limit errors"
+
+    - name: "ANTHROPIC_API_KEY"
+      value: "${ANTHROPIC_API_KEY}"
+      required: true
+      source: "existing"
+      description: "Claude API key"
+
+    - name: "GITHUB_PAT"
+      value: "${GITHUB_PAT}"
+      required: false
+      source: "existing"
+      description: "GitHub personal access token"
+
+    - name: "GITHUB_REPO_URL"
+      value: "${GITHUB_REPO_URL}"
+      required: false
+      auto_generate: true
+      description: "GitHub repository URL"
+
+# Post-install scripts
+post_install:
+  - name: "Create pyproject.toml if missing"
+    command: |
+      if [ ! -f pyproject.toml ]; then
+        cat > pyproject.toml <<'EOF'
+      [project]
+      name = "scout-plan-build"
+      version = "0.1.0"
+      requires-python = ">=3.10"
+      dependencies = [
+          "pydantic>=2.0",
+          "python-dotenv",
+          "gitpython",
+          "anthropic",
+      ]
+      EOF
+      fi
+    optional: true
+    conditional: "python_project"
+
+  - name: "Install Python dependencies"
+    command: "uv sync || pip install -r requirements.txt || echo 'Install dependencies manually'"
+    optional: true
+
+  - name: "Test installation"
+    command: "python test_installation.py"
+    optional: false
+
+  - name: "Mark scripts as executable"
+    command: "chmod +x scripts/*.sh"
+    optional: false
+
+  - name: "Create initial git commit"
+    command: "git add . && git commit -m 'chore: Install Scout-Plan-Build framework v${FRAMEWORK_VERSION}'"
+    optional: true
+    conditional: "git_repo_and_changes"
+
+# Uninstallation instructions
+uninstall:
+  remove_components:
+    - "adws/"
+    - ".claude/commands/scout.md"
+    - ".claude/commands/plan_w_docs.md"
+    - ".claude/commands/plan_w_docs_improved.md"
+    - ".claude/commands/build_adw.md"
+    - ".claude/hooks/"
+    - ".claude/skills/"
+    - "scripts/validate_pipeline.sh"
+    - "scripts/workflow.sh"
+    - "scripts/worktree_manager.sh"
+
+  preserve:
+    - ".env"
+    - ".adw_config.json"
+    - "specs/**/*.md"
+    - "ai_docs/**/*.md"
+    - ".claude/memory/"
+
+  remove_empty_dirs:
+    - "agents/"
+    - "specs/"
+    - "ai_docs/"
+
+  note: "Specs and documentation are preserved by default. Use --purge to remove all."
+
+# Upgrade instructions
+upgrade:
+  strategy: "preserve_config"
+  steps:
+    - backup_configs: [".env", ".adw_config.json"]
+    - remove_old_components: true
+    - install_new_components: true
+    - restore_configs: true
+    - run_validation: true
+  migrations:
+    "1.0.0_to_1.1.0":
+      description: "Add parallel execution support"
+      actions:
+        - update: "adws/adw_sdlc.py"
+        - add: ".claude/skills/adw-parallel.md"

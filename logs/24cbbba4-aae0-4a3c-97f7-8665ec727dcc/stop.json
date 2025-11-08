@@ -1,0 +1,18 @@
+[
+  {
+    "session_id": "24cbbba4-aae0-4a3c-97f7-8665ec727dcc",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/24cbbba4-aae0-4a3c-97f7-8665ec727dcc.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "Stop",
+    "stop_hook_active": false
+  },
+  {
+    "session_id": "24cbbba4-aae0-4a3c-97f7-8665ec727dcc",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/24cbbba4-aae0-4a3c-97f7-8665ec727dcc.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "Stop",
+    "stop_hook_active": false
+  }
+]

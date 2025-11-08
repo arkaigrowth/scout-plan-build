@@ -1,0 +1,10 @@
+[
+  {
+    "session_id": "99700f89-9b54-467d-ae40-5578ee457500",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/99700f89-9b54-467d-ae40-5578ee457500.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "hook_event_name": "PreCompact",
+    "trigger": "manual",
+    "custom_instructions": ""
+  }
+]

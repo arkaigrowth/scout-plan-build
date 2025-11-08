@@ -367,3 +367,234 @@ cd worktrees/issue-123
 ---
 
 *This index helps navigate all analysis documents created during repository assessment.*
+
+### PARALLELIZATION_IMPACT_ANALYSIS.md
+- **Purpose**: Comprehensive parallelization performance analysis
+- **Date**: 2025-10-20
+- **Status**: Performance Engineering Analysis
+- **Contents**:
+  - Current system bottleneck analysis (sequential execution profile)
+  - Integration impact assessment (Skills, Mem0, Git Worktrees, Archon)
+  - Combined system performance models with projections
+  - Resource requirements and scaling limits
+  - Parallelization strategies and optimization recommendations
+  - Risk analysis and mitigation strategies
+- **Key Findings**:
+  - Current system: 100% sequential, 15% CPU utilization
+  - Optimal configuration: 4-6 parallel agents
+  - Single workflow speedup: **2.35x** (20 min → 8.5 min)
+  - Multi-workflow speedup: **8.5x** (85 min → 10 min for 5 features)
+  - Git Worktrees identified as **critical enabler** for safe parallelization
+- **Performance Projections**:
+  - Skills: 1.3-1.5x speedup via sub-task parallelization
+  - Mem0: 15-30% efficiency gain via caching
+  - Worktrees: 1.4-10x speedup (enables parallel agents)
+  - Combined: 5-10x speedup for complex workflows
+- **Resource Impact**:
+  - CPU utilization: 15% → 65% (4x improvement)
+  - Memory usage: 3 GB → 10 GB peak (optimal)
+  - Disk I/O: Isolated by worktrees (no contention)
+- **Benchmarks**: Comprehensive test suite in `benchmarks/parallel_test_suite.py`
+- **Use Case**: Data-driven decision making for parallelization implementation
+
+### PARALLELIZATION_DECISION_MATRIX.md
+- **Purpose**: Practical guide for parallelization decisions
+- **Date**: 2025-10-20
+- **Status**: Decision Support Tool
+- **Contents**:
+  - Quick decision tree for parallelization strategy selection
+  - Task-level parallelization matrix (Plan, Build, Test, Review, Document)
+  - Agent allocation guidelines with resource formulas
+  - Resource allocation strategies (memory, CPU, disk, network)
+  - Integration selection guide (when to use Skills, Mem0, Worktrees, Archon)
+  - Anti-patterns to avoid (6 common mistakes)
+- **Key Decision Rules**:
+  - Only parallelize tasks >2 minutes duration
+  - Cap at 4-6 agents for optimal price/performance
+  - Use dependency graphs for partial parallelization
+  - Monitor resources and adapt dynamically
+- **Integration Combinations**:
+  - Worktrees + Skills: 3-5x speedup (best for parallel execution)
+  - Skills + Mem0: 1.5-2x speedup (best for efficiency)
+  - Full Stack: 5-10x speedup (best for complex workflows)
+- **Anti-Patterns**:
+  - Premature parallelization (<1 min tasks)
+  - Over-parallelization (>8 agents)
+  - Ignoring dependencies
+  - No resource monitoring
+  - Caching non-deterministic results
+  - Worktree leaks
+- **Quick Reference**: Scenario-based recommendations with expected speedups
+- **Use Case**: Operational guide for implementing parallelization correctly
+
+## 🧪 Benchmarks
+Located in `benchmarks/`
+
+### parallel_test_suite.py
+- **Purpose**: Comprehensive parallelization performance benchmarks
+- **Date**: 2025-10-20
+- **Test Scenarios**:
+  - Baseline sequential execution (current system)
+  - Parallel agents only (worktrees)
+  - Skills parallelization (sub-task decomposition)
+  - Combined parallel agents + skills
+  - Mem0 caching simulation
+  - Full stack optimized (all integrations)
+  - Multi-workflow parallel (5 workflows)
+  - Scaling tests (2, 4, 6, 8 agents)
+- **Metrics Collected**:
+  - Duration (seconds)
+  - Speedup vs baseline
+  - CPU utilization (%)
+  - Memory usage (MB)
+  - Disk I/O (MB)
+  - API call counts
+- **Output Formats**:
+  - Console summary table
+  - JSON results file (`benchmark_results/benchmark_results.json`)
+  - Resource utilization graphs
+- **Usage**:
+  ```bash
+  # Run all benchmarks
+  pytest benchmarks/parallel_test_suite.py -v
+
+  # Run specific test
+  pytest benchmarks/parallel_test_suite.py::test_full_stack_optimized -v
+
+  # Direct execution
+  python benchmarks/parallel_test_suite.py
+  ```
+- **Expected Results**:
+  - Baseline: 1.90s, 1.0x speedup, 12.5% CPU
+  - Parallel agents: 1.40s, 1.36x speedup, 35% CPU
+  - Skills: 1.35s, 1.41x speedup, 42% CPU
+  - Combined: 1.00s, 1.90x speedup, 58% CPU
+  - Full stack: 0.81s, 2.35x speedup, 66% CPU
+  - Multi-workflow: 1.40s, 5.0x speedup, 75% CPU
+
+### README.md (benchmarks/)
+- **Purpose**: Comprehensive benchmarking guide
+- **Contents**:
+  - Quick start and installation
+  - Benchmark scenario descriptions
+  - Output interpretation guide
+  - Customization instructions
+  - Real-world testing guidance
+  - CI/CD integration examples
+  - Performance regression detection
+  - Troubleshooting common issues
+- **Use Case**: Enable data-driven performance optimization
+
+## 🎯 Command and Skill Analysis (2025-10-23)
+Located in `ai_docs/`
+
+### COMMAND_SKILL_ANALYSIS_REPORT.md
+- **Purpose**: Comprehensive technical analysis of all commands and skill opportunities
+- **Date**: 2025-10-23
+- **Size**: ~2000 lines
+- **Status**: Complete Analysis
+- **Contents**:
+  - Section 1: Complete command inventory (34 commands across 7 categories)
+  - Section 2: Existing skills analysis (2 skills with 60% performance improvement)
+  - Section 3: Complexity analysis (4 complexity tiers)
+  - Section 4: Agent invocation patterns (Task, SlashCommand, Python function calls)
+  - Section 5: Command dependencies (detailed dependency graphs)
+  - Section 6: Skill opportunities (11 detailed proposals with specifications)
+  - Section 7: Command parameter patterns (5 parameter types with validation)
+  - Section 8: Integration patterns (file-based, state management, memory)
+  - Section 9: Recommendations (phased rollout over 8 weeks)
+  - Section 10: Skill architecture patterns (templates and standards)
+  - Section 11: Performance metrics (current vs expected with memory)
+  - Section 12: Risk analysis (current system vs migration risks)
+  - Section 13: Migration strategy (backward compatibility plan)
+  - Section 14: Success metrics (efficiency, quality, adoption targets)
+  - Appendices: Quick references, templates, file locations
+- **Key Findings**:
+  - 34 commands analyzed: 28 working (82%), 4 broken (12%), 2 partial (6%)
+  - 2 existing skills demonstrate 60% performance improvement with memory
+  - 11 high-value skill opportunities identified
+  - Scout commands completely broken (use non-existent tools)
+  - Expected 60-70% time savings with skill migration
+- **Critical Issues**:
+  - `/scout` and `/scout_improved` use gemini/opencode/codex that don't exist
+  - No memory/learning across command executions
+  - Manual copy-paste workflow between commands
+  - Poor error recovery (restart from scratch)
+- **Top Opportunities**:
+  1. `/workflow-complete` - Full workflow automation (64% time savings)
+  2. `/worktree-safe-dev` - Safe development with undo/redo (90% reduction in lost work)
+  3. `/scout-working` - Fix broken scout (already exists as `adw-scout`)
+  4. `/issue-to-implementation` - Streamline issue handling (67% time savings)
+  5. `/review-and-fix` - Quality automation (80% issue detection)
+- **Performance Impact**:
+  - Current workflow: 25 minutes with 8 manual steps
+  - With skills + memory: 9 minutes with 0 manual steps
+  - Improvement: 64% time savings, 90% reduction in manual work
+- **Use Case**: Complete reference for command-to-skill migration planning
+
+### SKILL_OPPORTUNITIES_SUMMARY.md
+- **Purpose**: Executive summary for decision makers
+- **Date**: 2025-10-23
+- **Size**: ~500 lines
+- **Status**: Quick Overview
+- **Contents**:
+  - Quick stats and critical issues
+  - Top 5 skill opportunities ranked
+  - Performance comparison (commands vs skills)
+  - Immediate action plan (3 phases)
+  - Memory learning curve
+  - Risk assessment
+  - Next steps with timeline
+- **Key Takeaways**:
+  - Fix broken scout commands immediately (4 hours effort)
+  - 60-70% time savings achievable
+  - Low risk migration with high ROI
+  - Skills get smarter with use (compound benefits)
+- **Action Plan**:
+  - Week 1: Fix critical scout issues (4 hours)
+  - Weeks 2-3: Enhance core workflow skill (1-2 days)
+  - Weeks 4-6: Roll out extended features (5-7 days)
+- **Target Metrics**:
+  - 95%+ command success rate
+  - 90%+ error detection rate
+  - 80% skill adoption by month 3
+  - 4.5/5 user satisfaction
+- **Use Case**: Quick overview for executives and product managers
+
+### SKILL_DECISION_TREE.md
+- **Purpose**: Decision support tool for skill creation
+- **Date**: 2025-10-23
+- **Size**: ~400 lines
+- **Status**: Reference Guide
+- **Contents**:
+  - Decision flowchart (command → skill evaluation)
+  - Command-by-command analysis with recommendations
+  - Complexity scoring criteria (4 tiers)
+  - ROI calculator with formula
+  - Skill combination patterns
+  - Anti-patterns (what NOT to convert)
+  - Quick decision checklist
+- **Decision Rules**:
+  - Broken commands → IMMEDIATE skill conversion
+  - >150 lines → HIGH PRIORITY candidate
+  - Chains 3+ commands → HIGH PRIORITY candidate
+  - Benefits from memory → MEDIUM PRIORITY candidate
+  - <50 lines, simple → Keep as command
+- **ROI Formula**:
+  ```
+  Complexity Score = (lines/100)*30 + (deps)*15 + (manual_steps)*20 + (error_rate)*10 + (usage)*5
+  Value Score = memory_benefit + (time_saved%)/2 + (error_reduction%)/2 + (manual_reduction%)/2
+  ROI = (Value/Complexity) * 100
+
+  ROI > 150: Excellent candidate
+  ROI 100-150: Good candidate
+  ROI 50-100: Evaluate case-by-case
+  ROI < 50: Keep as command
+  ```
+- **Skill Recommendations**:
+  - 4 broken commands → Fix immediately
+  - 8 high-complexity commands → Convert to 7 skills
+  - 14 medium-complexity → Evaluate case-by-case
+  - 12 low-complexity → Keep as commands
+- **Use Case**: Quick reference when evaluating any command for skill conversion
+

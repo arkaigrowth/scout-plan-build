@@ -1,0 +1,42 @@
+[
+  {
+    "session_id": "f67ada19-d93f-49c5-97fc-b71de9cb32e7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/f67ada19-d93f-49c5-97fc-b71de9cb32e7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "Can you please list all the deterministic scripts have in this repo, and their utility. and give some other examples of 'encoded workflows' that our framework leverages (or could potentially leverage). tysm"
+  },
+  {
+    "session_id": "f67ada19-d93f-49c5-97fc-b71de9cb32e7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/f67ada19-d93f-49c5-97fc-b71de9cb32e7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "hey how do you deploy this? like use this framework in another repo?? plz give instructions on how to install... least friction possible. the repo is /Users/alexkamysz/Documents/CATSY Documents/Catsy Clients/Blue Space [1143]/data_Analyzer.\n\nlmk if u have Qs. give most sensible options"
+  },
+  {
+    "session_id": "f67ada19-d93f-49c5-97fc-b71de9cb32e7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/f67ada19-d93f-49c5-97fc-b71de9cb32e7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "please answer ALL of those! and how do we codify the installationa nd portability of that whole thing?? think about this plz. ty!"
+  },
+  {
+    "session_id": "f67ada19-d93f-49c5-97fc-b71de9cb32e7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/f67ada19-d93f-49c5-97fc-b71de9cb32e7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "Hmm... ok. we have waaayyy to many .md files in the root... we need to review them all, figure out what's what, and what's outdated, and then organize... do\n  we have a script for this? How should we handle? should we scout with multiple haiku 4.5 or sonnet scount subagents? let's think hard about this...  and make a plan before executing. lmk if you have any Qs. right now the framework is a bit cluttered and unwieldy. thanks!"
+  },
+  {
+    "session_id": "f67ada19-d93f-49c5-97fc-b71de9cb32e7",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/f67ada19-d93f-49c5-97fc-b71de9cb32e7.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "plz execute! and manage context intelligently, using subagents if appropriate. we're at 86% usage. tysm!"
+  }
+]

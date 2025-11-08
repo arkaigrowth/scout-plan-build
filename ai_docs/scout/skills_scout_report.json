@@ -1,0 +1,204 @@
+{
+  "timestamp": "2025-10-23T00:00:00Z",
+  "task": "Identify high-leverage skills for scout_plan_build_mvp repository",
+  "scout_results": {
+    "testing_validation_patterns": {
+      "source": "root-cause-analyst",
+      "findings": {
+        "priority_skills": [
+          {
+            "name": "validate_input",
+            "description": "Universal input validation with security focus",
+            "files": ["validators.py", "tests/test_validators.py"],
+            "test_coverage": "155+ assertions",
+            "confidence": 0.95
+          },
+          {
+            "name": "handle_error",
+            "description": "Structured error handling with automatic recovery",
+            "files": ["exceptions.py", "adw_modules/workflow_ops.py"],
+            "recovery_strategies": 10,
+            "confidence": 0.90
+          },
+          {
+            "name": "review_with_resolution",
+            "description": "QA loops with automatic issue fixing",
+            "files": ["adw_review_issue.py", "adw_test_before_build.py"],
+            "resolution_rate": 0.70,
+            "confidence": 0.85
+          },
+          {
+            "name": "test_with_retry",
+            "description": "Test execution with resolution between attempts",
+            "files": ["adw_test_before_build.py"],
+            "retry_limit": 3,
+            "confidence": 0.85
+          }
+        ]
+      }
+    },
+    "workflow_patterns": {
+      "source": "Explore",
+      "findings": {
+        "duplication_analysis": {
+          "total_duplication": "70% (~1000 lines)",
+          "phase_orchestration": "98% duplicate across 6 scripts",
+          "state_management": "100% duplicate across all scripts",
+          "environment_validation": "100% duplicate across 5+ scripts"
+        },
+        "priority_skills": [
+          {
+            "name": "adw_orchestrate",
+            "description": "Consolidates 6 orchestrator scripts",
+            "files": ["adw_*.py"],
+            "time_savings": "40%",
+            "confidence": 0.95
+          },
+          {
+            "name": "adw_create_plan",
+            "description": "Complete planning workflow",
+            "files": ["adw_create_plan.py"],
+            "complexity": "high",
+            "confidence": 0.90
+          },
+          {
+            "name": "init_state",
+            "description": "State initialization",
+            "files": ["adw_modules/state.py"],
+            "duplication": "100%",
+            "confidence": 0.95
+          },
+          {
+            "name": "semantic_commit",
+            "description": "Commit message generation",
+            "files": ["adw_issue_to_pr.py"],
+            "pattern_frequency": 8,
+            "confidence": 0.85
+          },
+          {
+            "name": "validate_env",
+            "description": "Environment validation",
+            "files": ["utils.py"],
+            "duplication": "100%",
+            "confidence": 0.95
+          }
+        ]
+      }
+    },
+    "configuration_patterns": {
+      "source": "Explore",
+      "findings": {
+        "configuration_tiers": {
+          "required": ["ANTHROPIC_API_KEY", "GITHUB_REPO_URL"],
+          "highly_recommended": ["CLAUDE_CODE_MAX_OUTPUT_TOKENS"],
+          "optional": ["GITHUB_PAT", "R2_ENDPOINT_URL", "E2B_API_KEY"]
+        },
+        "common_mistakes": [
+          "Token limit too low (default 8192, needs 32768)",
+          "Missing GITHUB_PAT in automation",
+          "Path traversal errors outside allowed prefixes"
+        ],
+        "priority_skills": [
+          {
+            "name": "environment_validator",
+            "description": "Check and validate environment setup",
+            "confidence": 0.90
+          },
+          {
+            "name": "configuration_generator",
+            "description": "Generate valid configuration files",
+            "confidence": 0.85
+          },
+          {
+            "name": "error_recovery_guide",
+            "description": "Guide through common configuration errors",
+            "confidence": 0.85
+          }
+        ]
+      }
+    },
+    "architectural_patterns": {
+      "source": "architect-reviewer",
+      "findings": {
+        "architecture_scores": {
+          "modularity": 9,
+          "state_management": 8,
+          "error_handling": 9,
+          "integration_patterns": 7,
+          "memory_learning": 6,
+          "parallel_execution": 4,
+          "observability": 5
+        },
+        "priority_skills": [
+          {
+            "name": "workflow_orchestrator",
+            "description": "Create and manage multi-phase workflows",
+            "pattern": "Composable workflow orchestration",
+            "files": ["adw_modules/workflow_ops.py", "state.py"],
+            "confidence": 0.95
+          },
+          {
+            "name": "agent_memory",
+            "description": "Add memory capabilities to agent interactions",
+            "pattern": "Memory hook integration",
+            "files": ["memory_hooks.py", "memory_manager.py"],
+            "confidence": 0.85
+          },
+          {
+            "name": "state_manager",
+            "description": "Manage state across workflow executions",
+            "pattern": "Multi-backend state persistence",
+            "files": ["state.py"],
+            "confidence": 0.90
+          }
+        ]
+      }
+    },
+    "command_patterns": {
+      "source": "python-expert",
+      "findings": {
+        "total_commands": 34,
+        "broken_commands": 4,
+        "existing_skills": 2,
+        "priority_skills": [
+          {
+            "name": "scout_fixed",
+            "description": "Fix broken scout commands",
+            "urgency": "CRITICAL",
+            "effort": "4 hours",
+            "confidence": 0.95
+          },
+          {
+            "name": "complete_workflow",
+            "description": "End-to-end workflow automation",
+            "time_savings": "64%",
+            "effort": "1-2 days",
+            "confidence": 0.90
+          },
+          {
+            "name": "worktree_safe_dev",
+            "description": "Safe isolated development",
+            "safety_improvement": "90%",
+            "effort": "2-3 days",
+            "confidence": 0.85
+          }
+        ]
+      }
+    }
+  },
+  "consolidated_priorities": {
+    "top_5_skills": [
+      "workflow_orchestrator",
+      "validate_input",
+      "state_manager",
+      "adw_orchestrate",
+      "handle_error"
+    ],
+    "effort_estimate": "4 weeks total",
+    "expected_impact": {
+      "time_savings": "60-70%",
+      "error_reduction": "80%",
+      "code_duplication_reduction": "75%"
+    }
+  }
+}

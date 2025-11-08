@@ -1,0 +1,18 @@
+[
+  {
+    "session_id": "9673a0ee-355d-4786-a405-2b6d95b94ef5",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9673a0ee-355d-4786-a405-2b6d95b94ef5.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "hook_event_name": "PreCompact",
+    "trigger": "manual",
+    "custom_instructions": ""
+  },
+  {
+    "session_id": "9673a0ee-355d-4786-a405-2b6d95b94ef5",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9673a0ee-355d-4786-a405-2b6d95b94ef5.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "hook_event_name": "PreCompact",
+    "trigger": "manual",
+    "custom_instructions": ""
+  }
+]

@@ -29,7 +29,7 @@ MAX_ISSUE_NUMBER_LENGTH = 10  # GitHub issue numbers are typically < 10 digits
 # Allowed path prefixes for file operations
 ALLOWED_PATH_PREFIXES = [
     "specs/",
-    "agents/",
+    "scout_outputs/", "scout_outputs/ADW-", "scout_outputs/temp/",
     "ai_docs/",
     "docs/",
     "scripts/",

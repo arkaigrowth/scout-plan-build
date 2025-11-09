@@ -1,0 +1,9 @@
+# Temporary scout files
+temp/
+*.tmp
+*.log
+
+# But keep these
+!relevant_files.json
+!*_report.json
+!ADW-*/adw_state.json

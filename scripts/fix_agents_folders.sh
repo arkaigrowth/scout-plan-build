@@ -53,9 +53,9 @@ if [ -d "agents" ]; then
         echo "   Merging agents/ into scout_outputs/"
 
         # Move scout_files if it exists
-        if [ -d "agents/scout_files" ]; then
+        if [ -d "scout_outputs" ]; then
             if [ ! -d "scout_outputs/scout_files" ]; then
-                mv agents/scout_files scout_outputs/
+                mv scout_outputs scout_outputs/
                 echo "   ✅ Moved scout_files to scout_outputs/"
             else
                 echo "   ⚠️  scout_outputs/scout_files exists, keeping both"
@@ -190,5 +190,5 @@ echo "  1. Run: ./scripts/validate_pipeline.sh"
 echo "  2. Test scout operation to verify it works"
 echo "  3. Commit these changes"
 echo ""
-echo -e "${YELLOW}Note:${NC} If you have any custom scripts using 'agents/scout_files/',"
+echo -e "${YELLOW}Note:${NC} If you have any custom scripts using 'scout_outputs/',"
 echo "      you'll need to update them to use 'scout_outputs/' instead."

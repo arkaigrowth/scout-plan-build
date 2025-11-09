@@ -70,7 +70,7 @@ def launch_scout_squadron(task: str, scale: int = 4) -> List[Tuple[str, subproce
         print(f"  → Launching {strategy['focus']} scout...")
 
         # Create a temp output file for this scout
-        output_file = Path(f"agents/scout_temp/{strategy['focus']}_scout.json")
+        output_file = Path(f"scout_outputs/temp/{strategy['focus']}_scout.json")
         output_file.parent.mkdir(parents=True, exist_ok=True)
 
         # Build command (using scout_simple.py as the worker)
@@ -126,7 +126,7 @@ def aggregate_scout_reports(processes: List[Tuple[str, subprocess.Popen]], task:
                             all_files.update(data["files"])
 
                 # Move to permanent location
-                permanent_file = Path(f"agents/scout_files/{focus}_report.json")
+                permanent_file = Path(f"scout_outputs/{focus}_report.json")
                 permanent_file.parent.mkdir(parents=True, exist_ok=True)
                 if scout_output.exists():
                     import shutil
@@ -173,7 +173,7 @@ def save_scout_report(report: Dict) -> Path:
     """Save the aggregated scout report to the standard location."""
 
     # Primary location (for plan phase)
-    primary_output = Path("agents/scout_files/relevant_files.json")
+    primary_output = Path("scout_outputs/relevant_files.json")
     primary_output.parent.mkdir(parents=True, exist_ok=True)
 
     with open(primary_output, 'w') as f:

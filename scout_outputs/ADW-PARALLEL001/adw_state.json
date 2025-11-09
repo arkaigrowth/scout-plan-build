@@ -1,0 +1,10 @@
+{
+  "adw_id": "ADW-PARALLEL001",
+  "issue_number": "999",
+  "branch_name": "feature/simple-parallel-execution",
+  "plan_file": "specs/simple-parallel-execution.md",
+  "github_title": "Add simple parallel execution for Test/Review/Document phases",
+  "github_description": "Implement subprocess.Popen() based parallel execution with --no-commit flags",
+  "plan_status": "completed",
+  "build_status": "pending"
+}

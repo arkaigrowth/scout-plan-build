@@ -35,7 +35,7 @@ export GITHUB_REPO_URL="https://github.com/owner/repo"
 Task(subagent_type="explore", prompt="Find files for: [task]")
 
 # 2. Plan - This works as documented
-/plan_w_docs "[TASK]" "[DOCS_URL]" "agents/scout_files/relevant_files.json"
+/plan_w_docs "[TASK]" "[DOCS_URL]" "scout_outputs/relevant_files.json"
 # Returns: specs/issue-{N}-adw-{ID}-{slug}.md
 
 # 3. Build - This works as documented
@@ -113,7 +113,7 @@ git checkout -b feature/issue-NNN-adw-XXX  # Do this FIRST
 
 | Content Type | Location | Why |
 |-------------|----------|-----|
-| Scout results | `agents/scout_files/relevant_files.json` | Standard location for plan phase |
+| Scout results | `scout_outputs/relevant_files.json` | Standard location for plan phase |
 | Plans/Specs | `specs/issue-NNN-adw-XXX-slug.md` | Versioned, trackable |
 | Build reports | `ai_docs/build_reports/` | AI-generated documentation |
 | Code changes | Feature branch only | Never on main/master |
@@ -206,7 +206,7 @@ assert os.getenv("GITHUB_PAT")
 
 # 2. Scout with working methods
 results = Task(subagent_type="explore", prompt=task)
-Write("agents/scout_files/relevant_files.json", results)
+Write("scout_outputs/relevant_files.json", results)
 
 # 3. Plan with validation
 plan = SlashCommand("/plan_w_docs ...")

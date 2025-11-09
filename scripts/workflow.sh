@@ -34,19 +34,19 @@ scout() {
     echo -e "${BLUE}Scouting for: $task${NC}"
 
     # Create output directory
-    mkdir -p agents/scout_files
+    mkdir -p scout_outputs
 
     # Run scout command
     echo "/scout \"$task\" \"4\""
 
-    echo -e "${GREEN}Scout results saved to: agents/scout_files/relevant_files.json${NC}"
+    echo -e "${GREEN}Scout results saved to: scout_outputs/relevant_files.json${NC}"
 }
 
 # Generate plan
 plan() {
     local task="$1"
     local docs="${2:-}"
-    local scout_file="${3:-agents/scout_files/relevant_files.json}"
+    local scout_file="${3:-scout_outputs/relevant_files.json}"
 
     echo -e "${BLUE}Planning for: $task${NC}"
 
@@ -103,7 +103,7 @@ organize() {
     # Create directory structure
     mkdir -p ai_docs/{analyses,reference,architecture,build_reports,reviews}
     mkdir -p specs
-    mkdir -p agents/scout_files
+    mkdir -p scout_outputs
 
     # Move misplaced files (if any)
     for file in ADW_*.md ARCHITECTURE_*.md COMMAND_*.md; do

@@ -33,7 +33,7 @@ def run_plan(task: str, docs_url: str = "") -> str:
     print("-" * 40)
 
     # Check if scout output exists
-    scout_file = "agents/scout_files/relevant_files.json"
+    scout_file = "ai_docs/scout/relevant_files.json"
     if not Path(scout_file).exists():
         print("❌ No scout output found. Run scout first!")
         return None
@@ -144,7 +144,7 @@ Examples:
     else:
         print("⚠️  PIPELINE INCOMPLETE - See errors above")
         print("\nDebug tips:")
-        print("  • Check scout output: cat agents/scout_files/relevant_files.json")
+        print("  • Check scout output: cat ai_docs/scout/relevant_files.json")
         print("  • Check specs: ls -la specs/")
         print("  • Run health check: python check_health.py")
     print("=" * 60)

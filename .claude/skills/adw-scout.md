@@ -26,8 +26,8 @@ memory:
 ## Variables
 - `TASK`: $1 (The task description, e.g., "add authentication")
 - `DEPTH`: $2 (Search depth, defaults to 3)
-- `OUTPUT_DIR`: `agents/scout_files`
-- `OUTPUT_FILE`: `agents/scout_files/relevant_files.json`
+- `OUTPUT_DIR`: `scout_outputs`
+- `OUTPUT_FILE`: `scout_outputs/relevant_files.json`
 
 ## Phase 1: Memory Recall
 

@@ -27,7 +27,7 @@ Launches multiple scout agents in parallel, each with a different search strateg
 /scout_parallel "add caching layer" 6
 
 # After scout, run plan
-/plan_w_docs "[task]" "[docs]" "agents/scout_files/relevant_files.json"
+/plan_w_docs "[task]" "[docs]" "scout_outputs/relevant_files.json"
 ```
 
 ## Performance
@@ -61,8 +61,8 @@ aggregate_findings()
 ## Output
 
 Saves to standard locations:
-- `agents/scout_files/relevant_files.json` - For plan phase
-- `agents/scout_files/{focus}_report.json` - Individual scout reports
+- `scout_outputs/relevant_files.json` - For plan phase
+- `scout_outputs/{focus}_report.json` - Individual scout reports
 - `ai_docs/scout/relevant_files.json` - Backup
 
 ## Why This Matters
@@ -89,7 +89,7 @@ Total speedup: 60-70% (vs 40-50% without parallel scout)
 Run: /scout_parallel "implement user authentication"
 
 # 2. Generate Plan
-Run: /plan_w_docs "implement user authentication" "https://docs.auth0.com" "agents/scout_files/relevant_files.json"
+Run: /plan_w_docs "implement user authentication" "https://docs.auth0.com" "scout_outputs/relevant_files.json"
 
 # 3. Build
 Run: /build_adw "specs/issue-XXX-adw-YYY-auth.md"

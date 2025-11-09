@@ -99,7 +99,7 @@ def main():
         ("adws/adw_modules/validators.py", "Validation"),
         ("adws/adw_plan.py", "Plan Phase"),
         ("adws/adw_build.py", "Build Phase"),
-        ("agents/scout_files/relevant_files.json", "Scout Output"),
+        ("ai_docs/scout/relevant_files.json", "Scout Output"),
     ]
 
     for filepath, desc in files:

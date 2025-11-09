@@ -86,7 +86,7 @@ class TestSafeFilePath:
 
     def test_valid_path_agents(self):
         """Test valid path in agents directory."""
-        path = "agents/ADW-123/planner/plan.md"
+        path = "scout_outputs/ADW-123/planner/plan.md"
         validated = SafeFilePath(file_path=path)
         assert validated.file_path == path
 

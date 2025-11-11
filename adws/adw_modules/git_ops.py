@@ -14,6 +14,7 @@ from typing import Optional, Tuple
 from adw_modules.github import get_repo_url, extract_repo_path, make_issue_comment
 from adw_modules.exceptions import GitOperationError, GitHubAPIError, ValidationError
 from adw_modules.validators import validate_branch_name, validate_commit_message
+from adw_modules.vcs_detection import detect_vcs_provider, get_repo_info
 
 
 def get_current_branch() -> str:
@@ -80,6 +81,8 @@ def push_branch(branch_name: str) -> Tuple[bool, Optional[str]]:
 def check_pr_exists(branch_name: str) -> Optional[str]:
     """Check if PR exists for branch. Returns PR URL if exists.
 
+    Supports both GitHub (via gh CLI) and Bitbucket (via API).
+
     Args:
         branch_name: Branch name to check (will be validated)
 
@@ -88,11 +91,27 @@ def check_pr_exists(branch_name: str) -> Optional[str]:
 
     Raises:
         ValidationError: If branch name fails validation
-        GitHubAPIError: If gh command fails (except for "no PR found")
+        GitHubAPIError: If command/API fails (except for "no PR found")
     """
     # Validate branch name to prevent command injection
     validated_branch_name = validate_branch_name(branch_name)
 
+    # Detect VCS provider
+    try:
+        provider = detect_vcs_provider()
+    except Exception:
+        provider = "github"  # Default to GitHub for backward compatibility
+
+    if provider == "github":
+        return _check_pr_github(validated_branch_name)
+    elif provider == "bitbucket":
+        return _check_pr_bitbucket(validated_branch_name)
+    else:
+        raise GitHubAPIError(f"Unsupported VCS provider: {provider}")
+
+
+def _check_pr_github(branch_name: str) -> Optional[str]:
+    """Check for PR on GitHub using gh CLI."""
     try:
         repo_url = get_repo_url()
         repo_path = extract_repo_path(repo_url)
@@ -104,7 +123,7 @@ def check_pr_exists(branch_name: str) -> Optional[str]:
 
     try:
         result = subprocess.run(
-            ["gh", "pr", "list", "--repo", repo_path, "--head", validated_branch_name, "--json", "url"],
+            ["gh", "pr", "list", "--repo", repo_path, "--head", branch_name, "--json", "url"],
             capture_output=True,
             text=True,
             check=True
@@ -114,13 +133,12 @@ def check_pr_exists(branch_name: str) -> Optional[str]:
             return prs[0]["url"]
         return None
     except subprocess.CalledProcessError as e:
-        # gh returns non-zero if no PRs found, which is valid
         if "no pull requests" in e.stderr.lower():
             return None
         raise GitHubAPIError(
-            f"Failed to check for existing PR on branch {validated_branch_name}",
+            f"Failed to check for existing PR on branch {branch_name}",
             api_endpoint=f"gh pr list --repo {repo_path}",
-            branch_name=validated_branch_name,
+            branch_name=branch_name,
             stderr=e.stderr
         ) from e
     except json.JSONDecodeError as e:
@@ -129,6 +147,34 @@ def check_pr_exists(branch_name: str) -> Optional[str]:
             api_endpoint=f"gh pr list --repo {repo_path}",
             parse_error=str(e)
         ) from e
+
+
+def _check_pr_bitbucket(branch_name: str) -> Optional[str]:
+    """Check for PR on Bitbucket using API."""
+    import requests
+    from adw_modules import bitbucket_ops
+
+    try:
+        repo_info = get_repo_info()
+        workspace = repo_info.get("workspace")
+        repo = repo_info.get("repo")
+
+        client = bitbucket_ops.get_bitbucket_client()
+        url = f"{client['base_url']}/repositories/{workspace}/{repo}/pullrequests"
+        params = {"state": "OPEN", "q": f'source.branch.name="{branch_name}"'}
+
+        response = requests.get(url, auth=client["auth"], params=params, timeout=10)
+        response.raise_for_status()
+        data = response.json()
+
+        if data.get("values"):
+            return data["values"][0].get("links", {}).get("html", {}).get("href")
+        return None
+
+    except Exception as e:
+        # Bitbucket PR check failure is non-critical
+        logging.warning(f"Bitbucket PR check failed: {e}")
+        return None
 
 
 def create_branch(branch_name: str) -> Tuple[bool, Optional[str]]:

@@ -14,7 +14,7 @@ Copy everything below the line and paste as your first message:
 
 ### CRITICAL FILES TO READ FIRST
 
-```
+```text
 1. ai_docs/sessions/handoffs/handoff-2024-11-22-final.md  ← Full session summary
 2. ai_docs/reviews/agentic-primitives-v2-review.md        ← V2 adoption roadmap
 3. specs/git-worktree-parallel-agents.md                  ← Worktree spec
@@ -23,8 +23,7 @@ Copy everything below the line and paste as your first message:
 ### WHAT WAS ACCOMPLISHED
 
 ✅ **Research Infrastructure** - `ai_docs/research/` created with videos/, articles/, etc.
-✅ **Git Worktree Parallelization** - 4 new slash commands:
-   - `/init-parallel-worktrees` `/run-parallel-agents` `/compare-worktrees` `/merge-worktree`
+✅ **Git Worktree Parallelization** - 4 new slash commands: `/init-parallel-worktrees`, `/run-parallel-agents`, `/compare-worktrees`, `/merge-worktree`
 ✅ **V2 Primitives Review** - Full architectural review with adoption recommendations
 ✅ **Feedback Structure** - `ai_docs/feedback/{predictions,outcomes,corrections}/` created
 ✅ **All committed** to `feature/bitbucket-integration` branch
@@ -40,7 +39,7 @@ Copy everything below the line and paste as your first message:
 
 ### FRAMEWORK ROUTING RULES
 
-```
+```text
 TRIVIAL (1-2 files, obvious)  → Quick Execution (just do it)
 MODERATE (3-5 files)          → Quick ADW (/plan + /build)
 COMPLEX (6+ files, new)       → Full ADW (/scout + /plan + /build)

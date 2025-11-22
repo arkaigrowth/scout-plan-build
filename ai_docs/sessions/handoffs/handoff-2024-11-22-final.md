@@ -1,6 +1,7 @@
 # Session Handoff - 2024-11-22 (Final)
 
-**Context Remaining:** ~17% at handoff
+**Context Remaining:** ~35% at handoff
+**Compaction Prompt:** `ai_docs/sessions/COMPACTION_PROMPT.md`
 **Branch:** `feature/bitbucket-integration`
 **Focus:** Framework robustness + V2 primitives adoption
 
@@ -21,7 +22,12 @@
   - `/compare-worktrees`
   - `/merge-worktree`
 
-### 3. Agentic Primitives V2 Review ✅
+### 3. Feedback Loop Structure ✅ (Added Late Session)
+- Created `ai_docs/feedback/` with full documentation
+- Subdirectories: `predictions/`, `outcomes/`, `corrections/`
+- Ready for V2-style continuous learning implementation
+
+### 4. Agentic Primitives V2 Review ✅
 - Full review: `ai_docs/reviews/agentic-primitives-v2-review.md`
 - Model claims validated (Nov 2025 is accurate)
 - Identified gaps: State, Observability, Multi-model, Feedback loops

@@ -1,87 +1,101 @@
 # AI Documentation Organization Structure
 
-## ✅ The New Structure (Implemented)
+> **Updated**: 2024-11-22 - Added `research/` folder, clarified canonical paths
+
+## ✅ The Current Structure (Implemented)
 
 ```
-ai_docs/                      # ALL AI-generated artifacts
-├── scout/                    # Scout exploration outputs
-│   └── relevant_files.json   # Main scout output
-├── build_reports/            # Build phase reports
-├── analyses/                 # System analyses
-├── reviews/                  # Code reviews
-├── architecture/             # Architecture documentation
-└── reference/                # Reference guides
+ai_docs/                      # AI-generated and AI-consumed artifacts
+├── architecture/             # Architecture documentation & diagrams
+│   └── diagrams/            # Visual architecture representations
+├── analyses/                # System and code analyses
+├── assessments/             # Security audits, readiness assessments
+├── build_reports/           # Build phase execution reports
+├── reference/               # Internal quick reference guides
+├── research/                # External learning resources (NEW)
+│   ├── videos/             # Video transcript analyses
+│   ├── articles/           # Article summaries
+│   ├── implementations/    # Reference codebase notes
+│   └── papers/             # Academic papers
+├── reviews/                # Code review reports
+├── sessions/               # Session persistence & handoffs
+│   └── handoffs/          # Cross-session handoff documents
+└── scout/                  # DEPRECATED - see scout_outputs/
 
-specs/                        # AI-generated specifications (separate for visibility)
+scout_outputs/              # Scout phase outputs (CANONICAL location)
+├── relevant_files.json    # Primary scout output
+└── workflows/             # Workflow execution state
+
+specs/                      # Implementation specs (separate for visibility)
 ```
 
-## 🎯 Why This is Better
+## 🎯 Why This Structure
 
-### Before (Scattered)
-```
-scout_outputs/          # What outputs? From what?
-agents/                 # Agents or agent outputs? Confusing!
-ai_docs/               # Some AI docs
-specs/                 # More AI docs
-```
+### Semantic Boundaries
 
-### After (Organized)
-```
-ai_docs/               # EVERYTHING AI-generated (except specs)
-└── scout/            # Clear: scout's outputs go here
-specs/                # Specs stay separate for workflow visibility
-```
+| Folder | Semantic | Direction |
+|--------|----------|-----------|
+| `ai_docs/reference/` | Internal knowledge about THIS project | Generated → Out |
+| `ai_docs/research/` | External knowledge from OTHER sources | Sourced → In |
+| `ai_docs/architecture/` | How things ARE built | Documentation |
+| `ai_docs/analyses/` | What we LEARNED from analysis | Generated |
+| `scout_outputs/` | Scout phase results | Workflow artifact |
+
+### Content Types
+
+**AI-Generated (OUTPUT)**
+- `build_reports/` - Build execution logs
+- `reviews/` - Code review findings
+- `analyses/` - Deep-dive analyses
+- `reference/` - Internal quick refs
+
+**AI-Consumed (INPUT)**
+- `research/` - External learning resources
+- `sessions/` - Cross-session context
 
 ## 📋 Organizational Principles
 
-1. **Group by Origin**: AI-generated content stays together
-2. **Clear Naming**: `ai_docs/scout/` is unambiguous
+1. **SSOT**: Each content type has ONE canonical location
+2. **Clear Naming**: Folder names match their purpose
 3. **Workflow Clarity**: Each phase has its place:
-   - Scout → `ai_docs/scout/`
+   - Scout → `scout_outputs/` (canonical)
    - Plan → `specs/`
    - Build → `ai_docs/build_reports/`
-4. **Gitignore Friendly**: Can exclude all AI content with `ai_docs/`
+   - Review → `ai_docs/reviews/`
+4. **Semantic Accuracy**: `reference/` (internal) vs `research/` (external)
 
-## 🔄 Migration Completed
+## 🔄 Migration History
 
-| Old Path | New Path | Why Better |
-|----------|----------|------------|
-| `scout_outputs/` | `ai_docs/scout/` | Groups AI artifacts together |
-| `agents/scout_files/` | `ai_docs/scout/` | Eliminates confusion with agent definitions |
-| Scattered AI docs | `ai_docs/*` | Single source of truth for AI content |
+| Date | Change | Reason |
+|------|--------|--------|
+| 2024-11-20 | `ai_docs/scout/` → `scout_outputs/` | SSOT consolidation |
+| 2024-11-22 | Added `ai_docs/research/` | External learning resources |
 
-## 📝 Updated References
+### Deprecated Paths
 
-All code has been updated to use the new structure:
-- ✅ `adws/scout_simple.py` - saves to `ai_docs/scout/`
-- ✅ All scout commands - use `ai_docs/scout/`
-- ✅ Validation scripts - check `ai_docs/scout/`
-- ✅ Installer - creates proper structure
-- ✅ Documentation - reflects new paths
+| Old Path | New Path | Status |
+|----------|----------|--------|
+| `ai_docs/scout/` | `scout_outputs/` | Deprecated, fallback only |
+| `agents/scout_files/` | `scout_outputs/` | Removed |
 
-## 🚀 For New Repos
+## 📝 Code References
 
-When installing to other repos (like tax-prep), they'll get:
-```
-your-repo/
-├── ai_docs/
-│   ├── scout/         # Scout finds files here
-│   ├── build_reports/ # Build saves reports here
-│   └── analyses/      # Other AI analyses
-└── specs/            # Plans go here
-```
-
-This structure is:
-- **Self-documenting**: Names explain purpose
-- **Consistent**: Same pattern everywhere
-- **Scalable**: Easy to add new AI artifact types
-- **Clean**: No confusion about what goes where
+All code uses canonical paths:
+- ✅ `adws/scout_simple.py` - saves to `scout_outputs/`
+- ✅ `adws/adw_modules/constants.py` - defines canonical paths
+- ✅ Validation in `validators.py` - enforces paths
 
 ## 💡 Best Practice
 
-**Rule**: If AI generated it, it goes in `ai_docs/` (except specs which need visibility)
+**Rule**:
+- AI **generated** it → `ai_docs/` (except specs)
+- AI **consumes** it → `ai_docs/research/` or `ai_docs/sessions/`
+- Scout **output** → `scout_outputs/` (workflow artifact)
+- Implementation **plan** → `specs/` (for workflow visibility)
 
 This makes it crystal clear:
 - Human code: `src/`, `app/`, etc.
 - AI artifacts: `ai_docs/`
-- AI specs: `specs/` (for workflow reasons)
+- AI learning: `ai_docs/research/`
+- AI specs: `specs/`
+- Scout results: `scout_outputs/`

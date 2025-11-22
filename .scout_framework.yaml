@@ -3,7 +3,7 @@
 # This manifest defines what gets installed in a declarative way
 
 version: "1.0.0"
-framework_version: "2024.11.1"
+framework_version: "2024.11.8"
 
 metadata:
   name: "Scout-Plan-Build Framework"
@@ -79,6 +79,7 @@ components:
       - validate_pipeline.sh
       - workflow.sh
       - worktree_manager.sh
+      - fix_agents_naming.sh
 
 # Directories to create
 directories:
@@ -86,8 +87,16 @@ directories:
     description: "Implementation plans and specifications"
     gitkeep: true
 
-  - path: "agents/scout_files/"
-    description: "Scout discovery results"
+  - path: "scout_outputs/"
+    description: "Scout discovery results (canonical location)"
+    gitkeep: true
+
+  - path: "scout_outputs/temp/"
+    description: "Temporary scout working files"
+    gitkeep: true
+
+  - path: "scout_outputs/workflows/"
+    description: "Workflow execution state (replaces agents/ directory)"
     gitkeep: true
 
   - path: "ai_docs/build_reports/"
@@ -98,9 +107,32 @@ directories:
     description: "Code review reports"
     gitkeep: true
 
-  - path: "ai_docs/scout/"
-    description: "Scout analysis results"
+  - path: "ai_docs/research/"
+    description: "External learning resources (videos, articles, implementations)"
     gitkeep: true
+
+  - path: "ai_docs/research/videos/"
+    description: "Video transcript analyses"
+    gitkeep: true
+
+  - path: "ai_docs/research/articles/"
+    description: "Article summaries and notes"
+    gitkeep: true
+
+  - path: "ai_docs/research/implementations/"
+    description: "Reference codebase notes"
+    gitkeep: true
+
+  - path: "ai_docs/research/papers/"
+    description: "Academic papers"
+    gitkeep: true
+
+  - path: "ai_docs/outputs/"
+    description: "Timestamped output directory (FileOrganizer)"
+    gitkeep: true
+
+  # NOTE: ai_docs/scout/ is DEPRECATED - removed from v2024.11.20+
+  # All scout outputs now go to scout_outputs/ (canonical location)
 
   - path: ".claude/memory/"
     description: "Workflow memory and learning"
@@ -130,10 +162,10 @@ configurations:
         },
         "paths": {
           "specs": "specs/",
-          "agents": "agents/",
+          "scout_outputs": "scout_outputs/",
           "ai_docs": "ai_docs/",
           "app_code": ".",
-          "allowed": ["specs", "agents", "ai_docs", "app", "src", "lib"]
+          "allowed": ["specs", "scout_outputs", "ai_docs", "app", "src", "lib"]
         },
         "workflow": {
           "use_github": true,

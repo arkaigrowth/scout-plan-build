@@ -39,7 +39,7 @@ cp .env.template .env
 Task(subagent_type="explore", prompt="Find all authentication code")
 
 # 2. Create a specification
-/plan_w_docs "Add OAuth2 support" "" "ai_docs/scout/relevant_files.json"
+/plan_w_docs "Add OAuth2 support" "" "scout_outputs/relevant_files.json"
 
 # 3. Build from the spec
 /build_adw "specs/issue-001-oauth2.md"
@@ -68,13 +68,15 @@ uv run adws/adw_sdlc.py <issue-number> <adw-id> --parallel
 
 ```
 your-repo/
-├── adws/              # Core workflow modules
+├── adws/                # Core workflow modules
+├── scout_outputs/       # Scout phase outputs (canonical)
 ├── ai_docs/
-│   ├── scout/         # Scout outputs
-│   └── build_reports/ # Build reports
-├── specs/             # Generated specifications
-├── .claude/commands/  # Workflow commands
-└── scripts/           # Validation tools
+│   ├── build_reports/   # Build execution reports
+│   ├── reviews/         # Code reviews
+│   └── research/        # External learning resources
+├── specs/               # Generated specifications
+├── .claude/commands/    # Workflow commands
+└── scripts/             # Validation tools
 ```
 
 **Your existing code is untouched** - this system works alongside it.

@@ -201,8 +201,8 @@ Located in `ai_docs/reviews/`
 The repository uses these deterministic patterns:
 
 ```python
-# Scout outputs
-scout_results = "agents/scout_files/relevant_files.json"
+# Scout outputs (canonical location)
+scout_results = "scout_outputs/relevant_files.json"
 
 # Plans/Specs
 plan_file = f"specs/issue-{issue_number}-adw-{adw_id}-{slugify(title)}.md"

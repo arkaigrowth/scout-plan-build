@@ -683,5 +683,67 @@
       "command": "git add -A && git commit -m \"chore: Prepare session for compaction - Framework v4 + Phase 1 state mgmt\n\nSession accomplishments:\n- Framework v4 with deterministic routing\n- Phase 1 Agent Box state management\n- Parallel command audit and risk classification\n- Directory consolidation and cleanup\n\nReady for compaction with comprehensive handoff.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\"",
       "description": "Commit session artifacts"
     }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "git rev-parse --short HEAD",
+      "description": "Get short commit hash for session ID"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "mv ai_docs/sessions/handoffs/handoff-2025-11-23.md ai_docs/sessions/handoffs/1123-handoff-565e274.md && echo \"Handoff renamed with slug pattern\"",
+      "description": "Rename handoff with MMDD-slug-hash pattern"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/sessions/COMPACTION_PROMPT.md",
+      "old_string": "### CRITICAL FILES TO READ FIRST\n\n```text\n1. ai_docs/sessions/handoffs/handoff-2025-11-23.md        \u2190 Today's full session",
+      "new_string": "### CRITICAL FILES TO READ FIRST\n\n```text\n1. ai_docs/sessions/handoffs/1123-handoff-565e274.md      \u2190 Today's full session"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/sessions/COMPACTION_PROMPT.md",
+      "old_string": "### PENDING ACTION ITEMS (Prioritized)\n\n| Priority | Item | Route | Effort |\n|----------|------|-------|--------|\n| 1 | Create RunManager class | Direct implementation | 30 min |\n| 2 | Create /init-framework command | Direct or ADW | 20 min |\n| 3 | Fix scout commands (Task tool) | Investigation + fixes | 1 hr |\n| 4 | Add risk headers to commands | Quick edits | 20 min |",
+      "new_string": "### PENDING ACTION ITEMS (Prioritized)\n\n| Priority | Item | Route | Effort |\n|----------|------|-------|--------|\n| 1 | Create RunManager class | Direct implementation | 30 min |\n| 2 | Create /init-framework command | Direct or ADW | 20 min |\n| 3 | Integrate handoffs with RunManager | Quick enhancement | 15 min |\n| 4 | Fix scout commands (Task tool) | Investigation + fixes | 1 hr |\n| 5 | Add risk headers to commands | Quick edits | 20 min |\n\n**Future**: Wrap handoff process in state management (track sessions with RunManager)"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "git add -A && git commit -m \"refactor: Use MMDD-slug-hash pattern for handoff files\n\n- Renamed handoff to 1123-handoff-565e274.md\n- Uses git commit hash as session ID\n- Added handoff/RunManager integration to pending items\n- Consistent with our run ID pattern\n\nReady for compaction with improved naming.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\"",
+      "description": "Commit handoff naming improvements"
+    }
   }
 ]

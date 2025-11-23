@@ -15,7 +15,7 @@ Copy everything below the line and paste as your first message:
 ### CRITICAL FILES TO READ FIRST
 
 ```text
-1. ai_docs/sessions/handoffs/handoff-2025-11-23.md        ← Today's full session
+1. ai_docs/sessions/handoffs/1123-handoff-565e274.md      ← Today's full session
 2. ai_docs/architecture/AGENT_BOX_INTEGRATION_DECISION.md ← Phase 2/3 plan
 3. specs/phase1-agent-box-state-management.md             ← What we implemented
 4. CLAUDE.md                                              ← Framework v4 routing
@@ -35,8 +35,11 @@ Copy everything below the line and paste as your first message:
 |----------|------|-------|--------|
 | 1 | Create RunManager class | Direct implementation | 30 min |
 | 2 | Create /init-framework command | Direct or ADW | 20 min |
-| 3 | Fix scout commands (Task tool) | Investigation + fixes | 1 hr |
-| 4 | Add risk headers to commands | Quick edits | 20 min |
+| 3 | Integrate handoffs with RunManager | Quick enhancement | 15 min |
+| 4 | Fix scout commands (Task tool) | Investigation + fixes | 1 hr |
+| 5 | Add risk headers to commands | Quick edits | 20 min |
+
+**Future**: Wrap handoff process in state management (track sessions with RunManager)
 
 ### FRAMEWORK ROUTING RULES
 

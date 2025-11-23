@@ -9,6 +9,16 @@ import subprocess
 from pathlib import Path
 from typing import List, Dict
 
+# Import canonical path constants
+try:
+    from adw_modules.constants import get_scout_output_path
+except ImportError:
+    # Fallback for when running outside of framework
+    def get_scout_output_path():
+        path = Path("scout_outputs/relevant_files.json")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        return path
+
 def scout_files(task: str, max_files: int = 50) -> Dict:
     """
     Scout for files using WORKING native tools.
@@ -61,9 +71,8 @@ def scout_files(task: str, max_files: int = 50) -> Dict:
     # CRITICAL: Sort for determinism (MVP fix!)
     sorted_files = sorted(list(all_files))[:max_files]
 
-    # Save to standard location
-    output_dir = Path("ai_docs/scout")
-    output_dir.mkdir(parents=True, exist_ok=True)
+    # Save to canonical location (single source of truth!)
+    output_file = get_scout_output_path()
 
     output_data = {
         "task": task,
@@ -72,7 +81,6 @@ def scout_files(task: str, max_files: int = 50) -> Dict:
         "method": "native_tools"
     }
 
-    output_file = output_dir / "relevant_files.json"
     with open(output_file, 'w') as f:
         json.dump(output_data, f, indent=2)
 
@@ -98,7 +106,7 @@ def main():
         print(f"  - {f}")
 
     print(f"\nTotal: {result['count']} files")
-    print(f"Output: ai_docs/scout/relevant_files.json")
+    print(f"Output: scout_outputs/relevant_files.json")
 
 if __name__ == "__main__":
     main()

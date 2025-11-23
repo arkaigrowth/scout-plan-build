@@ -15,37 +15,18 @@ Handoffs now use **Claude session IDs** for traceability:
 
 **Correlation chain**: Handoff filename → Session ID → Transcript JSONL → Full conversation
 
-## Template: Copy Below Line After /compact
+## How to Resume After /compact
+
+**Option 1: Slash Command (Recommended)**
+```
+/session:resume
+```
+This automatically loads session metadata, finds the latest handoff, and restores context.
+
+**Option 2: Manual Resume**
+Just paste the quick resume section below into your next message.
 
 ---
-
-## SESSION RESUME - Scout-Plan-Build Framework
-
-**Session:** `{SESSION_SHORT_ID}` (full: `{FULL_SESSION_ID}`)
-**Branch:** `{BRANCH_NAME}`
-**Last Commit:** `{GIT_HASH}` - {COMMIT_MESSAGE}
-**Date:** {DATE}
-
-### CRITICAL FILES TO READ FIRST
-
-```text
-1. ai_docs/sessions/handoffs/{MMDD}-handoff-{SESSION_SHORT}.md  ← This session's handoff
-2. .current_session                                              ← Session metadata (JSON)
-3. CLAUDE.md                                                     ← Framework v4 routing
-```
-
-### SESSION PROVENANCE
-
-Check `.current_session` for:
-```json
-{
-  "session_id": "{FULL_UUID}",
-  "short_id": "{8_CHARS}",
-  "git_hash": "{SHORT_HASH}",
-  "git_branch": "{BRANCH}",
-  "timestamp": "{ISO8601}"
-}
-```
 
 ### FRAMEWORK ROUTING RULES
 
@@ -57,32 +38,14 @@ RESEARCH/EXPLORE              → Task(Explore) agent
 MULTIPLE APPROACHES           → /init-parallel-worktrees
 ```
 
-### QUICK VERIFICATION COMMANDS
-
-```bash
-# Check current session info
-cat .current_session | python3 -m json.tool
-
-# Test provenance helpers
-python3 -c "from adws.adw_common import get_current_session, get_provenance_block; print(get_provenance_block('markdown'))"
-
-# Generate handoff filename
-python3 -c "from adws.adw_common import generate_handoff_filename; print(generate_handoff_filename())"
-```
-
 ### REFERENCE FILES
 
 | Purpose | Path |
 |---------|------|
 | Main instructions | `CLAUDE.md` |
-| Session helpers | `adws/adw_common.py` (get_current_session, get_provenance_block) |
+| Session helpers | `adws/adw_common.py` |
 | Hook that writes session | `.claude/hooks/user_prompt_submit.py` |
-| Agent run templates | `agent_runs/.template/` |
 | Framework manifest | `.scout_framework.yaml` |
-
----
-
-**Please read the latest handoff file first, then ask what I'd like to work on next.**
 
 ---
 

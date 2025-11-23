@@ -51,21 +51,46 @@ mkdir -p "$TARGET_REPO/scripts"
 echo "📋 Copying core modules..."
 cp -r "$SOURCE_DIR/adws" "$TARGET_REPO/"
 
-# Copy working slash commands
+# Copy working slash commands (all with risk headers)
 echo "📝 Copying slash commands..."
-# Only copy the WORKING commands, not broken ones
+# Core workflow commands
 cp "$SOURCE_DIR/.claude/commands/plan_w_docs.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
 cp "$SOURCE_DIR/.claude/commands/plan_w_docs_improved.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
 cp "$SOURCE_DIR/.claude/commands/build_adw.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
-cp "$SOURCE_DIR/.claude/commands/scout.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
+cp "$SOURCE_DIR/.claude/commands/build.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
 
-# Copy hooks for observability
-echo "🪝 Copying hooks for logging and validation..."
+# Scout commands (FIXED - now use Python scripts)
+cp "$SOURCE_DIR/.claude/commands/scout.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
+cp "$SOURCE_DIR/.claude/commands/scout_improved.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
+cp "$SOURCE_DIR/.claude/commands/scout_fixed.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
+cp "$SOURCE_DIR/.claude/commands/scout_parallel.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
+
+# Interactive setup (NEW)
+cp "$SOURCE_DIR/.claude/commands/init-framework.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
+
+# Worktree commands
+cp "$SOURCE_DIR/.claude/commands/init-parallel-worktrees.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
+cp "$SOURCE_DIR/.claude/commands/compare-worktrees.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
+cp "$SOURCE_DIR/.claude/commands/merge-worktree.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
+
+# Copy hooks (includes session tracking!)
+echo "🪝 Copying hooks (logging + session tracking)..."
 cp -r "$SOURCE_DIR/.claude/hooks" "$TARGET_REPO/.claude/" 2>/dev/null || true
 
 # Copy skills for workflow orchestration
 echo "🎯 Copying skills (workflow building blocks)..."
 cp -r "$SOURCE_DIR/.claude/skills" "$TARGET_REPO/.claude/" 2>/dev/null || true
+
+# Copy RunManager (NEW - state tracking)
+echo "🏃 Copying RunManager (agent state tracking)..."
+mkdir -p "$TARGET_REPO/agents"
+cp -r "$SOURCE_DIR/agents/"*.py "$TARGET_REPO/agents/" 2>/dev/null || true
+
+# Copy agent_runs template (NEW)
+echo "📁 Creating agent_runs directory..."
+mkdir -p "$TARGET_REPO/agent_runs/.template"
+cp "$SOURCE_DIR/agent_runs/.template/meta.yaml" "$TARGET_REPO/agent_runs/.template/" 2>/dev/null || true
+cp "$SOURCE_DIR/agent_runs/.template/state.json" "$TARGET_REPO/agent_runs/.template/" 2>/dev/null || true
 
 # Copy validation script
 echo "✅ Copying validation tools..."

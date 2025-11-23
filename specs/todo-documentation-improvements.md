@@ -6,7 +6,7 @@ Generated from marketing/consistency review on 2024-11-23.
 
 ### Path Migration
 - [ ] **Complete `agents/` to `scout_outputs/` migration** - 50+ files still reference deprecated paths
-  - Files: PRACTICAL_EXECUTION_GUIDE.md, WORKFLOW_ARCHITECTURE.md, SLASH_COMMANDS_REFERENCE.md, TECHNICAL_REFERENCE.md, COMMANDS_DETAILED_COMPARISON.md, SPEC_SCHEMA.md, adw-complete.md skill
+  - Files: TROUBLESHOOTING_AND_INTERNALS.md (was PRACTICAL_EXECUTION_GUIDE.md), WORKFLOW_ARCHITECTURE.md, SLASH_COMMANDS_REFERENCE.md, TECHNICAL_REFERENCE.md, COMMANDS_DETAILED_COMPARISON.md, SPEC_SCHEMA.md, adw-complete.md skill
   - Impact: Users following docs get "file not found" errors
 
 ### Date Fixes
@@ -32,7 +32,10 @@ Generated from marketing/consistency review on 2024-11-23.
 - [ ] Reframe ADW_QUICK_REFERENCE.md positively (currently leads with "broken")
 
 ### Consolidation
-- [ ] Consider merging: FRAMEWORK_USAGE_GUIDE.md + PRACTICAL_EXECUTION_GUIDE.md + TEAM_ONBOARDING_PRESENTATION.md
+- [x] Consider merging: FRAMEWORK_USAGE_GUIDE.md + PRACTICAL_EXECUTION_GUIDE.md + TEAM_ONBOARDING_PRESENTATION.md
+  - COMPLETED (2025-11-23): Merged into TEAM_ONBOARDING_PRESENTATION.md
+  - FRAMEWORK_USAGE_GUIDE.md archived to docs/archive/
+  - PRACTICAL_EXECUTION_GUIDE.md renamed to TROUBLESHOOTING_AND_INTERNALS.md
 - [ ] Create canonical paths reference document
 - [ ] Add VERSION file with proper versioning scheme
 
@@ -70,7 +73,7 @@ Generated from marketing/consistency review on 2024-11-23.
 | INSTALLATION_GUIDE.md | Flow diagram |
 | TEAM_ONBOARDING_PRESENTATION.md | Learning path |
 | BITBUCKET_INTEGRATION_PLAN.md | Gantt timeline |
-| PRACTICAL_EXECUTION_GUIDE.md | Workaround flow |
+| TROUBLESHOOTING_AND_INTERNALS.md | Workaround flow |
 | SCOUT_PLAN_BUILD_WORKFLOW.md | Sequence diagram |
 | SKILLS_ARCHITECTURE.md | Architecture layers |
 

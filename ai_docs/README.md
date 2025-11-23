@@ -100,9 +100,30 @@ Session End  → ai_docs/sessions/handoffs/handoff-*.md
 | `architecture/` | How things ARE built | Documentation |
 | `analyses/` | What we LEARNED from analysis | Generated |
 
+## Future Infrastructure (Planned Features)
+
+Some folders are scaffolding for planned features:
+
+| Folder | Status | Planned For |
+|--------|--------|-------------|
+| `feedback/predictions/` | Empty | V2 Feedback Loop - stores AI predictions |
+| `feedback/outcomes/` | Empty | V2 Feedback Loop - stores actual results |
+| `feedback/corrections/` | Active | Bug documentation, learned patterns |
+
+**Feedback Loop Architecture** (from Agentic Primitives V2):
+```
+PREDICT → OBSERVE → LEARN → APPLY
+   ↓         ↓         ↓        ↓
+predictions/ outcomes/ corrections/ → improved prompts
+```
+
+This enables continuous learning from AI predictions vs actual outcomes.
+See `ai_docs/reference/AGENTIC_ENGINEERING_PRIMITIVES_V2.md` Section 8.
+
 ## Why This Organization?
 
 - **SSOT**: Each content type has ONE canonical location
 - **Predictability**: Deterministic folders have known triggers
 - **Discoverability**: Easy to find all AI artifacts
 - **Cleanup**: Manual folders need periodic triage (see archive/)
+- **Future-Ready**: Empty folders may be scaffolding for planned features

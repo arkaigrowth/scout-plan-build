@@ -17,12 +17,14 @@ We've successfully addressed all the key challenges to make this framework ready
 
 ### 1. Documentation Suite (4 files)
 
-#### `docs/FRAMEWORK_USAGE_GUIDE.md` (350+ lines)
+#### `docs/TEAM_ONBOARDING_PRESENTATION.md` (500+ lines)
 - Complete end-to-end workflows with real examples
 - File organization best practices
 - Git worktree integration guide
-- Bitbucket workflow documentation
+- Bitbucket workflow documentation (merged from FRAMEWORK_USAGE_GUIDE.md)
 - Performance benchmarks
+- Team onboarding content
+- Note: FRAMEWORK_USAGE_GUIDE.md archived to docs/archive/ (2025-11-23)
 
 #### `CLAUDE_v4.md` (400+ lines)
 - **100% accurate** reflection of current system state

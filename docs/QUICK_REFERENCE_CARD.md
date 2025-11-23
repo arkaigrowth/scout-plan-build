@@ -114,7 +114,8 @@ ls -la ai_docs/outputs/latest/
 
 ## 📞 Getting Help
 
-- **Docs**: `docs/FRAMEWORK_USAGE_GUIDE.md`
+- **Docs**: `docs/TEAM_ONBOARDING_PRESENTATION.md`
+- **Troubleshooting**: `docs/TROUBLESHOOTING_AND_INTERNALS.md`
 - **Quick Facts**: `ai_docs/ADW_QUICK_REFERENCE.md`
 - **Architecture**: `ai_docs/ADW_SYSTEM_ANALYSIS.md`
 - **Slack**: #ai-development

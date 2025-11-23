@@ -320,12 +320,44 @@ cd worktrees/jwt-auth
 
 ---
 
+## 🔌 Bitbucket Integration
+
+### Current Status
+- **GitHub**: Fully supported via `gh` CLI
+- **Bitbucket**: Manual process (no direct CLI support)
+
+### Bitbucket Workflow
+```bash
+# 1. Use standard git operations
+git remote add bitbucket https://bitbucket.org/team/repo.git
+git checkout -b feature/issue-123
+# ... make changes ...
+git push bitbucket feature/issue-123
+
+# 2. Create PR manually via web UI
+# Or use Bitbucket API:
+curl -X POST https://api.bitbucket.org/2.0/repositories/{workspace}/{repo}/pullrequests \
+  -H "Authorization: Bearer $BITBUCKET_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Feature: JWT Auth",
+    "source": {"branch": {"name": "feature/issue-123"}},
+    "destination": {"branch": {"name": "main"}}
+  }'
+```
+
+### Future Bitbucket Support
+Native Bitbucket integration is planned for Q1 2025 (see roadmap below).
+
+---
+
 ## 🆘 Getting Help
 
 ### When You're Stuck
 
 1. **Check the docs**:
-   - `docs/FRAMEWORK_USAGE_GUIDE.md` - Complete guide
+   - `docs/TEAM_ONBOARDING_PRESENTATION.md` - Complete onboarding guide (this file)
+   - `docs/TROUBLESHOOTING_AND_INTERNALS.md` - Deep troubleshooting and system internals
    - `ai_docs/ADW_QUICK_REFERENCE.md` - Quick facts
 
 2. **Common Issues**:
@@ -405,9 +437,20 @@ spec = Read("specs/issue-XXX.md")
 
 ### Q1 2025 Roadmap
 - **Agent Memory System**: Agents remember across sessions
-- **Bitbucket Integration**: Native support like GitHub
+- **Bitbucket Integration**: Native CLI support like GitHub
 - **Visual Scout**: UI for browsing scout results
 - **Auto-PR Creation**: One command from scout to PR
+
+---
+
+## 📚 Additional Resources
+
+- **Architecture**: `ai_docs/ADW_SYSTEM_ANALYSIS.md`
+- **Quick Reference**: `ai_docs/ADW_QUICK_REFERENCE.md`
+- **Worktree Details**: `ai_docs/architecture/GIT_WORKTREE_UNDO_SYSTEM.md`
+- **Spec Schema**: `docs/SPEC_SCHEMA.md`
+- **Workflow Patterns**: `docs/WORKFLOW_ARCHITECTURE.md`
+- **Troubleshooting**: `docs/TROUBLESHOOTING_AND_INTERNALS.md`
 
 ### How You Can Help
 - Report bugs and pain points
@@ -459,7 +502,8 @@ ls scout_outputs/                    # Should have relevant_files.json
 
 # HELP
 # ====
-Docs: docs/FRAMEWORK_USAGE_GUIDE.md
+Docs: docs/TEAM_ONBOARDING_PRESENTATION.md
+Internals: docs/TROUBLESHOOTING_AND_INTERNALS.md
 Slack: #ai-development
 ```
 

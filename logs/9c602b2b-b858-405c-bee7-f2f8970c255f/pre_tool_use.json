@@ -201,5 +201,657 @@
       "thoughtNumber": 4,
       "totalThoughts": 4
     }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__sequential-thinking__sequentialthinking",
+    "tool_input": {
+      "thought": "Analyzing implementation complexity and risks for each component:\n\n**1. Python Script (`scripts/update-research-index.py`)**\nComplexity: MEDIUM\n- Must parse `**Key**: Value` frontmatter format (not YAML!)\n- Must update markdown tables without breaking formatting\n- Must be idempotent (no duplicates, consistent ordering)\n- Must handle missing frontmatter gracefully\n\nKey risks:\n- Regex for frontmatter could be brittle\n- Table manipulation in markdown is positional/fragile\n- Path handling across OS could cause issues\n\n**2. Pre-commit Hook**\nComplexity: LOW-MEDIUM\n- Need to choose hook manager (husky, lefthook, or raw git)\n- Must auto-install for new clones\n- Should support --check mode (CI) vs --fix mode (local)\n\nKey risks:\n- Hook installation is manual unless using husky/lefthook\n- Can be bypassed with --no-verify\n\n**3. Slash Command (`/research-add`)**\nComplexity: LOW\n- Just a markdown prompt template\n- Guides Claude to create file + update index\n- No code execution, pure prompt\n\nKey risks:\n- Minimal - it's just instructions\n- Independent of script (manual fallback)",
+      "nextThoughtNeeded": true,
+      "thoughtNumber": 1,
+      "totalThoughts": 4
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__sequential-thinking__sequentialthinking",
+    "tool_input": {
+      "thought": "Dependency analysis for parallelization:\n\n```\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502  Python Script  \u2502 \u25c4\u2500\u2500 Foundation (must work first)\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n         \u2502\n    \u250c\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2510\n    \u2502         \u2502\n    \u25bc         \u25bc\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502 Hook  \u2502  \u2502 Slash Cmd   \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n  depends    independent!\n  on script\n```\n\n**What CAN run in parallel:**\n- Script implementation\n- Slash command creation (completely independent - it's just Claude instructions)\n\n**What MUST be sequential:**\n- Hook setup \u2192 depends on script existing and working\n\n**Proposed Parallel Strategy:**\n\nAgent 1 (Sonnet - needs precision): \n- Write `scripts/update-research-index.py`\n- Include unit test function\n- Handle all 4 subfolders\n- Parse `**Key**: Value` frontmatter\n\nAgent 2 (Haiku - simpler task):\n- Create `.claude/commands/research-add.md`\n- Clear instructions for file creation + index update\n- Reference the script as optional validation\n\nTHEN (sequential after Agent 1 completes):\n- Set up pre-commit hook\n- Test the full flow",
+      "nextThoughtNeeded": true,
+      "thoughtNumber": 2,
+      "totalThoughts": 4
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__sequential-thinking__sequentialthinking",
+    "tool_input": {
+      "thought": "Risk mitigation strategies for the script (the hardest part):\n\n**Risk 1: Brittle frontmatter parsing**\nMitigation: Use a forgiving regex that handles variations:\n- `**Key**: Value`\n- `**Key:** Value` (with space)\n- `**Key**:Value` (no space)\nPattern: `\\*\\*([^*]+)\\*\\*:\\s*(.+)`\n\n**Risk 2: Table manipulation breaking markdown**\nMitigation: Don't regex-replace tables. Instead:\n1. Find table section by header (`### Videos`, etc.)\n2. Find the markdown table boundaries\n3. Parse existing rows\n4. Add new row if not present\n5. Rebuild table from structured data\n\n**Risk 3: Duplicate entries**\nMitigation: Normalize file paths and check before adding:\n- Extract filename from existing entries\n- Compare against new file\n- Skip if already present\n\n**Risk 4: Different README formats over time**\nMitigation: Use marker comments (optional enhancement):\n```markdown\n<!-- INDEX:videos:start -->\n| Source | Topic | File | Date Added |\n...\n<!-- INDEX:videos:end -->\n```\n\n**Testing strategy:**\n- Script has `--dry-run` mode (shows what would change)\n- Script has `--check` mode (exit 1 if changes needed, for CI)\n- Include self-test with sample data",
+      "nextThoughtNeeded": true,
+      "thoughtNumber": 3,
+      "totalThoughts": 4
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "mcp__sequential-thinking__sequentialthinking",
+    "tool_input": {
+      "thought": "Final implementation proposal:\n\n**Phase 1: Parallel (can start immediately)**\n\u251c\u2500\u2500 Agent 1 (Sonnet): `scripts/update-research-index.py`\n\u2502   - ~100-150 lines Python\n\u2502   - Frontmatter parser (forgiving regex)\n\u2502   - Table updater (structured, not regex replace)\n\u2502   - Modes: --dry-run, --check, default (apply)\n\u2502   - Self-test function\n\u2502\n\u2514\u2500\u2500 Agent 2 (Haiku): `.claude/commands/research-add.md`\n    - ~50 lines markdown\n    - Clear step-by-step instructions\n    - Frontmatter template included\n    - Links to script for validation\n\n**Phase 2: Sequential (after Phase 1 completes)**\n- Test the script manually on existing files\n- Set up pre-commit hook (simple wrapper)\n- Document in README\n\n**Estimated effort:**\n- Script: 30-45 min (most complex)\n- Slash command: 10-15 min (simple)\n- Hook setup: 10 min (trivial once script works)\n- Testing: 15 min\n\n**What the user needs to do:**\n1. Approve this approach\n2. After implementation: run script once to validate\n3. Decide on hook manager preference (husky vs raw git hook)\n\n**Rollback plan:**\n- All changes in new files (non-destructive)\n- Script doesn't auto-modify anything by default\n- Easy to delete if approach doesn't work",
+      "nextThoughtNeeded": false,
+      "thoughtNumber": 4,
+      "totalThoughts": 4
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Create Python script (scripts/update-research-index.py)",
+          "status": "in_progress",
+          "activeForm": "Creating Python script for index updates"
+        },
+        {
+          "content": "Create slash command (.claude/commands/research-add.md)",
+          "status": "in_progress",
+          "activeForm": "Creating slash command for research additions"
+        },
+        {
+          "content": "Create install script (scripts/install-hooks.sh)",
+          "status": "pending",
+          "activeForm": "Creating hook installation script"
+        },
+        {
+          "content": "Add marker comments to README",
+          "status": "pending",
+          "activeForm": "Adding marker comments to research README"
+        },
+        {
+          "content": "Test the full workflow",
+          "status": "pending",
+          "activeForm": "Testing the full workflow"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Task",
+    "tool_input": {
+      "description": "Create index update script",
+      "prompt": "## Task: Create Research Index Auto-Update System (Python Script + Git Hook)\n\nCreate a robust, non-brittle Python script and git hook for automatically updating the research index.\n\n### Files to Create\n\n#### 1. `scripts/update-research-index.py`\n\n```python\n#!/usr/bin/env python3\n\"\"\"\nResearch Index Auto-Updater\n\nScans ai_docs/research/ subfolders and updates the README.md index tables.\nParses **Key**: Value frontmatter format and rebuilds tables from structured data.\n\nUsage:\n    python scripts/update-research-index.py           # Apply updates\n    python scripts/update-research-index.py --dry-run # Show what would change\n    python scripts/update-research-index.py --check   # Exit 1 if changes needed (for CI)\n    python scripts/update-research-index.py --verbose # Detailed output\n\"\"\"\n```\n\n**Requirements:**\n1. Parse `**Key**: Value` frontmatter format (NOT YAML) using forgiving regex: `\\*\\*([^*]+)\\*\\*:\\s*(.+)`\n2. Handle all 4 subfolders: `videos/`, `articles/`, `implementations/`, `papers/`\n3. Look for marker comments in README:\n   - `<!-- INDEX:videos:start -->` ... `<!-- INDEX:videos:end -->`\n   - Same pattern for articles, implementations, papers\n4. Be IDEMPOTENT - running twice produces same result, no duplicates\n5. Handle missing frontmatter gracefully (use filename as fallback, warn user)\n6. Parse existing table entries to avoid duplicates (compare by file path)\n7. Sort entries by date (newest first) or alphabetically if no date\n\n**CLI Modes:**\n- `--dry-run`: Print what would change, don't modify files\n- `--check`: Exit code 1 if changes needed, 0 if index is current (for pre-commit)\n- `--verbose`: Print detailed progress\n- Default: Apply changes silently\n\n**Frontmatter fields to extract (based on README template):**\n- For videos: Source, Topic (from title), File path, Date Analyzed\n- For articles: Source, Topic, File path, Date Added\n- For implementations: Repository/Source, Topic, File path, Date Added\n- For papers: Title, Topic, File path, Date Added\n\n**Table format to generate:**\n```markdown\n| Source | Topic | File | Date Added |\n|--------|-------|------|------------|\n| IndyDevDan | Git Worktrees | [Analysis](videos/file.md) | 2024-11-21 |\n```\n\n#### 2. `scripts/install-hooks.sh`\n\n```bash\n#!/bin/bash\n# Install git hooks for this repository\n# Run once after cloning: ./scripts/install-hooks.sh\n```\n\n**Requirements:**\n1. Create `.git/hooks/pre-commit` that calls the Python script with --check\n2. Make hooks executable\n3. Print success message\n4. Be idempotent (safe to run multiple times)\n\n#### 3. `scripts/hooks/pre-commit`\n\nThe actual hook script that:\n1. Runs `python scripts/update-research-index.py --check`\n2. If exit code 1, print helpful message and block commit\n3. If exit code 0, allow commit to proceed\n\n### Important Implementation Notes\n\n1. **Path handling**: Use `pathlib.Path` for cross-platform compatibility\n2. **UTF-8 encoding**: Always specify `encoding='utf-8'` when reading/writing\n3. **No external dependencies**: Use only Python stdlib (re, pathlib, argparse, sys)\n4. **Error messages**: Be helpful - tell user exactly what to do if index is outdated\n5. **Project root detection**: Script should work from any directory in the repo\n\n### Test the script\n\nAfter creating, verify it works:\n1. Run `python scripts/update-research-index.py --dry-run` - should show no changes (index is current)\n2. The existing `implementations/slash-commands-chaining-chad.md` file should be detected\n\n### Return\n\nReport back with:\n1. Full content of all files created\n2. Confirmation that script runs without errors\n3. Any issues or edge cases discovered",
+      "subagent_type": "general-purpose"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Task",
+    "tool_input": {
+      "description": "Create slash command + markers",
+      "prompt": "## Task: Create Slash Command and Add README Markers\n\nCreate the slash command for adding research documents and add marker comments to the README for robust parsing.\n\n### Files to Create/Modify\n\n#### 1. CREATE: `.claude/commands/research-add.md`\n\nCreate a slash command that guides Claude to properly add research documents.\n\n```markdown\n# Add Research Document\n\n<!-- risk: mutate -->\n<!-- scope: ai_docs/research/** -->\n\nAdd a new research document to the ai_docs/research library with proper frontmatter and index update.\n\n## Arguments\n$ARGUMENTS should contain:\n- Type: video | article | implementation | paper\n- Topic: Brief description of what's being analyzed\n- Source: URL or citation\n- Author: Original creator's name\n\n## Steps\n\n1. **Determine subfolder** based on type:\n   - video \u2192 `ai_docs/research/videos/`\n   - article \u2192 `ai_docs/research/articles/`\n   - implementation \u2192 `ai_docs/research/implementations/`\n   - paper \u2192 `ai_docs/research/papers/`\n\n2. **Generate filename** following convention: `topic-source.md`\n   - Lowercase, hyphenated\n   - Example: `git-worktrees-indydevdan.md`\n\n3. **Create the file** with frontmatter:\n```markdown\n# [Topic Title]\n\n**Source**: [URL or citation]\n**Author**: [Original creator]\n**Date Analyzed**: [YYYY-MM-DD]\n**Analyzed By**: [Claude or Human name]\n\n---\n\n[Content goes here]\n```\n\n4. **Update the README index**:\n   - Open `ai_docs/research/README.md`\n   - Find the appropriate section (Videos, Articles, Implementations, Papers)\n   - Add entry between the marker comments:\n     - `<!-- INDEX:type:start -->` and `<!-- INDEX:type:end -->`\n   - Entry format: `| Source | Topic | [Analysis](subfolder/filename.md) | YYYY-MM-DD |`\n\n5. **Validate** (optional):\n   - Run: `python scripts/update-research-index.py --check`\n   - If it passes, index is correctly updated\n\n## Example Usage\n\nUser: `/research-add video \"Git Worktree Parallelization\" \"https://youtu.be/xyz\" \"IndyDevDan\"`\n\nClaude creates:\n- `ai_docs/research/videos/git-worktree-parallelization-indydevdan.md`\n- Updates README.md index table\n\n## Important\n- Always use the frontmatter template exactly\n- Always update the index after creating the file\n- Filename should be URL-safe (no spaces, special chars)\n```\n\n#### 2. MODIFY: `ai_docs/research/README.md`\n\nAdd marker comments around each index table for robust parsing. \n\nRead the current README first, then add markers like this:\n\n**Before each table section:**\n```markdown\n### Videos\n<!-- INDEX:videos:start -->\n| Source | Topic | File | Date Added |\n|--------|-------|------|------------|\n| IndyDevDan (YouTube) | Git Worktree Parallelization | [Analysis](videos/...) | 2024-11-21 |\n<!-- INDEX:videos:end -->\n```\n\nDo this for ALL FOUR sections:\n- `<!-- INDEX:videos:start -->` / `<!-- INDEX:videos:end -->`\n- `<!-- INDEX:articles:start -->` / `<!-- INDEX:articles:end -->`\n- `<!-- INDEX:implementations:start -->` / `<!-- INDEX:implementations:end -->`\n- `<!-- INDEX:papers:start -->` / `<!-- INDEX:papers:end -->`\n\nKeep all existing content, just wrap the tables with marker comments.\n\n### Return\n\nReport back with:\n1. Full content of `.claude/commands/research-add.md`\n2. The specific changes made to `ai_docs/research/README.md` (show the marker additions)\n3. Confirmation both files are created/updated",
+      "subagent_type": "general-purpose"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+      "pattern": ".claude/commands/*.md",
+      "path": "/Users/alexkamysz/AI/scout_plan_build_mvp"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+      "pattern": "ai_docs/research/**/*.md",
+      "path": "/Users/alexkamysz/AI/scout_plan_build_mvp"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/research/videos/idd-video-git-worktrees-f8RnRuaxee8-analysis.md"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la /Users/alexkamysz/AI/scout_plan_build_mvp/scripts/ 2>/dev/null || echo \"Directory does not exist\"",
+      "description": "Check if scripts directory exists"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/.claude/commands/research-add.md",
+      "content": "# Add Research Document\n\n<!-- risk: mutate -->\n<!-- scope: ai_docs/research/** -->\n\nAdd a new research document to the ai_docs/research library with proper frontmatter and index update.\n\n## Arguments\n$ARGUMENTS should contain:\n- Type: video | article | implementation | paper\n- Topic: Brief description of what's being analyzed\n- Source: URL or citation\n- Author: Original creator's name\n\n## Steps\n\n1. **Determine subfolder** based on type:\n   - video \u2192 `ai_docs/research/videos/`\n   - article \u2192 `ai_docs/research/articles/`\n   - implementation \u2192 `ai_docs/research/implementations/`\n   - paper \u2192 `ai_docs/research/papers/`\n\n2. **Generate filename** following convention: `topic-source.md`\n   - Lowercase, hyphenated\n   - Example: `git-worktrees-indydevdan.md`\n\n3. **Create the file** with frontmatter:\n```markdown\n# [Topic Title]\n\n**Source**: [URL or citation]\n**Author**: [Original creator]\n**Date Analyzed**: [YYYY-MM-DD]\n**Analyzed By**: [Claude or Human name]\n\n---\n\n[Content goes here]\n```\n\n4. **Update the README index**:\n   - Open `ai_docs/research/README.md`\n   - Find the appropriate section (Videos, Articles, Implementations, Papers)\n   - Add entry between the marker comments:\n     - `<!-- INDEX:type:start -->` and `<!-- INDEX:type:end -->`\n   - Entry format: `| Source | Topic | [Analysis](subfolder/filename.md) | YYYY-MM-DD |`\n\n5. **Validate** (optional):\n   - Run: `python scripts/update-research-index.py --check`\n   - If it passes, index is correctly updated\n\n## Example Usage\n\nUser: `/research-add video \"Git Worktree Parallelization\" \"https://youtu.be/xyz\" \"IndyDevDan\"`\n\nClaude creates:\n- `ai_docs/research/videos/git-worktree-parallelization-indydevdan.md`\n- Updates README.md index table\n\n## Important\n- Always use the frontmatter template exactly\n- Always update the index after creating the file\n- Filename should be URL-safe (no spaces, special chars)\n"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/research/README.md",
+      "content": "# AI Research Library\n\nExternal resources analyzed to inform framework development decisions.\n\n## Purpose\n\nThis directory contains **analyses of external content** \u2014 videos, articles, reference implementations, and papers that provide learning and inspiration for the Scout-Plan-Build framework.\n\n> **Important**: These are analyses/summaries of external sources, not original work.\n> Original creators retain all rights to their content.\n\n## Directory Structure\n\n```\nresearch/\n\u251c\u2500\u2500 README.md           \u2190 This file (index + attribution)\n\u251c\u2500\u2500 videos/             \u2190 Video transcript analyses\n\u251c\u2500\u2500 articles/           \u2190 Article summaries and notes\n\u251c\u2500\u2500 implementations/    \u2190 Notes on reference codebases/repos\n\u2514\u2500\u2500 papers/             \u2190 Academic papers (if any)\n```\n\n## Semantic Clarification\n\n| Folder                 | Contains            | Purpose                           |\n| ---------------------- | ------------------- | --------------------------------- |\n| `ai_docs/reference/` | Internal quick refs | Generated docs about THIS project |\n| `ai_docs/research/`  | External analyses   | Learning from EXTERNAL sources    |\n\n**Research = INPUT** (external knowledge coming in)\n**Reference = OUTPUT** (internal knowledge distilled out)\n\n## Index\n\n### Videos\n\n<!-- INDEX:videos:start -->\n| Source               | Topic                                        | File                                                            | Date Added |\n| -------------------- | -------------------------------------------- | --------------------------------------------------------------- | ---------- |\n| IndyDevDan (YouTube) | Git Worktree Parallelization for Claude Code | [Analysis](videos/idd-video-git-worktrees-f8RnRuaxee8-analysis.md) | 2024-11-21 |\n<!-- INDEX:videos:end -->\n\n### Articles\n\n<!-- INDEX:articles:start -->\n| Source          | Topic | File | Date Added |\n| --------------- | ----- | ---- | ---------- |\n| *Coming soon* |       |      |            |\n<!-- INDEX:articles:end -->\n\n### Implementations\n\n<!-- INDEX:implementations:start -->\n| Repository | Topic | File | Date Added |\n|------------|-------|------|------------|\n| Chad/Claude Code | Claude Code Slash Commands + Chaining | [Analysis](implementations/slash-commands-chaining-chad.md) | 2025-11-22 |\n<!-- INDEX:implementations:end -->\n\n### Papers\n\n<!-- INDEX:papers:start -->\n| Title           | Topic | File | Date Added |\n| --------------- | ----- | ---- | ---------- |\n| *Coming soon* |       |      |            |\n<!-- INDEX:papers:end -->\n\n## Adding New Research\n\nWhen adding a new analysis:\n\n1. **Place in appropriate subfolder** (videos/, articles/, etc.)\n2. **Name clearly**: `topic-source.md` (e.g., `git-worktree-parallelization-indydevdan.md`)\n3. **Include attribution** at the top of the file:\n   ```markdown\n   # [Topic]\n\n   **Source**: [URL or citation]\n   **Author**: [Original creator]\n   **Date Analyzed**: YYYY-MM-DD\n   **Analyzed By**: [Your name/AI]\n   ```\n4. **Update this README** index table\n5. **Use the slash command**: `/research-add <type> \"<topic>\" \"<source>\" \"<author>\"`\n\n## Why This Exists\n\nIn agentic engineering, AI assistants benefit from curated external knowledge:\n\n- Patterns from successful implementations\n- Best practices from industry experts\n- Academic foundations for complex features\n\nThis research library gives Claude context for informed recommendations.\n"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/scripts/update-research-index.py",
+      "content": "#!/usr/bin/env python3\n\"\"\"\nResearch Index Auto-Updater\n\nScans ai_docs/research/ subfolders and updates the README.md index tables.\nParses **Key**: Value frontmatter format and rebuilds tables from structured data.\n\nUsage:\n    python scripts/update-research-index.py           # Apply updates\n    python scripts/update-research-index.py --dry-run # Show what would change\n    python scripts/update-research-index.py --check   # Exit 1 if changes needed (for CI)\n    python scripts/update-research-index.py --verbose # Detailed output\n\"\"\"\n\nimport argparse\nimport re\nimport sys\nfrom pathlib import Path\nfrom typing import Optional\n\n\n# Configuration\nSUBFOLDERS = [\"videos\", \"articles\", \"implementations\", \"papers\"]\n\n# Marker patterns for finding index sections in README\nMARKER_START = \"<!-- INDEX:{folder}:start -->\"\nMARKER_END = \"<!-- INDEX:{folder}:end -->\"\n\n# Frontmatter regex - forgiving pattern for **Key**: Value format\nFRONTMATTER_PATTERN = re.compile(r\"\\*\\*([^*]+)\\*\\*:\\s*(.+)\")\n\n# Table header configurations for each folder type\nTABLE_CONFIGS = {\n    \"videos\": {\n        \"headers\": [\"Source\", \"Topic\", \"File\", \"Date Added\"],\n        \"source_keys\": [\"Creator\", \"Source\", \"Author\"],\n        \"topic_keys\": [\"Topic\", \"Title\"],\n        \"date_keys\": [\"Date Analyzed\", \"Date Added\", \"Date\"],\n    },\n    \"articles\": {\n        \"headers\": [\"Source\", \"Topic\", \"File\", \"Date Added\"],\n        \"source_keys\": [\"Source\", \"Author\", \"Publication\"],\n        \"topic_keys\": [\"Topic\", \"Title\"],\n        \"date_keys\": [\"Date Added\", \"Date Analyzed\", \"Date\"],\n    },\n    \"implementations\": {\n        \"headers\": [\"Repository\", \"Topic\", \"File\", \"Date Added\"],\n        \"source_keys\": [\"Repository\", \"Source\", \"Author\", \"Repo\"],\n        \"topic_keys\": [\"Topic\", \"Title\"],\n        \"date_keys\": [\"Date Added\", \"Date Analyzed\", \"Date\"],\n    },\n    \"papers\": {\n        \"headers\": [\"Title\", \"Topic\", \"File\", \"Date Added\"],\n        \"source_keys\": [\"Title\", \"Paper\", \"Name\"],\n        \"topic_keys\": [\"Topic\", \"Subject\", \"Area\"],\n        \"date_keys\": [\"Date Added\", \"Date Analyzed\", \"Date\"],\n    },\n}\n\n\ndef find_project_root() -> Path:\n    \"\"\"Find the project root by looking for .git or CLAUDE.md\"\"\"\n    current = Path(__file__).resolve().parent\n\n    # Walk up directory tree\n    for _ in range(10):  # Max 10 levels up\n        if (current / \".git\").exists() or (current / \"CLAUDE.md\").exists():\n            return current\n        parent = current.parent\n        if parent == current:\n            break\n        current = parent\n\n    # Fallback: assume script is in scripts/ under project root\n    return Path(__file__).resolve().parent.parent\n\n\ndef parse_frontmatter(file_path: Path, verbose: bool = False) -> dict[str, str]:\n    \"\"\"\n    Parse **Key**: Value frontmatter from a markdown file.\n    Returns dict of key -> value pairs (keys lowercased for consistency).\n    \"\"\"\n    frontmatter = {}\n\n    try:\n        content = file_path.read_text(encoding=\"utf-8\")\n    except Exception as e:\n        if verbose:\n            print(f\"  Warning: Could not read {file_path}: {e}\")\n        return frontmatter\n\n    # Only look at the first 50 lines for frontmatter\n    lines = content.split(\"\\n\")[:50]\n\n    for line in lines:\n        match = FRONTMATTER_PATTERN.search(line)\n        if match:\n            key = match.group(1).strip()\n            value = match.group(2).strip()\n            frontmatter[key.lower()] = value\n            if verbose:\n                print(f\"    Found: {key} = {value}\")\n\n    # Also try to extract title from first H1\n    for line in lines:\n        if line.startswith(\"# \"):\n            frontmatter[\"_title\"] = line[2:].strip()\n            break\n\n    return frontmatter\n\n\ndef extract_field(frontmatter: dict[str, str], keys: list[str], fallback: str = \"\") -> str:\n    \"\"\"Extract a field from frontmatter, trying multiple possible key names.\"\"\"\n    for key in keys:\n        value = frontmatter.get(key.lower())\n        if value:\n            return value\n    return fallback\n\n\ndef extract_topic_from_title(title: str) -> str:\n    \"\"\"Extract a reasonable topic from a title string.\"\"\"\n    # Remove common prefixes\n    prefixes = [\"Video Analysis:\", \"Analysis:\", \"Research:\", \"Paper:\"]\n    for prefix in prefixes:\n        if title.startswith(prefix):\n            title = title[len(prefix):].strip()\n            break\n\n    # Truncate if too long\n    if len(title) > 60:\n        title = title[:57] + \"...\"\n\n    return title\n\n\ndef scan_folder(folder_path: Path, folder_type: str, verbose: bool = False) -> list[dict]:\n    \"\"\"\n    Scan a research subfolder and return list of entry dicts.\n    Each dict has: source, topic, file_path, date, sort_key\n    \"\"\"\n    entries = []\n    config = TABLE_CONFIGS.get(folder_type, TABLE_CONFIGS[\"articles\"])\n\n    if not folder_path.exists():\n        if verbose:\n            print(f\"  Folder does not exist: {folder_path}\")\n        return entries\n\n    for md_file in sorted(folder_path.glob(\"*.md\")):\n        if md_file.name.lower() == \"readme.md\":\n            continue\n\n        if verbose:\n            print(f\"  Scanning: {md_file.name}\")\n\n        frontmatter = parse_frontmatter(md_file, verbose)\n\n        # Extract fields using config\n        source = extract_field(frontmatter, config[\"source_keys\"])\n        topic = extract_field(frontmatter, config[\"topic_keys\"])\n        date = extract_field(frontmatter, config[\"date_keys\"])\n\n        # Fallbacks\n        if not source:\n            source = md_file.stem.replace(\"-\", \" \").replace(\"_\", \" \").title()\n            if verbose:\n                print(f\"    Warning: No source found, using filename: {source}\")\n\n        if not topic:\n            title = frontmatter.get(\"_title\", \"\")\n            if title:\n                topic = extract_topic_from_title(title)\n            else:\n                topic = md_file.stem.replace(\"-\", \" \").replace(\"_\", \" \").title()\n            if verbose:\n                print(f\"    Warning: No topic found, using: {topic}\")\n\n        if not date:\n            date = \"Unknown\"\n            if verbose:\n                print(f\"    Warning: No date found for {md_file.name}\")\n\n        # Relative path for the link\n        rel_path = f\"{folder_type}/{md_file.name}\"\n\n        entries.append({\n            \"source\": source,\n            \"topic\": topic,\n            \"file_path\": rel_path,\n            \"file_name\": md_file.name,\n            \"date\": date,\n            \"sort_key\": date if date != \"Unknown\" else \"0000-00-00\",\n        })\n\n    # Sort by date (newest first)\n    entries.sort(key=lambda e: e[\"sort_key\"], reverse=True)\n\n    return entries\n\n\ndef generate_table(entries: list[dict], folder_type: str) -> str:\n    \"\"\"Generate a markdown table for the given entries.\"\"\"\n    config = TABLE_CONFIGS.get(folder_type, TABLE_CONFIGS[\"articles\"])\n    headers = config[\"headers\"]\n\n    if not entries:\n        # Return placeholder row\n        lines = [\n            f\"| {' | '.join(headers)} |\",\n            f\"| {' | '.join(['---' + '-' * (len(h) - 3) for h in headers])} |\",\n            f\"| *Coming soon* | {'| '.join(['' for _ in headers[1:]])}|\",\n        ]\n        return \"\\n\".join(lines)\n\n    # Build header\n    lines = [\n        f\"| {' | '.join(headers)} |\",\n        f\"|{' | '.join(['-' * (len(h) + 2) for h in headers])}|\",\n    ]\n\n    # Build rows\n    for entry in entries:\n        if folder_type == \"papers\":\n            # Papers use Title as first column\n            row = [\n                entry[\"source\"],  # Title for papers\n                entry[\"topic\"],\n                f\"[Analysis]({entry['file_path']})\",\n                entry[\"date\"],\n            ]\n        else:\n            row = [\n                entry[\"source\"],\n                entry[\"topic\"],\n                f\"[Analysis]({entry['file_path']})\",\n                entry[\"date\"],\n            ]\n        lines.append(f\"| {' | '.join(row)} |\")\n\n    return \"\\n\".join(lines)\n\n\ndef update_readme_section(\n    readme_content: str,\n    folder_type: str,\n    new_table: str,\n    verbose: bool = False\n) -> tuple[str, bool]:\n    \"\"\"\n    Update a section of the README between markers.\n    Returns (new_content, changed).\n\n    If markers don't exist, we need to inject them around the existing table.\n    \"\"\"\n    start_marker = MARKER_START.format(folder=folder_type)\n    end_marker = MARKER_END.format(folder=folder_type)\n\n    # Check if markers exist\n    if start_marker in readme_content and end_marker in readme_content:\n        # Extract everything between markers\n        start_idx = readme_content.index(start_marker) + len(start_marker)\n        end_idx = readme_content.index(end_marker)\n\n        old_section = readme_content[start_idx:end_idx].strip()\n\n        # Replace section\n        new_section = f\"\\n{new_table}\\n\"\n        new_content = (\n            readme_content[:start_idx] +\n            new_section +\n            readme_content[end_idx:]\n        )\n\n        changed = old_section != new_table\n        return new_content, changed\n\n    # Markers don't exist - we need to find the section and add markers\n    # Look for the section header (e.g., ### Videos)\n    section_header = f\"### {folder_type.title()}\"\n\n    if section_header not in readme_content:\n        if verbose:\n            print(f\"  Warning: Could not find section '{section_header}' in README\")\n        return readme_content, False\n\n    # Find the section header\n    header_idx = readme_content.index(section_header)\n\n    # Find the next section header or end of file\n    remaining = readme_content[header_idx + len(section_header):]\n    next_section_match = re.search(r\"\\n###? \", remaining)\n\n    if next_section_match:\n        section_end_idx = header_idx + len(section_header) + next_section_match.start()\n    else:\n        section_end_idx = len(readme_content)\n\n    # Build new section with markers\n    new_section = f\"\"\"{section_header}\n\n{start_marker}\n{new_table}\n{end_marker}\n\n\"\"\"\n\n    new_content = (\n        readme_content[:header_idx] +\n        new_section +\n        readme_content[section_end_idx:].lstrip()\n    )\n\n    return new_content, True\n\n\ndef main():\n    parser = argparse.ArgumentParser(\n        description=\"Update research index tables in README.md\"\n    )\n    parser.add_argument(\n        \"--dry-run\",\n        action=\"store_true\",\n        help=\"Show what would change without modifying files\"\n    )\n    parser.add_argument(\n        \"--check\",\n        action=\"store_true\",\n        help=\"Exit 1 if changes needed (for CI/pre-commit)\"\n    )\n    parser.add_argument(\n        \"--verbose\", \"-v\",\n        action=\"store_true\",\n        help=\"Print detailed progress\"\n    )\n    args = parser.parse_args()\n\n    # Find project root and paths\n    project_root = find_project_root()\n    research_dir = project_root / \"ai_docs\" / \"research\"\n    readme_path = research_dir / \"README.md\"\n\n    if args.verbose:\n        print(f\"Project root: {project_root}\")\n        print(f\"Research dir: {research_dir}\")\n        print(f\"README path: {readme_path}\")\n\n    # Validate paths\n    if not research_dir.exists():\n        print(f\"Error: Research directory not found: {research_dir}\")\n        sys.exit(1)\n\n    if not readme_path.exists():\n        print(f\"Error: README.md not found: {readme_path}\")\n        sys.exit(1)\n\n    # Read current README\n    readme_content = readme_path.read_text(encoding=\"utf-8\")\n    original_content = readme_content\n\n    any_changes = False\n\n    # Process each subfolder\n    for folder_type in SUBFOLDERS:\n        folder_path = research_dir / folder_type\n\n        if args.verbose:\n            print(f\"\\nProcessing: {folder_type}/\")\n\n        # Scan folder for entries\n        entries = scan_folder(folder_path, folder_type, args.verbose)\n\n        if args.verbose:\n            print(f\"  Found {len(entries)} entries\")\n\n        # Generate new table\n        new_table = generate_table(entries, folder_type)\n\n        # Update README section\n        readme_content, changed = update_readme_section(\n            readme_content, folder_type, new_table, args.verbose\n        )\n\n        if changed:\n            any_changes = True\n            if args.verbose:\n                print(f\"  Changes detected in {folder_type} section\")\n\n    # Handle output based on mode\n    if args.check:\n        if any_changes:\n            print(\"Research index is out of date!\")\n            print(\"Run 'python scripts/update-research-index.py' to update it.\")\n            print(\"\")\n            print(\"Or run with --dry-run to see what would change.\")\n            sys.exit(1)\n        else:\n            if args.verbose:\n                print(\"\\nResearch index is up to date.\")\n            sys.exit(0)\n\n    if args.dry_run:\n        if any_changes:\n            print(\"Changes would be made to README.md:\")\n            print(\"-\" * 60)\n            # Show a simple diff-like output\n            old_lines = original_content.split(\"\\n\")\n            new_lines = readme_content.split(\"\\n\")\n\n            # Find changed sections\n            for i, (old, new) in enumerate(zip(old_lines, new_lines)):\n                if old != new:\n                    print(f\"Line {i + 1}:\")\n                    print(f\"  - {old[:80]}\")\n                    print(f\"  + {new[:80]}\")\n\n            # Handle different lengths\n            if len(new_lines) > len(old_lines):\n                print(f\"\\n{len(new_lines) - len(old_lines)} new lines added\")\n            elif len(old_lines) > len(new_lines):\n                print(f\"\\n{len(old_lines) - len(new_lines)} lines removed\")\n        else:\n            print(\"No changes needed - index is up to date.\")\n        sys.exit(0)\n\n    # Default mode: apply changes\n    if any_changes:\n        readme_path.write_text(readme_content, encoding=\"utf-8\")\n        print(f\"Updated: {readme_path}\")\n    else:\n        if args.verbose:\n            print(\"\\nNo changes needed.\")\n\n\nif __name__ == \"__main__\":\n    main()\n"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/scripts/hooks/pre-commit",
+      "content": "#!/bin/bash\n#\n# Pre-commit hook for Scout Plan Build MVP\n#\n# Validates that the research index is up-to-date before allowing commits.\n# Install with: ./scripts/install-hooks.sh\n#\n\n# Find the repository root\nREPO_ROOT=\"$(git rev-parse --show-toplevel 2>/dev/null)\"\n\nif [ -z \"$REPO_ROOT\" ]; then\n    echo \"Error: Not in a git repository\"\n    exit 1\nfi\n\n# Check if any research files are being committed\nRESEARCH_FILES=$(git diff --cached --name-only | grep -E \"^ai_docs/research/\")\n\nif [ -n \"$RESEARCH_FILES\" ]; then\n    echo \"Research files detected in commit. Checking index...\"\n\n    # Run the index checker\n    if python3 \"$REPO_ROOT/scripts/update-research-index.py\" --check; then\n        echo \"Research index is up to date.\"\n    else\n        echo \"\"\n        echo \"==========================================\"\n        echo \"  COMMIT BLOCKED: Research index outdated\"\n        echo \"==========================================\"\n        echo \"\"\n        echo \"Research files changed but index not updated.\"\n        echo \"\"\n        echo \"To fix this, run:\"\n        echo \"  python scripts/update-research-index.py\"\n        echo \"\"\n        echo \"Then stage the updated README.md:\"\n        echo \"  git add ai_docs/research/README.md\"\n        echo \"\"\n        echo \"Or use --dry-run to preview changes:\"\n        echo \"  python scripts/update-research-index.py --dry-run\"\n        echo \"\"\n        exit 1\n    fi\nfi\n\nexit 0\n"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/scripts/install-hooks.sh",
+      "content": "#!/bin/bash\n#\n# Install git hooks for Scout Plan Build MVP\n#\n# Run once after cloning: ./scripts/install-hooks.sh\n#\n# This script:\n# 1. Creates the .git/hooks directory if needed\n# 2. Copies/links the pre-commit hook\n# 3. Makes hooks executable\n#\n\nset -e\n\n# Find the repository root\nREPO_ROOT=\"$(git rev-parse --show-toplevel 2>/dev/null)\"\n\nif [ -z \"$REPO_ROOT\" ]; then\n    echo \"Error: Not in a git repository\"\n    exit 1\nfi\n\nHOOKS_DIR=\"$REPO_ROOT/.git/hooks\"\nSOURCE_HOOKS=\"$REPO_ROOT/scripts/hooks\"\n\necho \"Installing git hooks...\"\necho \"  Repository: $REPO_ROOT\"\necho \"  Hooks dir:  $HOOKS_DIR\"\n\n# Ensure hooks directory exists\nmkdir -p \"$HOOKS_DIR\"\n\n# Install pre-commit hook\nif [ -f \"$SOURCE_HOOKS/pre-commit\" ]; then\n    # Copy the hook (symlinks can have issues with some git configurations)\n    cp \"$SOURCE_HOOKS/pre-commit\" \"$HOOKS_DIR/pre-commit\"\n    chmod +x \"$HOOKS_DIR/pre-commit\"\n    echo \"  Installed: pre-commit\"\nelse\n    echo \"  Warning: pre-commit hook source not found at $SOURCE_HOOKS/pre-commit\"\nfi\n\n# Make the Python script executable\nPYTHON_SCRIPT=\"$REPO_ROOT/scripts/update-research-index.py\"\nif [ -f \"$PYTHON_SCRIPT\" ]; then\n    chmod +x \"$PYTHON_SCRIPT\"\n    echo \"  Made executable: update-research-index.py\"\nfi\n\necho \"\"\necho \"Git hooks installed successfully!\"\necho \"\"\necho \"The pre-commit hook will now check that the research index\"\necho \"is up-to-date when you commit changes to ai_docs/research/.\"\necho \"\"\necho \"To manually update the index, run:\"\necho \"  python scripts/update-research-index.py\"\necho \"\"\n"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "chmod +x /Users/alexkamysz/AI/scout_plan_build_mvp/scripts/update-research-index.py /Users/alexkamysz/AI/scout_plan_build_mvp/scripts/install-hooks.sh /Users/alexkamysz/AI/scout_plan_build_mvp/scripts/hooks/pre-commit",
+      "description": "Make scripts executable"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "python3 scripts/update-research-index.py --verbose --dry-run",
+      "description": "Test the update script with verbose dry-run"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/research/videos/idd-video-git-worktrees-f8RnRuaxee8-analysis.md",
+      "limit": 20
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/scripts/update-research-index.py",
+      "old_string": "TABLE_CONFIGS = {\n    \"videos\": {\n        \"headers\": [\"Source\", \"Topic\", \"File\", \"Date Added\"],\n        \"source_keys\": [\"Creator\", \"Source\", \"Author\"],\n        \"topic_keys\": [\"Topic\", \"Title\"],\n        \"date_keys\": [\"Date Analyzed\", \"Date Added\", \"Date\"],\n    },\n    \"articles\": {\n        \"headers\": [\"Source\", \"Topic\", \"File\", \"Date Added\"],\n        \"source_keys\": [\"Source\", \"Author\", \"Publication\"],\n        \"topic_keys\": [\"Topic\", \"Title\"],\n        \"date_keys\": [\"Date Added\", \"Date Analyzed\", \"Date\"],\n    },\n    \"implementations\": {\n        \"headers\": [\"Repository\", \"Topic\", \"File\", \"Date Added\"],\n        \"source_keys\": [\"Repository\", \"Source\", \"Author\", \"Repo\"],\n        \"topic_keys\": [\"Topic\", \"Title\"],\n        \"date_keys\": [\"Date Added\", \"Date Analyzed\", \"Date\"],\n    },\n    \"papers\": {\n        \"headers\": [\"Title\", \"Topic\", \"File\", \"Date Added\"],\n        \"source_keys\": [\"Title\", \"Paper\", \"Name\"],\n        \"topic_keys\": [\"Topic\", \"Subject\", \"Area\"],\n        \"date_keys\": [\"Date Added\", \"Date Analyzed\", \"Date\"],\n    },\n}",
+      "new_string": "TABLE_CONFIGS = {\n    \"videos\": {\n        \"headers\": [\"Source\", \"Topic\", \"File\", \"Date Added\"],\n        \"source_keys\": [\"creator\", \"source\", \"author\", \"channel\"],\n        \"topic_keys\": [\"topic\", \"title\", \"subject\"],\n        \"date_keys\": [\"date analyzed\", \"date added\", \"date\"],\n    },\n    \"articles\": {\n        \"headers\": [\"Source\", \"Topic\", \"File\", \"Date Added\"],\n        \"source_keys\": [\"source\", \"author\", \"publication\", \"site\"],\n        \"topic_keys\": [\"topic\", \"title\", \"subject\"],\n        \"date_keys\": [\"date added\", \"date analyzed\", \"date\"],\n    },\n    \"implementations\": {\n        \"headers\": [\"Repository\", \"Topic\", \"File\", \"Date Added\"],\n        \"source_keys\": [\"repository\", \"source\", \"author\", \"repo\"],\n        \"topic_keys\": [\"topic\", \"title\", \"subject\"],\n        \"date_keys\": [\"date added\", \"date analyzed\", \"date\"],\n    },\n    \"papers\": {\n        \"headers\": [\"Title\", \"Topic\", \"File\", \"Date Added\"],\n        \"source_keys\": [\"title\", \"paper\", \"name\"],\n        \"topic_keys\": [\"topic\", \"subject\", \"area\"],\n        \"date_keys\": [\"date added\", \"date analyzed\", \"date\"],\n    },\n}"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "python3 scripts/update-research-index.py --verbose --dry-run",
+      "description": "Test after fixing key matching"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "python3 -c \"\nimport re\ncontent = open('/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/research/videos/idd-video-git-worktrees-f8RnRuaxee8-analysis.md').read()\npattern = re.compile(r'\\*\\*([^*]+)\\*\\*:\\s*(.+)')\nfor line in content.split('\\n')[:20]:\n    match = pattern.search(line)\n    if match:\n        print(f'Key: {match.group(1).strip()!r} -> {match.group(1).strip().lower()!r}, Value: {match.group(2).strip()!r}')\n\"",
+      "description": "Debug frontmatter parsing"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "python3 -c \"\nimport re\ncontent = open('/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/research/videos/idd-video-git-worktrees-f8RnRuaxee8-analysis.md').read()\npattern = re.compile(r'\\*\\*([^*]+)\\*\\*:\\s*(.+)')\nfor line in content.split('\\n')[:20]:\n    match = pattern.search(line)\n    if match:\n        print(repr(line))\n        print(f'Key: {repr(match.group(1).strip())}, Value: {repr(match.group(2).strip())}')\n\"",
+      "description": "Debug frontmatter parsing with line output"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "head -10 /Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/research/videos/idd-video-git-worktrees-f8RnRuaxee8-analysis.md | xxd | head -40",
+      "description": "Check exact bytes in frontmatter"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/scripts/update-research-index.py",
+      "old_string": "# Frontmatter regex - forgiving pattern for **Key**: Value format\nFRONTMATTER_PATTERN = re.compile(r\"\\*\\*([^*]+)\\*\\*:\\s*(.+)\")",
+      "new_string": "# Frontmatter regex - handles both **Key:** Value AND **Key**: Value formats\n# Pattern 1: **Key:** Value (colon inside bold)\n# Pattern 2: **Key**: Value (colon outside bold)\nFRONTMATTER_PATTERNS = [\n    re.compile(r\"\\*\\*([^*:]+):\\*\\*\\s*(.+)\"),    # **Key:** Value\n    re.compile(r\"\\*\\*([^*]+)\\*\\*:\\s*(.+)\"),      # **Key**: Value\n]"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/scripts/update-research-index.py",
+      "old_string": "def parse_frontmatter(file_path: Path, verbose: bool = False) -> dict[str, str]:\n    \"\"\"\n    Parse **Key**: Value frontmatter from a markdown file.\n    Returns dict of key -> value pairs (keys lowercased for consistency).\n    \"\"\"\n    frontmatter = {}\n\n    try:\n        content = file_path.read_text(encoding=\"utf-8\")\n    except Exception as e:\n        if verbose:\n            print(f\"  Warning: Could not read {file_path}: {e}\")\n        return frontmatter\n\n    # Only look at the first 50 lines for frontmatter\n    lines = content.split(\"\\n\")[:50]\n\n    for line in lines:\n        match = FRONTMATTER_PATTERN.search(line)\n        if match:\n            key = match.group(1).strip()\n            value = match.group(2).strip()\n            frontmatter[key.lower()] = value\n            if verbose:\n                print(f\"    Found: {key} = {value}\")\n\n    # Also try to extract title from first H1\n    for line in lines:\n        if line.startswith(\"# \"):\n            frontmatter[\"_title\"] = line[2:].strip()\n            break\n\n    return frontmatter",
+      "new_string": "def parse_frontmatter(file_path: Path, verbose: bool = False) -> dict[str, str]:\n    \"\"\"\n    Parse **Key:** Value or **Key**: Value frontmatter from a markdown file.\n    Returns dict of key -> value pairs (keys lowercased for consistency).\n    \"\"\"\n    frontmatter = {}\n\n    try:\n        content = file_path.read_text(encoding=\"utf-8\")\n    except Exception as e:\n        if verbose:\n            print(f\"  Warning: Could not read {file_path}: {e}\")\n        return frontmatter\n\n    # Only look at the first 50 lines for frontmatter\n    lines = content.split(\"\\n\")[:50]\n\n    for line in lines:\n        # Try each pattern\n        for pattern in FRONTMATTER_PATTERNS:\n            match = pattern.search(line)\n            if match:\n                key = match.group(1).strip()\n                value = match.group(2).strip()\n                frontmatter[key.lower()] = value\n                if verbose:\n                    print(f\"    Found: {key} = {value}\")\n                break  # Don't match same line twice\n\n    # Also try to extract title from first H1\n    for line in lines:\n        if line.startswith(\"# \"):\n            frontmatter[\"_title\"] = line[2:].strip()\n            break\n\n    return frontmatter"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "python3 scripts/update-research-index.py --verbose --dry-run",
+      "description": "Test after regex fix"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/research/README.md",
+      "offset": 30,
+      "limit": 40
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "python3 scripts/update-research-index.py --verbose",
+      "description": "Apply updates to README"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "python3 scripts/update-research-index.py --check --verbose && echo \"SUCCESS: Index is up to date\"",
+      "description": "Verify idempotency with --check"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/research/README.md",
+      "offset": 30,
+      "limit": 40
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/scripts/update-research-index.py",
+      "old_string": "def extract_topic_from_title(title: str) -> str:\n    \"\"\"Extract a reasonable topic from a title string.\"\"\"\n    # Remove common prefixes\n    prefixes = [\"Video Analysis:\", \"Analysis:\", \"Research:\", \"Paper:\"]\n    for prefix in prefixes:\n        if title.startswith(prefix):\n            title = title[len(prefix):].strip()\n            break\n\n    # Truncate if too long\n    if len(title) > 60:\n        title = title[:57] + \"...\"\n\n    return title",
+      "new_string": "def extract_topic_from_title(title: str) -> str:\n    \"\"\"Extract a reasonable topic from a title string.\"\"\"\n    # Remove common prefixes\n    prefixes = [\n        \"Video Analysis:\",\n        \"Analysis:\",\n        \"Research:\",\n        \"Paper:\",\n        \"Article:\",\n        \"Implementation:\",\n    ]\n    for prefix in prefixes:\n        if title.startswith(prefix):\n            title = title[len(prefix):].strip()\n            break\n\n    # Try to extract key topic from common title patterns\n    # Pattern: \"Topic - Subtitle\" or \"Topic: Subtitle\"\n    separators = [\" - \", \": \", \" | \"]\n    for sep in separators:\n        if sep in title:\n            # Take the more descriptive part (usually after separator for \"How to X\" patterns)\n            parts = title.split(sep, 1)\n            # If first part looks like a vague intro, use second\n            vague_prefixes = [\"how\", \"why\", \"what\", \"guide to\", \"introduction to\"]\n            if any(parts[0].lower().startswith(v) for v in vague_prefixes):\n                title = parts[1].strip()\n            else:\n                title = parts[0].strip()\n            break\n\n    # Clean up common noise words at start\n    noise_starts = [\n        \"Claude 4 ADVANCED AI Coding - How I PARALLELIZE Claude Code with \",\n    ]\n    for noise in noise_starts:\n        if title.startswith(noise):\n            title = title[len(noise):].strip()\n            break\n\n    # Truncate if still too long, but try to break at word boundary\n    if len(title) > 50:\n        truncated = title[:47]\n        # Try to break at last space\n        last_space = truncated.rfind(\" \")\n        if last_space > 30:\n            truncated = truncated[:last_space]\n        title = truncated + \"...\"\n\n    return title"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "python3 scripts/update-research-index.py --dry-run",
+      "description": "Test improved topic extraction"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/scripts/update-research-index.py",
+      "old_string": "def extract_topic_from_title(title: str) -> str:\n    \"\"\"Extract a reasonable topic from a title string.\"\"\"\n    # Remove common prefixes\n    prefixes = [\n        \"Video Analysis:\",\n        \"Analysis:\",\n        \"Research:\",\n        \"Paper:\",\n        \"Article:\",\n        \"Implementation:\",\n    ]\n    for prefix in prefixes:\n        if title.startswith(prefix):\n            title = title[len(prefix):].strip()\n            break\n\n    # Try to extract key topic from common title patterns\n    # Pattern: \"Topic - Subtitle\" or \"Topic: Subtitle\"\n    separators = [\" - \", \": \", \" | \"]\n    for sep in separators:\n        if sep in title:\n            # Take the more descriptive part (usually after separator for \"How to X\" patterns)\n            parts = title.split(sep, 1)\n            # If first part looks like a vague intro, use second\n            vague_prefixes = [\"how\", \"why\", \"what\", \"guide to\", \"introduction to\"]\n            if any(parts[0].lower().startswith(v) for v in vague_prefixes):\n                title = parts[1].strip()\n            else:\n                title = parts[0].strip()\n            break\n\n    # Clean up common noise words at start\n    noise_starts = [\n        \"Claude 4 ADVANCED AI Coding - How I PARALLELIZE Claude Code with \",\n    ]\n    for noise in noise_starts:\n        if title.startswith(noise):\n            title = title[len(noise):].strip()\n            break\n\n    # Truncate if still too long, but try to break at word boundary\n    if len(title) > 50:\n        truncated = title[:47]\n        # Try to break at last space\n        last_space = truncated.rfind(\" \")\n        if last_space > 30:\n            truncated = truncated[:last_space]\n        title = truncated + \"...\"\n\n    return title",
+      "new_string": "def extract_topic_from_title(title: str) -> str:\n    \"\"\"Extract a reasonable topic from a title string.\"\"\"\n    original = title\n\n    # Remove common prefixes\n    prefixes = [\n        \"Video Analysis:\",\n        \"Analysis:\",\n        \"Research:\",\n        \"Paper:\",\n        \"Article:\",\n        \"Implementation:\",\n    ]\n    for prefix in prefixes:\n        if title.startswith(prefix):\n            title = title[len(prefix):].strip()\n            break\n\n    # Look for \"with X\" pattern at the end - often the key topic\n    with_match = re.search(r\"\\bwith\\s+(.+)$\", title, re.IGNORECASE)\n    if with_match:\n        potential_topic = with_match.group(1).strip()\n        # Only use if it's reasonably short\n        if 5 < len(potential_topic) < 40:\n            return potential_topic\n\n    # Try to extract key topic from common title patterns\n    # Pattern: \"Topic - Subtitle\" or \"Topic: Subtitle\"\n    separators = [\" - \", \" | \"]\n    for sep in separators:\n        if sep in title:\n            parts = title.split(sep, 1)\n            # If first part looks like a vague intro, use second\n            vague_prefixes = [\"how\", \"why\", \"what\", \"guide to\", \"introduction to\"]\n            if any(parts[0].lower().startswith(v) for v in vague_prefixes):\n                title = parts[1].strip()\n            else:\n                # Prefer shorter, more specific part\n                title = min(parts, key=lambda p: len(p)).strip()\n            break\n\n    # Remove ellipsis-like patterns\n    title = re.sub(r\"\\s*\\.\\.\\.\\s*\", \" \", title).strip()\n\n    # Truncate if still too long, but try to break at word boundary\n    if len(title) > 50:\n        truncated = title[:47]\n        # Try to break at last space\n        last_space = truncated.rfind(\" \")\n        if last_space > 30:\n            truncated = truncated[:last_space]\n        title = truncated + \"...\"\n\n    return title"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "python3 scripts/update-research-index.py --dry-run",
+      "description": "Test improved topic extraction"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "python3 scripts/update-research-index.py && python3 scripts/update-research-index.py --check && echo \"SUCCESS: Index is idempotent\"",
+      "description": "Apply and verify idempotency"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "./scripts/install-hooks.sh",
+      "description": "Install git hooks"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la /Users/alexkamysz/AI/scout_plan_build_mvp/.git/hooks/pre-commit && head -20 /Users/alexkamysz/AI/scout_plan_build_mvp/.git/hooks/pre-commit",
+      "description": "Verify pre-commit hook installation"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/research/README.md",
+      "offset": 33,
+      "limit": 35
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/scripts/update-research-index.py"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/scripts/install-hooks.sh"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Create Python script (scripts/update-research-index.py)",
+          "status": "completed",
+          "activeForm": "Creating Python script for index updates"
+        },
+        {
+          "content": "Create slash command (.claude/commands/research-add.md)",
+          "status": "completed",
+          "activeForm": "Creating slash command for research additions"
+        },
+        {
+          "content": "Create install script (scripts/install-hooks.sh)",
+          "status": "completed",
+          "activeForm": "Creating hook installation script"
+        },
+        {
+          "content": "Add marker comments to README",
+          "status": "completed",
+          "activeForm": "Adding marker comments to research README"
+        },
+        {
+          "content": "Test the full workflow",
+          "status": "in_progress",
+          "activeForm": "Testing the full workflow"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "python scripts/update-research-index.py --dry-run --verbose",
+      "description": "Test the index update script"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+      "pattern": ".claude/commands/research-add.md"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+      "pattern": "scripts/hooks/pre-commit"
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Create Python script (scripts/update-research-index.py)",
+          "status": "completed",
+          "activeForm": "Creating Python script for index updates"
+        },
+        {
+          "content": "Create slash command (.claude/commands/research-add.md)",
+          "status": "completed",
+          "activeForm": "Creating slash command for research additions"
+        },
+        {
+          "content": "Create install script (scripts/install-hooks.sh)",
+          "status": "completed",
+          "activeForm": "Creating hook installation script"
+        },
+        {
+          "content": "Add marker comments to README",
+          "status": "completed",
+          "activeForm": "Adding marker comments to research README"
+        },
+        {
+          "content": "Test the full workflow",
+          "status": "completed",
+          "activeForm": "Testing the full workflow"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "9c602b2b-b858-405c-bee7-f2f8970c255f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/9c602b2b-b858-405c-bee7-f2f8970c255f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "./scripts/install-hooks.sh",
+      "description": "Install git pre-commit hook"
+    }
   }
 ]

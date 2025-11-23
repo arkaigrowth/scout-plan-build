@@ -1,0 +1,47 @@
+#!/bin/bash
+#
+# Pre-commit hook for Scout Plan Build MVP
+#
+# Validates that the research index is up-to-date before allowing commits.
+# Install with: ./scripts/install-hooks.sh
+#
+
+# Find the repository root
+REPO_ROOT="$(git rev-parse --show-toplevel 2>/dev/null)"
+
+if [ -z "$REPO_ROOT" ]; then
+    echo "Error: Not in a git repository"
+    exit 1
+fi
+
+# Check if any research files are being committed
+RESEARCH_FILES=$(git diff --cached --name-only | grep -E "^ai_docs/research/")
+
+if [ -n "$RESEARCH_FILES" ]; then
+    echo "Research files detected in commit. Checking index..."
+
+    # Run the index checker
+    if python3 "$REPO_ROOT/scripts/update-research-index.py" --check; then
+        echo "Research index is up to date."
+    else
+        echo ""
+        echo "=========================================="
+        echo "  COMMIT BLOCKED: Research index outdated"
+        echo "=========================================="
+        echo ""
+        echo "Research files changed but index not updated."
+        echo ""
+        echo "To fix this, run:"
+        echo "  python scripts/update-research-index.py"
+        echo ""
+        echo "Then stage the updated README.md:"
+        echo "  git add ai_docs/research/README.md"
+        echo ""
+        echo "Or use --dry-run to preview changes:"
+        echo "  python scripts/update-research-index.py --dry-run"
+        echo ""
+        exit 1
+    fi
+fi
+
+exit 0

@@ -5,10 +5,34 @@
     "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
     "permission_mode": "bypassPermissions",
     "hook_event_name": "PreToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+      "pattern": "**/*worktree*",
+      "path": "/Users/alexkamysz/AI/scout_plan_build_mvp"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+      "pattern": "worktree|isolation|sandbox",
+      "path": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws",
+      "output_mode": "files_with_matches"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
     "tool_name": "Read",
     "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/build_reports/structured-error-handling-build-report.md",
-      "limit": 50
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/analyses/GIT_WORKTREE_PARALLELIZATION_SCOUT_REPORT.md"
     }
   },
   {
@@ -19,8 +43,20 @@
     "hook_event_name": "PreToolUse",
     "tool_name": "Bash",
     "tool_input": {
-      "command": "ls -la /Users/alexkamysz/AI/scout_plan_build_mvp/scout_outputs/workflows/ 2>/dev/null || echo \"Directory empty or not found\"",
-      "description": "List workflows directory"
+      "command": "mkdir -p /Users/alexkamysz/AI/scout_plan_build_mvp/agent_outputs/2025-11-22",
+      "description": "Create agent_outputs directory"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/agent_outputs/2025-11-22/sandboxing-analysis.md",
+      "content": "# AI Code Execution Sandboxing Analysis\n\n**Date**: 2025-11-22\n**Repository**: scout_plan_build_mvp\n**Focus**: Agent isolation, security gaps, and minimum viable sandboxing\n\n---\n\n## Executive Summary\n\nThe scout_plan_build framework has evolved a pragmatic multi-layer approach to agent isolation:\n\n| Layer | Current State | Security Level |\n|-------|--------------|----------------|\n| Input Validation | Pydantic validators | Strong |\n| Process Isolation | Subprocess with filtered env | Medium |\n| Filesystem Isolation | Git worktrees | Medium |\n| Container Isolation | E2B sandbox PoC | Experimental |\n| Resource Limits | None | Weak |\n\n**Key Finding**: The framework uses git worktrees as a \"poor man's sandbox\" - not true process isolation, but effective for preventing agent state pollution and enabling parallel execution.\n\n---\n\n## 1. Current State Analysis\n\n### 1.1 What Exists Today\n\n**Pydantic Input Validation** (`/adws/adw_modules/validators.py`)\n\nComprehensive input validation covering:\n- Command injection prevention (shell metacharacters blocked)\n- Path traversal prevention (`..` blocked, prefix whitelist enforced)\n- SQL injection pattern blocking\n- Length limits (DoS prevention)\n- Format validation (branch names, commit messages, ADW IDs)\n\n```python\n# Key validators in use:\nSafeUserInput      # Prompts/content (100KB limit)\nSafeFilePath       # Path traversal prevention\nSafeGitBranch      # Branch name validation\nSafeCommitMessage  # Commit injection prevention\nSafeCommandArgs    # Subprocess argument sanitization\n```\n\n**Subprocess Environment Filtering** (`/adws/adw_modules/utils.py`)\n\n```python\ndef get_safe_subprocess_env():\n    \"\"\"Filter environment variables for subprocesses\"\"\"\n    return {\n        \"PATH\": os.getenv(\"PATH\"),\n        \"HOME\": os.getenv(\"HOME\"),\n        \"ANTHROPIC_API_KEY\": os.getenv(\"ANTHROPIC_API_KEY\"),  # Required\n        \"GITHUB_PAT\": os.getenv(\"GITHUB_PAT\"),\n        # Intentionally excludes: AWS keys, DB creds, etc.\n    }\n```\n\n**Git Worktree Isolation** (`/scripts/worktree_manager.sh`)\n\nGit worktrees provide:\n- Isolated working directory per agent/task\n- Independent branch for changes\n- Checkpoint/undo capability via git commits\n- Merge gating before changes reach main\n\n```bash\n# Isolation model\nworktree_create \"agent-task-123\" main\n# Creates: worktrees/agent-task-123/\n# Branch: feature/agent-task-123\n# Agent works here -> changes isolated from main repo\n```\n\n### 1.2 What's Missing\n\n| Gap | Risk Level | Current Mitigation |\n|-----|------------|-------------------|\n| Process isolation | HIGH | None - agents run in same process space |\n| Resource limits | HIGH | None - no CPU/memory/disk limits |\n| Network access | MEDIUM | None - agents can make network calls |\n| Self-poisoning | MEDIUM | Partial - worktrees help but not complete |\n| Timeout enforcement | MEDIUM | Optional timeout in subprocess calls |\n| File descriptor limits | LOW | System defaults only |\n\n---\n\n## 2. Agent Box Supervisor Approach\n\n### 2.1 The Concept\n\nFrom `/ai_docs/research/implementations/agent-box-supervisor-chad.md`:\n\n> \"Agents are fallible/untrusted ... the wrapper enforces order.\"\n\nThe Agent Box model adds a **supervisor layer** between user commands and Claude Code:\n\n```\nUser -> Supervisor -> Claude Code -> Worktree\n           |\n           +-- Enforces tool allowlist\n           +-- Captures session_id for resume\n           +-- Manages run artifacts\n           +-- Implements human gates\n```\n\n### 2.2 Worktree Airlock (Tier 3 Fix Operations)\n\nThe key innovation is the **worktree airlock** for mutation operations:\n\n```yaml\n# From Agent Box spec\nrun_type: fix\nworktree_path: \"agent_box/trees/2025-11-22_1430__fix-auth__a1b2\"\ntools_allowlist: [\"ReadFile\", \"Grep\", \"Ls\", \"EditFile\", \"GitDiff\"]\n# Note: EditFile only works in worktree, not main repo\n```\n\n**Isolation Benefits**:\n1. Agent edits are confined to worktree directory\n2. Changes exported as `.patch` file\n3. Human reviews patch before applying to main\n4. Failed/aborted runs don't pollute main repo\n\n**Self-Poisoning Prevention**:\n```bash\n# Launch Claude with ignore patterns\nclaude --ignore-patterns .agents/ \\\n       --ignore-patterns .claude/commands/run_*/\n```\n\nThis prevents agents from:\n- Reading their own output artifacts\n- Modifying supervisor state files\n- Discovering other run contexts\n\n### 2.3 Permission Matrix\n\n| Tier | Run Type | Allowed Tools | Can Mutate? |\n|------|----------|--------------|-------------|\n| 1 | scout | Grep, Ls, ReadFile, cat | NO |\n| 2 | plan | Tier 1 only | NO |\n| 3 | fix | Tier 1 + EditFile (worktree only) | LOCAL ONLY |\n\nHuman-only commands (`merge_*`, `apply_*`) require:\n```yaml\ndisable-model-invocation: true\n```\n\n---\n\n## 3. Security Gap Analysis\n\n### 3.1 Critical Gaps (Fix Before Production)\n\n**Gap 1: No Process Isolation**\n\n- **Current**: Agents run as subprocess of main process\n- **Risk**: Memory corruption, file descriptor leaks, signal handling issues\n- **Recommended**: Container-based isolation (Docker, E2B)\n\n**Gap 2: API Key Exposure**\n\n- **Current**: `ANTHROPIC_API_KEY` passed to subprocess env\n- **Risk**: Malicious agent code could exfiltrate key\n- **Recommended**: Use secure credential storage, rotate keys\n\n**Gap 3: Webhook Without Authentication**\n\n- **Current**: GitHub webhook endpoint has no signature verification\n- **Risk**: Anyone can trigger ADW workflows\n- **Recommended**: Implement HMAC-SHA256 verification\n\n### 3.2 Medium Gaps (Address for Robustness)\n\n**Gap 4: No Resource Limits**\n\n```python\n# Current subprocess call - no limits\nsubprocess.run(cmd, capture_output=True, timeout=120)\n\n# Recommended: Add resource limits\nimport resource\nresource.setrlimit(resource.RLIMIT_CPU, (60, 60))  # 60 seconds CPU\nresource.setrlimit(resource.RLIMIT_AS, (1024*1024*1024, 1024*1024*1024))  # 1GB memory\n```\n\n**Gap 5: Self-Poisoning (Partial)**\n\nGit worktrees help but don't fully prevent:\n- Agent reading `scout_outputs/` from previous runs\n- Agent accessing `ai_docs/build_reports/` from other agents\n- Log files leaking context between runs\n\n**Gap 6: Timeout Inconsistency**\n\nSome subprocess calls have timeout, others don't:\n```python\n# With timeout\nsubprocess.run(cmd, timeout=5)\n\n# Without timeout (can hang forever)\nsubprocess.run(cmd)  # Missing timeout!\n```\n\n### 3.3 Security Audit Score\n\nFrom `/ai_docs/assessments/SECURITY_AUDIT_REPORT.md`:\n\n> **Overall Security Score**: 6/10\n> **Status**: NOT READY for public release\n\n| Positive | Status |\n|----------|--------|\n| Pydantic validation | Implemented |\n| No shell=True | Followed |\n| Environment filtering | Implemented |\n| Command whitelisting | Implemented |\n\n| Negative | Status |\n|----------|--------|\n| Command injection (scout_simple.py) | VULNERABLE |\n| Webhook authentication | MISSING |\n| Path traversal (partial) | VULNERABLE |\n| API key exposure | RISK |\n\n---\n\n## 4. Minimum Viable Sandboxing (MVP)\n\n### 4.1 Pragmatic Short-Term (1-2 weeks)\n\n**Level 1: Strengthen Current Model**\n\n1. Fix webhook authentication (1 day)\n2. Add consistent timeout to all subprocess calls (1 day)\n3. Sanitize scout_simple.py keyword input (1 hour)\n4. Strengthen path traversal checks with `Path.resolve()` (2 hours)\n\n**Level 2: Implement Agent Box Supervisor**\n\n```python\n# supervisor.py - Minimal implementation\nclass AgentSupervisor:\n    def __init__(self, run_type: str):\n        self.run_dir = self._create_run_dir()\n        self.worktree = None\n        if run_type == \"fix\":\n            self.worktree = self._create_worktree()\n\n    def launch_agent(self, prompt: str):\n        cmd = [\n            \"claude\", \"-p\", prompt,\n            \"--output-format\", \"stream-json\",\n            \"--ignore-patterns\", \".agents/\",\n        ]\n        if self.worktree:\n            cmd.extend([\"--cwd\", self.worktree.path])\n\n        return subprocess.Popen(\n            cmd,\n            stdin=subprocess.DEVNULL,  # Critical for non-TTY\n            stdout=subprocess.PIPE,\n            env=self._get_filtered_env(),\n            timeout=300\n        )\n```\n\n**Level 3: Add Resource Limits**\n\n```python\n# Add to subprocess calls\ndef limited_subprocess(cmd, timeout=120, max_memory_mb=1024):\n    def set_limits():\n        import resource\n        resource.setrlimit(resource.RLIMIT_AS,\n            (max_memory_mb * 1024 * 1024, max_memory_mb * 1024 * 1024))\n\n    return subprocess.run(\n        cmd,\n        preexec_fn=set_limits,\n        timeout=timeout,\n        capture_output=True\n    )\n```\n\n### 4.2 Medium-Term (1-2 months)\n\n**Container-Based Isolation**\n\nThe E2B sandbox PoC (`/adws/adw_tests/sandbox_poc.py`) shows this is viable:\n\n```python\n# Key discovery from PoC\n# Claude Code works in E2B when:\n# 1. stdin=subprocess.DEVNULL or < /dev/null\n# 2. -p flag for non-interactive mode\n# 3. --dangerously-skip-permissions to avoid prompts\n\nwith Sandbox(envs={\"ANTHROPIC_API_KEY\": api_key}) as sandbox:\n    result = sandbox.commands.run(\n        \"~/.npm-global/bin/claude -p 'task' --output-format json \"\n        \"--dangerously-skip-permissions < /dev/null\"\n    )\n```\n\n**Docker Alternative**\n\n```dockerfile\n# Dockerfile.agent\nFROM python:3.11-slim\nRUN npm install -g @anthropic-ai/claude-code\nUSER nobody  # Non-root\nWORKDIR /workspace\n# No network by default\n```\n\n```python\n# Launch agent in container\ndocker run --rm \\\n    --network none \\\n    --memory 1g \\\n    --cpus 1 \\\n    --read-only \\\n    -v /workspace:/workspace \\\n    agent-sandbox claude -p \"task\"\n```\n\n### 4.3 Long-Term (3-6 months)\n\n**Full Agent Box Implementation**\n\n- Supervisor wrapper with lifecycle management\n- Session persistence and resume\n- Run-scoped slash commands\n- Watchdog for zombie reaping\n- Artifact management and garbage collection\n- Human gates for risky operations\n\n---\n\n## 5. Decision Matrix: Isolation Approaches\n\n| Approach | Security | Complexity | Performance | Recommendation |\n|----------|----------|------------|-------------|----------------|\n| Git Worktrees | Medium | Low | High | Use now (MVP) |\n| Subprocess + Limits | Medium | Medium | High | Add to MVP |\n| Docker Containers | High | Medium | Medium | Post-MVP |\n| E2B Sandbox | High | Low | Medium | Evaluate for cloud |\n| Firecracker/gVisor | Very High | High | Medium | Future if needed |\n\n### 5.1 Recommended Path\n\n**Phase 1 (Now)**: Git Worktrees + Subprocess Limits\n- Already have worktree infrastructure\n- Add resource limits (memory, CPU, timeout)\n- Add Agent Box supervisor pattern\n\n**Phase 2 (Month 2)**: Docker Containers\n- Full process isolation\n- Network isolation (--network none)\n- Read-only filesystem where possible\n\n**Phase 3 (Month 3+)**: Production Hardening\n- Secret management (Vault, AWS Secrets Manager)\n- Audit logging\n- Runtime security monitoring\n\n---\n\n## 6. Self-Poisoning Prevention\n\n### 6.1 The Problem\n\nAgents can read their own output, creating feedback loops:\n\n```\nAgent A writes: scout_outputs/relevant_files.json\nAgent B reads: scout_outputs/relevant_files.json (Agent A's output!)\nAgent B now has polluted context\n```\n\n### 6.2 Solutions\n\n**Solution 1: Run-Scoped Output Directories**\n\n```\n.agents/runs/2025-11-22_1430__task__a1b2/\n    output/           # Agent writes here\n    input/            # Agent reads from here (pre-populated)\n```\n\n**Solution 2: Ignore Patterns**\n\n```bash\nclaude --ignore-patterns .agents/ \\\n       --ignore-patterns scout_outputs/ \\\n       --ignore-patterns ai_docs/build_reports/\n```\n\n**Solution 3: Worktree + Symlinks**\n\nEach worktree gets its own output directory:\n```\nworktrees/agent-task-123/\n    scout_outputs/ -> /tmp/isolated-outputs/agent-task-123/\n```\n\n### 6.3 Recommended Approach\n\nCombine worktrees with run-scoped output:\n\n```python\ndef setup_agent_isolation(run_id: str):\n    # Create isolated worktree\n    worktree_path = f\"worktrees/{run_id}\"\n    subprocess.run([\"git\", \"worktree\", \"add\", worktree_path, \"main\"])\n\n    # Create isolated output directory\n    output_dir = f\".agents/runs/{run_id}/output\"\n    os.makedirs(output_dir, exist_ok=True)\n\n    # Symlink output directory into worktree\n    os.symlink(output_dir, f\"{worktree_path}/scout_outputs\")\n\n    return worktree_path, output_dir\n```\n\n---\n\n## 7. State Management and Recovery\n\n### 7.1 Current State Management\n\n**Git-Based Checkpoints** (from worktree_manager.sh):\n\n```bash\n# Create checkpoint\nworktree_checkpoint \"after implementing auth\"\n# Creates: wip-1729418400: after implementing auth\n\n# Undo changes\nworktree_undo 3  # Undo last 3 checkpoints\n\n# Redo if needed\nworktree_redo\n```\n\n**State Files**:\n```\n.git/REDO_STACK           # Stack of undone commits\n.worktree-meta.json       # Worktree configuration\n.checkpoint-history       # Human-readable history\n```\n\n### 7.2 Recommended State Schema\n\nFrom Agent Box spec (`state.json`):\n\n```json\n{\n  \"status\": \"ACTIVE|REVIEW|CRASHED|STALLED|DONE\",\n  \"pid\": 12345,\n  \"session_id\": \"abc123\",\n  \"worktree_path\": \"agent_box/trees/run_a1b2\",\n  \"started_at\": \"2025-11-22T14:30:00Z\",\n  \"last_heartbeat\": \"2025-11-22T14:35:00Z\",\n  \"config_hash\": \"a1b2c3d4\",\n  \"failure\": null\n}\n```\n\n### 7.3 Recovery Scenarios\n\n| Scenario | Detection | Recovery |\n|----------|-----------|----------|\n| Agent OOM | Exit code 137 | Resume from last checkpoint |\n| Agent timeout | No heartbeat >5m | Mark STALLED, allow resume |\n| Agent crash | Non-zero exit | Mark CRASHED, preserve artifacts |\n| Human abort | SIGINT | Mark ABORTED, cleanup gracefully |\n\n```python\n# Recovery implementation\ndef recover_agent(run_id: str):\n    state = load_state(run_id)\n\n    if state[\"status\"] == \"CRASHED\":\n        # Find last safe artifact\n        last_checkpoint = find_last_checkpoint(run_id)\n        print(f\"Resuming from: {last_checkpoint}\")\n\n        # Resume session\n        subprocess.run([\n            \"claude\", \"--resume\", state[\"session_id\"],\n            \"--output-format\", \"stream-json\"\n        ])\n```\n\n---\n\n## 8. Summary and Recommendations\n\n### 8.1 Immediate Actions (This Week)\n\n1. **Fix Critical Vulnerabilities**\n   - Webhook authentication\n   - scout_simple.py command injection\n   - Consistent timeout on all subprocess calls\n\n2. **Implement Basic Supervisor**\n   - Run-scoped output directories\n   - State tracking (state.json)\n   - Ignore patterns for self-poisoning\n\n3. **Add Resource Limits**\n   - Memory limit (1GB default)\n   - CPU timeout (5 minutes default)\n   - Disk quota (optional)\n\n### 8.2 Short-Term (Month 1)\n\n1. **Full Agent Box Implementation**\n   - Tiered permission model\n   - Human gates for risky operations\n   - Session resume capability\n\n2. **Improve Observability**\n   - Structured logging for agent runs\n   - Heartbeat monitoring\n   - Performance metrics\n\n### 8.3 Long-Term (Month 2-3)\n\n1. **Container Isolation**\n   - Docker or E2B for production\n   - Network isolation\n   - Read-only filesystem\n\n2. **Production Hardening**\n   - Secret management\n   - Audit logging\n   - Runtime security monitoring\n\n---\n\n## References\n\n- `/ai_docs/research/implementations/agent-box-supervisor-chad.md` - Agent Box spec\n- `/adws/adw_modules/validators.py` - Current validation implementation\n- `/adws/adw_tests/sandbox_poc.py` - E2B sandbox proof of concept\n- `/ai_docs/assessments/SECURITY_AUDIT_REPORT.md` - Security audit (6/10)\n- `/ai_docs/architecture/GIT_WORKTREE_UNDO_SYSTEM.md` - Worktree architecture\n- `/scripts/worktree_manager.sh` - Worktree implementation\n\n---\n\n*Analysis generated: 2025-11-22*\n*Framework version: scout_plan_build_mvp*\n*Branch: feature/bitbucket-integration*\n"
     }
   },
   {
@@ -31,56 +67,8 @@
     "hook_event_name": "PreToolUse",
     "tool_name": "Bash",
     "tool_input": {
-      "command": "mkdir -p /Users/alexkamysz/AI/scout_plan_build_mvp/trees/command-audit-2/ai_docs/investigations",
-      "description": "Create investigations directory"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Write",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/trees/command-audit-1/ai_docs/investigations/slug_generation_patterns.md",
-      "content": "# Slug Generation Patterns Investigation\n\n**Date**: 2025-11-22\n**Investigator**: Haiku 4.5 Agent (command-audit-1 worktree)\n**Working Directory**: `/Users/alexkamysz/AI/scout_plan_build_mvp/trees/command-audit-1`\n\n## Executive Summary\n\nThe codebase contains **two distinct slug generation patterns** with different purposes:\n1. **Text slugification** - for human-readable URL-friendly slugs\n2. **ADW ID validation** - for structured workflow identifiers\n\n---\n\n## 1. Primary Slugify Function\n\n**Location**: `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_common.py:27-30`\n\n```python\ndef slugify(text: str) -> str:\n    text = text.lower().strip()\n    text = re.sub(r\"[^a-z0-9]+\", \"-\", text)\n    return re.sub(r\"-+\", \"-\", text).strip(\"-\")\n```\n\n### Behavior\n- Converts to **lowercase**\n- Replaces non-alphanumeric characters with hyphens\n- Collapses multiple consecutive hyphens to single hyphen\n- Strips leading/trailing hyphens\n\n### Example Transformations\n| Input | Output |\n|-------|--------|\n| `\"JWT Authentication\"` | `\"jwt-authentication\"` |\n| `\"Add user  login!!!\"` | `\"add-user-login\"` |\n| `\"Fix @#$ Bug\"` | `\"fix-bug\"` |\n\n---\n\n## 2. Alternative Slug Generation (in constants.py)\n\n**Location**: `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/constants.py:159-160`\n\n```python\nslug = \"\".join(c if c.isalnum() or c in \"-_\" else \"-\"\n               for c in task_name.lower())[:50]\n```\n\n### Differences from main slugify\n- Preserves **underscores** (not just hyphens)\n- Has **50-character limit**\n- Does **NOT** collapse consecutive hyphens\n- Used specifically for build report path generation\n\n---\n\n## 3. FileOrganizer Clean Name Pattern\n\n**Location**: `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/file_organization.py:56-57`\n\n```python\nclean_name = \"\".join(c if c.isalnum() or c in \"-_\" else \"_\"\n                    for c in task_name.lower())[:50]\n```\n\n### Differences\n- Uses **underscore** as default replacement (not hyphen)\n- Same 50-character limit\n- Used for timestamped directory names\n\n---\n\n## 4. ADW ID Format\n\n**Location**: `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/validators.py:265-283`\n\n```python\nadw_id: Annotated[str, Field(\n    min_length=5,\n    max_length=MAX_ADW_ID_LENGTH,  # 64 chars\n    pattern=r'^ADW-[A-Z0-9]+$'\n)]\n```\n\n### ADW ID Rules\n- **Prefix**: Must start with `ADW-`\n- **Suffix**: Only uppercase letters and digits (`A-Z0-9`)\n- **Length**: 5-64 characters total\n- **Examples**: `ADW-001`, `ADW-AUTH001`, `ADW-EXT001`, `ADW-123ABC`\n\n### Invalid ADW IDs (rejected)\n- `ADW-` (empty suffix)\n- `adw-123` (lowercase)\n- `ADW-123@456` (special characters)\n- `ADW-TEST;rm` (shell injection attempt)\n- `ADW-$(pwd)` (command injection attempt)\n\n---\n\n## 5. File Naming Patterns\n\n### Plan/Spec Files\n**Format**: `issue-{issue_num}-adw-{adw_id}-{slug}.md`\n**Location**: `specs/` directory\n**Example**: `specs/issue-123-adw-AUTH001-jwt-auth.md`\n\n### Build Reports\n**Format**: `{slug}-build-report.md` or `{slug}-{adw_id}-build-report.md`\n**Location**: `ai_docs/build_reports/`\n**Example**: `ai_docs/build_reports/jwt-auth-build-report.md`\n\n### Timestamped Directories\n**Format**: `{YYYYMMDD-HHMMSS}-{adw_id}-{clean_name}`\n**Location**: `ai_docs/outputs/`\n**Example**: `ai_docs/outputs/20251122-143256-AUTH-001-jwt_authentication/`\n\n---\n\n## 6. Timestamps in Patterns\n\n### Where Used\n1. **Task directories**: `create_task_directory()` uses `datetime.now().strftime(\"%Y%m%d-%H%M%S\")`\n2. **Metadata files**: ISO 8601 format in `metadata.json`\n\n### Where NOT Used\n- Plan/spec filenames (no timestamp)\n- Build report filenames (no timestamp)\n- ADW IDs (no timestamp component)\n\n---\n\n## 7. Security Considerations\n\n### Path Validation\nSlugs are used in file paths and must pass validators that check:\n- No path traversal (`..`)\n- No null bytes\n- Within allowed prefixes (e.g., `specs/`, `scout_outputs/`, `ai_docs/`)\n\n### ADW ID Security\nThe regex pattern `^ADW-[A-Z0-9]+$` explicitly prevents:\n- Shell metacharacters (`;`, `|`, `&`, `$`, etc.)\n- Command injection patterns\n- Path traversal attempts\n\n---\n\n## 8. Inconsistencies Found\n\n| Location | Issue |\n|----------|-------|\n| `adw_common.py` | Main `slugify()` doesn't preserve underscores |\n| `constants.py` | Uses different slugification logic |\n| `file_organization.py` | Uses underscore instead of hyphen as replacement |\n\n### Recommendation\nConsider consolidating to a single `slugify()` function with options for different behaviors to ensure consistency.\n\n---\n\n## Summary Table\n\n| Component | Function/Pattern | Char Limit | Preserves `_` | Preserves `-` | Timestamp |\n|-----------|-----------------|------------|---------------|---------------|-----------|\n| adw_common.slugify | `re.sub(r\"[^a-z0-9]+\", \"-\", ...)` | 80* | No | Yes | No |\n| constants.py slug | `c.isalnum() or c in \"-_\"` | 50 | Yes | Yes | No |\n| file_organization | `c.isalnum() or c in \"-_\"` | 50 | Yes | Yes | **Yes** (prefix) |\n| ADW ID | `^ADW-[A-Z0-9]+$` | 64 | No | Yes (literal) | No |\n\n*80 char limit applied at usage site in `adw_plan.py`, not in function\n\n---\n\n## Files Analyzed\n\n1. `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_common.py`\n2. `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/file_organization.py`\n3. `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/constants.py`\n4. `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/validators.py`\n5. `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/validators_v2_fix.py`\n6. `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_tests/test_validators.py`\n"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Write",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/trees/command-audit-3/ai_docs/investigations/repo_root_chaos_analysis.md",
-      "content": "# Repository Root File Organization Chaos Analysis\n\n**Analysis Date**: 2025-11-22\n**Analyzed By**: Command Audit Agent (Haiku 4.5)\n**Working Directory**: /Users/alexkamysz/AI/scout_plan_build_mvp\n\n---\n\n## Executive Summary\n\nThe repository root contains **15 markdown files** that should not be there. This represents a systematic file organization problem where agent outputs, analysis reports, and documentation are being dumped in the root instead of their canonical locations.\n\n**Total Misplaced Files**: 12 (excludes legitimate root files)\n**Estimated Cleanup Required**: ~2 hours manual effort or automated script\n\n---\n\n## File Inventory and Classification\n\n### Legitimate Root Files (Keep)\n| File | Purpose | Status |\n|------|---------|--------|\n| `CLAUDE.md` | Agent instructions (main) | Keep |\n| `CLAUDE.local.md` | Local environment overrides | Keep (.gitignored) |\n| `README.md` | (Not listed but standard) | Keep |\n\n### Misplaced Files - Should Be in `ai_docs/`\n\n| File | Size | Date | Should Go To | Why |\n|------|------|------|--------------|-----|\n| `ANALYSIS_SUMMARY.md` | 12KB | Nov 9 | `ai_docs/analyses/` | Agent analysis output |\n| `FRAMEWORK_ANALYSIS_INDEX.md` | 8KB | Nov 9 | `ai_docs/analyses/` | Index of agent analyses |\n| `SCOUT_FRAMEWORK_DEEP_ANALYSIS.md` | 22KB | Nov 9 | `ai_docs/analyses/` | Deep analysis report |\n| `FRAMEWORK_ARCHITECTURE_PATTERNS.md` | 17KB | Nov 9 | `ai_docs/architecture/` | Architecture patterns doc |\n| `DOCUMENTATION_AUDIT_REPORT.md` | 15KB | Nov 22 | `ai_docs/analyses/` | Audit report |\n| `OUTDATED_REFERENCES_AUDIT.md` | 9KB | Nov 22 | `ai_docs/analyses/` | Audit report |\n| `GIT_WORKTREE_PARALLELIZATION_SCOUT_REPORT.md` | 16KB | Nov 22 | `ai_docs/research/` | Scout/research output |\n\n### Misplaced Files - Should Be in `docs/`\n\n| File | Size | Date | Should Go To | Why |\n|------|------|------|--------------|-----|\n| `INSTALLATION_GUIDE.md` | 12KB | Nov 9 | `docs/guides/` | User-facing documentation |\n| `DIRECTORY_STRUCTURE.md` | 14KB | Nov 22 | `docs/reference/` | Reference documentation |\n\n### Misplaced Files - Should Be in `specs/` or Versioned\n\n| File | Size | Date | Should Go To | Why |\n|------|------|------|--------------|-----|\n| `CLAUDE_v4.md` | 9KB | Nov 9 | `specs/` or merge to CLAUDE.md | Version proposal |\n| `CLAUDE_v4_PROPOSED.md` | 5KB | Nov 22 | `specs/` or delete | Draft proposal |\n| `WHERE_ARE_THE_PLANS.md` | 2KB | Nov 8 | Delete or `docs/` | Temporary navigation aid |\n\n### Questionable Files - Need Decision\n\n| File | Size | Date | Recommendation |\n|------|------|------|----------------|\n| `run_log.md` | 30KB | Nov 22 | Move to `logs/` or add to `.gitignore` |\n\n---\n\n## Pattern Analysis: Why Is This Happening?\n\n### Root Cause 1: Agents Writing to CWD\nMany agent outputs are being written to the current working directory without specifying the correct output path.\n\n**Evidence**:\n- `ANALYSIS_SUMMARY.md` - Written by analysis agent directly to root\n- `GIT_WORKTREE_PARALLELIZATION_SCOUT_REPORT.md` - Scout report dumped in root\n- `DOCUMENTATION_AUDIT_REPORT.md` - Audit agent wrote to root\n\n### Root Cause 2: No Enforcement of Output Paths\nThe framework documents canonical locations (`ai_docs/analyses/`, `docs/`, etc.) but doesn't enforce them in the tooling.\n\n**Evidence from DIRECTORY_STRUCTURE.md**:\n```\n\u251c\u2500\u2500 ai_docs/\n\u2502   \u251c\u2500\u2500 analyses/           \u2190 Analysis reports SHOULD go here\n\u2502   \u251c\u2500\u2500 research/           \u2190 Scout outputs SHOULD go here\n```\n\nYet files are landing in root.\n\n### Root Cause 3: Version Drift of CLAUDE.md\nMultiple versions of the agent instructions exist:\n- `CLAUDE.md` (v3 - current)\n- `CLAUDE_v4.md` (proposed v4)\n- `CLAUDE_v4_PROPOSED.md` (another v4 proposal)\n\nThis creates confusion about which is authoritative.\n\n### Root Cause 4: run_log.md as Uncontrolled Growth\nThe `run_log.md` file (30KB and growing) is essentially an operation log that:\n- Is modified by multiple tools/agents\n- Has no size limit or rotation\n- Should probably be in `logs/` or gitignored\n\n---\n\n## Impact Assessment\n\n### Immediate Problems\n1. **Git noise**: 12+ unnecessary files show in `git status`\n2. **Confusion**: Which CLAUDE.md is authoritative?\n3. **Discoverability**: Agent outputs hard to find when scattered\n4. **Scalability**: Problem will worsen as more agents run\n\n### Long-term Risks\n1. **Accidental commits**: Temporary analysis files getting committed\n2. **Stale documentation**: Multiple versions of same doc diverge\n3. **Onboarding friction**: New users confused by root clutter\n\n---\n\n## Commands/Agents That Are Worst Offenders\n\nBased on file timestamps and content analysis:\n\n### 1. Analysis/Scout Agents (Most Prolific)\n- `ANALYSIS_SUMMARY.md` - Analysis workflow\n- `SCOUT_FRAMEWORK_DEEP_ANALYSIS.md` - Scout workflow\n- `FRAMEWORK_ANALYSIS_INDEX.md` - Analysis workflow\n- `GIT_WORKTREE_PARALLELIZATION_SCOUT_REPORT.md` - Scout workflow\n\n### 2. Documentation Agents\n- `DOCUMENTATION_AUDIT_REPORT.md` - Audit workflow\n- `OUTDATED_REFERENCES_AUDIT.md` - Audit workflow\n\n### 3. Manual/Ad-hoc Creation\n- `INSTALLATION_GUIDE.md` - Likely created manually\n- `DIRECTORY_STRUCTURE.md` - Likely created manually\n- `CLAUDE_v4.md`, `CLAUDE_v4_PROPOSED.md` - Proposals\n\n---\n\n## Recommended Cleanup Actions\n\n### Immediate (Low Risk)\n```bash\n# Move analysis outputs to ai_docs/analyses/\nmv ANALYSIS_SUMMARY.md ai_docs/analyses/\nmv FRAMEWORK_ANALYSIS_INDEX.md ai_docs/analyses/\nmv SCOUT_FRAMEWORK_DEEP_ANALYSIS.md ai_docs/analyses/\nmv DOCUMENTATION_AUDIT_REPORT.md ai_docs/analyses/\nmv OUTDATED_REFERENCES_AUDIT.md ai_docs/analyses/\nmv FRAMEWORK_ARCHITECTURE_PATTERNS.md ai_docs/architecture/\n\n# Move scout/research outputs\nmv GIT_WORKTREE_PARALLELIZATION_SCOUT_REPORT.md ai_docs/research/\n\n# Move user-facing docs\nmv INSTALLATION_GUIDE.md docs/guides/\nmv DIRECTORY_STRUCTURE.md docs/reference/\n\n# Handle versioning chaos\nmv CLAUDE_v4.md specs/claude-v4-proposal.md\nmv CLAUDE_v4_PROPOSED.md specs/claude-v4-router-proposal.md\nrm WHERE_ARE_THE_PLANS.md  # Outdated navigation aid\n\n# Handle run_log.md\nmv run_log.md logs/run_log.md\n# OR add to .gitignore\n```\n\n### Systemic Fixes (Prevent Recurrence)\n1. **Update .gitignore** - Add patterns for common misplaced outputs:\n   ```\n   # Agent outputs that shouldn't be tracked\n   *_ANALYSIS.md\n   *_REPORT.md\n   *_AUDIT.md\n   run_log.md\n   ```\n\n2. **Update Agent Prompts** - Add explicit output path requirements\n3. **Add Pre-commit Hook** - Warn if .md files created in root\n\n---\n\n## .gitignore Analysis\n\nCurrent .gitignore is minimal:\n```\n__pycache__/\n*.pyc\n```\n\n**Missing patterns that would help**:\n```\n# Temporary analysis outputs\n*_ANALYSIS.md\n*_REPORT.md\n*_AUDIT.md\n*_SUMMARY.md\n\n# Operation logs\nrun_log.md\n\n# Local overrides (already handled?)\nCLAUDE.local.md\n```\n\n---\n\n## Summary Statistics\n\n| Category | Count | Total Size |\n|----------|-------|------------|\n| Should be in `ai_docs/` | 7 files | ~99 KB |\n| Should be in `docs/` | 2 files | ~26 KB |\n| Should be in `specs/` | 2 files | ~14 KB |\n| Should be deleted/gitignored | 2 files | ~32 KB |\n| **Total Misplaced** | **12 files** | **~171 KB** |\n\n---\n\n## Conclusion\n\nThe repository root has accumulated 12 misplaced files totaling approximately 171KB of content that belongs elsewhere. This is a systematic problem caused by:\n\n1. Agents defaulting to writing in the current working directory\n2. Lack of enforcement of the documented canonical file locations\n3. No .gitignore patterns to catch common misplacements\n\nThe cleanup is straightforward but the systemic fix requires updating agent prompts and adding pre-commit hooks to prevent recurrence.\n"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Write",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/trees/command-audit-4/ai_docs/investigations/output_organization_proposal.md",
-      "content": "# Agent Output Organization Proposal\n\n**Date**: 2025-11-22\n**Status**: PROPOSAL\n**Author**: Agent (Haiku 4.5)\n**Purpose**: Design a simple, effective organization system for agent outputs\n\n---\n\n## Executive Summary\n\nThis proposal defines a **unified output organization system** that:\n- Prevents root directory pollution\n- Enables easy artifact discovery\n- Supports parallel agent execution\n- Balances simplicity with traceability\n\n**Core Principle**: One location per output type, with timestamps for sortability and slugs for readability.\n\n---\n\n## 1. Directory Structure\n\n### Primary Layout\n\n```\nagent_outputs/\n\u251c\u2500\u2500 YYYY-MM-DD/                    # Date-based organization (auto-cleanup friendly)\n\u2502   \u251c\u2500\u2500 scouts/                    # Scout phase outputs\n\u2502   \u2502   \u251c\u2500\u2500 143052-auth-debug.json\n\u2502   \u2502   \u2514\u2500\u2500 155230-api-routes.json\n\u2502   \u2502\n\u2502   \u251c\u2500\u2500 builds/                    # Build phase outputs\n\u2502   \u2502   \u251c\u2500\u2500 143052-auth-debug-report.md\n\u2502   \u2502   \u2514\u2500\u2500 155230-api-routes-report.md\n\u2502   \u2502\n\u2502   \u251c\u2500\u2500 reviews/                   # Review phase outputs\n\u2502   \u2502   \u2514\u2500\u2500 160000-auth-debug-review.md\n\u2502   \u2502\n\u2502   \u251c\u2500\u2500 tests/                     # Test phase outputs\n\u2502   \u2502   \u2514\u2500\u2500 161500-auth-debug-tests.md\n\u2502   \u2502\n\u2502   \u2514\u2500\u2500 temp/                      # Temporary working files (auto-cleanup)\n\u2502       \u2514\u2500\u2500 worktree-1-scratch/\n\u2502\n\u251c\u2500\u2500 persistent/                    # Long-lived artifacts (NOT date-scoped)\n\u2502   \u251c\u2500\u2500 specs/                     # Implementation specifications\n\u2502   \u2502   \u2514\u2500\u2500 issue-001-adw-AUTH-001-jwt-authentication.md\n\u2502   \u2502\n\u2502   \u251c\u2500\u2500 workflows/                 # Workflow state files\n\u2502   \u2502   \u2514\u2500\u2500 ADW-AUTH-001/\n\u2502   \u2502       \u251c\u2500\u2500 adw_state.json\n\u2502   \u2502       \u2514\u2500\u2500 execution.log\n\u2502   \u2502\n\u2502   \u2514\u2500\u2500 reports/                   # Final reports (aggregated)\n\u2502       \u2514\u2500\u2500 ADW-AUTH-001-final-report.md\n\u2502\n\u2514\u2500\u2500 latest/                        # Symlinks to most recent outputs\n    \u251c\u2500\u2500 scout.json -> ../2025-11-22/scouts/155230-api-routes.json\n    \u2514\u2500\u2500 build-report.md -> ../2025-11-22/builds/155230-api-routes-report.md\n```\n\n### Why This Structure?\n\n| Decision | Rationale |\n|----------|-----------|\n| **Date-based top level** | Easy cleanup (delete old dates), natural sorting, prevents infinite accumulation |\n| **Category subdirectories** | Quick navigation by output type |\n| **`persistent/` separate** | Specs and workflows outlive daily outputs |\n| **`latest/` symlinks** | Always find most recent without timestamp knowledge |\n| **`temp/` per day** | Isolates temporary files, auto-cleanup friendly |\n\n---\n\n## 2. Slug Generation Patterns\n\n### Standard Slug Format\n\n```\n{HHMMSS}-{task-slug}[-{suffix}].{ext}\n```\n\n**Components**:\n- `HHMMSS` - Time portion (date from parent directory)\n- `task-slug` - Kebab-case task description (max 40 chars)\n- `suffix` - Optional qualifier (report, review, tests)\n- `ext` - File extension\n\n### Examples\n\n| Context | Slug | Full Path |\n|---------|------|-----------|\n| Scout output | `143052-auth-debug.json` | `agent_outputs/2025-11-22/scouts/143052-auth-debug.json` |\n| Build report | `143052-auth-debug-report.md` | `agent_outputs/2025-11-22/builds/143052-auth-debug-report.md` |\n| Review | `160000-auth-debug-review.md` | `agent_outputs/2025-11-22/reviews/160000-auth-debug-review.md` |\n| Test results | `161500-auth-debug-tests.md` | `agent_outputs/2025-11-22/tests/161500-auth-debug-tests.md` |\n\n### Slug Generation Rules\n\n```python\nimport re\nfrom datetime import datetime\n\ndef generate_slug(task_description: str, suffix: str = \"\", max_length: int = 40) -> str:\n    \"\"\"Generate a readable, sortable slug from task description.\"\"\"\n    # Get timestamp (time only - date is in parent directory)\n    timestamp = datetime.now().strftime(\"%H%M%S\")\n\n    # Normalize task description\n    slug = task_description.lower()\n    slug = re.sub(r'[^a-z0-9\\s-]', '', slug)  # Remove special chars\n    slug = re.sub(r'[\\s_]+', '-', slug)        # Spaces/underscores to hyphens\n    slug = re.sub(r'-+', '-', slug)            # Collapse multiple hyphens\n    slug = slug.strip('-')                      # Remove leading/trailing hyphens\n\n    # Truncate to max length\n    if len(slug) > max_length:\n        slug = slug[:max_length].rsplit('-', 1)[0]  # Don't cut mid-word\n\n    # Combine with timestamp and suffix\n    if suffix:\n        return f\"{timestamp}-{slug}-{suffix}\"\n    return f\"{timestamp}-{slug}\"\n```\n\n---\n\n## 3. Parallel Agent Outputs\n\n### Problem\nWhen multiple agents run in parallel (via git worktrees), they may generate outputs simultaneously. Without coordination, this could cause:\n- File name collisions\n- Race conditions in `latest/` symlinks\n- Unclear output provenance\n\n### Solution: Agent ID Prefix\n\nFor parallel execution, include agent identifier:\n\n```\n{HHMMSS}-{agent-id}-{task-slug}[-{suffix}].{ext}\n```\n\n**Examples**:\n```\n143052-wt1-auth-debug.json          # Worktree 1\n143052-wt2-api-routes.json          # Worktree 2\n143052-main-config-check.json       # Main worktree\n```\n\n### Agent ID Conventions\n\n| Context | Agent ID Format | Example |\n|---------|-----------------|---------|\n| Main worktree | `main` | `143052-main-auth.json` |\n| Git worktree N | `wt{N}` | `143052-wt1-auth.json` |\n| Subagent | `sub{N}` | `143052-sub1-models.json` |\n| Named agent | `{name}` (max 8 chars) | `143052-security-audit.json` |\n\n---\n\n## 4. Subagent Reports\n\n### Problem\nSubagents (spawned by parent agents) produce intermediate outputs that need:\n- Association with parent task\n- Aggregation into final report\n- Optional preservation for debugging\n\n### Solution: Nested Structure\n\n```\nagent_outputs/2025-11-22/scouts/\n\u251c\u2500\u2500 143052-auth-debug.json           # Final aggregated scout result\n\u2514\u2500\u2500 143052-auth-debug-parts/         # Subagent outputs (optional)\n    \u251c\u2500\u2500 sub1-models.json\n    \u251c\u2500\u2500 sub2-routes.json\n    \u251c\u2500\u2500 sub3-tests.json\n    \u2514\u2500\u2500 sub4-config.json\n```\n\n### Subagent Output Rules\n\n1. **Subagents write to `{parent-slug}-parts/`** subdirectory\n2. **Parent agent aggregates** into single final output\n3. **Parts are optional** - delete after aggregation if not needed for debugging\n4. **Naming**: `{subagent-id}-{focus}.{ext}`\n\n---\n\n## 5. Temporary vs Permanent Artifacts\n\n### Classification\n\n| Artifact Type | Lifetime | Location | Auto-Cleanup |\n|---------------|----------|----------|--------------|\n| **Temporary** | Hours | `agent_outputs/YYYY-MM-DD/temp/` | Yes (24-48h) |\n| **Transient** | Days | `agent_outputs/YYYY-MM-DD/{category}/` | Yes (7-30 days) |\n| **Persistent** | Months+ | `agent_outputs/persistent/` | No |\n\n### Cleanup Strategy\n\n```bash\n# Auto-cleanup rules (suggested cron job)\n\n# Delete temp files older than 24 hours\nfind agent_outputs/*/temp -mtime +1 -delete\n\n# Delete transient outputs older than 30 days\nfind agent_outputs/20* -maxdepth 0 -mtime +30 -exec rm -rf {} \\;\n\n# Never auto-delete persistent/\n# (Manual cleanup only)\n```\n\n### Promotion to Persistent\n\nWhen a transient artifact should become permanent:\n\n```python\ndef promote_to_persistent(transient_path: str, persistent_category: str):\n    \"\"\"Move artifact from date-based to persistent storage.\"\"\"\n    import shutil\n    from pathlib import Path\n\n    src = Path(transient_path)\n    dst = Path(f\"agent_outputs/persistent/{persistent_category}/{src.name}\")\n    dst.parent.mkdir(parents=True, exist_ok=True)\n    shutil.move(src, dst)\n    return dst\n```\n\n---\n\n## 6. Integration with Existing Structure\n\n### Mapping Current to Proposed\n\n| Current Location | Proposed Location | Notes |\n|------------------|-------------------|-------|\n| `scout_outputs/relevant_files.json` | `agent_outputs/persistent/scouts/relevant_files.json` | Keep as canonical scout output |\n| `specs/issue-*.md` | `agent_outputs/persistent/specs/` | Unchanged (critical artifacts) |\n| `ai_docs/build_reports/` | `agent_outputs/YYYY-MM-DD/builds/` | Date-organize for cleanup |\n| `ai_docs/reviews/` | `agent_outputs/YYYY-MM-DD/reviews/` | Date-organize for cleanup |\n| `scout_outputs/workflows/` | `agent_outputs/persistent/workflows/` | Workflow state is persistent |\n| `logs/{session-id}/` | Keep separate | Logs are observability, not artifacts |\n\n### Backward Compatibility\n\n```python\n# Read from both old and new locations\ndef find_artifact(artifact_type: str, name: str) -> Path:\n    \"\"\"Find artifact in new or legacy location.\"\"\"\n    # Try new location first\n    new_paths = [\n        Path(f\"agent_outputs/persistent/{artifact_type}/{name}\"),\n        *Path(\"agent_outputs\").glob(f\"*/{{artifact_type}}/{name}\"),\n    ]\n\n    # Fallback to legacy locations\n    legacy_paths = {\n        \"scouts\": Path(f\"scout_outputs/{name}\"),\n        \"specs\": Path(f\"specs/{name}\"),\n        \"builds\": Path(f\"ai_docs/build_reports/{name}\"),\n        \"reviews\": Path(f\"ai_docs/reviews/{name}\"),\n    }\n\n    for path in new_paths:\n        if path.exists():\n            return path\n\n    legacy = legacy_paths.get(artifact_type)\n    if legacy and legacy.exists():\n        return legacy\n\n    raise FileNotFoundError(f\"{artifact_type}/{name} not found\")\n```\n\n---\n\n## 7. Implementation Recommendations\n\n### Phase 1: Add New Structure (Week 1)\n- Create `agent_outputs/` directory structure\n- Implement slug generation utility\n- Update one workflow (e.g., scout) to use new paths\n- Keep old paths functional (read from both)\n\n### Phase 2: Migrate Writes (Week 2-3)\n- Update all workflow phases to write to new locations\n- Update `latest/` symlinks after each write\n- Add cleanup cron job for temp/transient files\n\n### Phase 3: Deprecate Old Paths (Week 4+)\n- Add deprecation warnings when reading from old locations\n- Migrate any remaining consumers\n- Eventually remove old paths from `ALLOWED_PATH_PREFIXES`\n\n---\n\n## 8. Quick Reference Card\n\n### Finding Files\n\n```bash\n# Most recent scout output\ncat agent_outputs/latest/scout.json\n\n# Today's build reports\nls agent_outputs/$(date +%Y-%m-%d)/builds/\n\n# All specs (persistent)\nls agent_outputs/persistent/specs/\n\n# Specific workflow state\ncat agent_outputs/persistent/workflows/ADW-AUTH-001/adw_state.json\n```\n\n### Creating Outputs\n\n```python\nfrom pathlib import Path\nfrom datetime import datetime\n\ndef get_output_path(category: str, slug: str, persistent: bool = False) -> Path:\n    \"\"\"Get canonical output path for artifact.\"\"\"\n    if persistent:\n        return Path(f\"agent_outputs/persistent/{category}/{slug}\")\n    else:\n        date = datetime.now().strftime(\"%Y-%m-%d\")\n        return Path(f\"agent_outputs/{date}/{category}/{slug}\")\n```\n\n### Slug Cheat Sheet\n\n| Input | Slug |\n|-------|------|\n| \"JWT Authentication Implementation\" | `143052-jwt-authentication-implementation` |\n| \"Fix bug #123 in auth module\" | `143052-fix-bug-123-in-auth-module` |\n| \"API routes analysis\" | `143052-api-routes-analysis` |\n| \"Security audit (critical)\" | `143052-security-audit-critical` |\n\n---\n\n## 9. Anti-Patterns to Avoid\n\n1. **Timestamps in directory names** (except date)\n   - Bad: `agent_outputs/20251122-143052-auth/`\n   - Good: `agent_outputs/2025-11-22/scouts/143052-auth.json`\n\n2. **Deep nesting** (>3 levels)\n   - Bad: `agent_outputs/2025/11/22/scouts/auth/debug/`\n   - Good: `agent_outputs/2025-11-22/scouts/143052-auth-debug.json`\n\n3. **Inconsistent slug formats**\n   - Bad: `auth_debug.json`, `AuthDebug.json`, `auth-debug.json` (mixed)\n   - Good: Always `kebab-case` with timestamp prefix\n\n4. **Overusing persistent/**\n   - Only truly long-lived artifacts (specs, workflows)\n   - Most outputs are transient and should be date-organized\n\n5. **Manual file organization**\n   - Always use helper functions\n   - Never hardcode paths\n\n---\n\n## 10. Summary\n\n### Key Decisions\n\n| Aspect | Decision | Rationale |\n|--------|----------|-----------|\n| **Top-level organization** | Date-based (`YYYY-MM-DD/`) | Easy cleanup, natural sorting |\n| **Slug format** | `{HHMMSS}-{task-slug}[-{suffix}]` | Readable, sortable, unique |\n| **Parallel outputs** | Agent ID prefix (`wt1-`, `sub1-`) | Prevents collisions |\n| **Subagent outputs** | `{parent}-parts/` subdirectory | Clear association |\n| **Cleanup** | Date directories auto-delete | Prevents accumulation |\n| **Persistent artifacts** | Separate `persistent/` tree | Clear lifetime distinction |\n\n### Expected Benefits\n\n1. **40% reduction in root directory clutter** - All outputs in one tree\n2. **Easy cleanup** - Delete old date directories\n3. **Fast discovery** - `latest/` symlinks, predictable paths\n4. **Parallel-safe** - Agent ID prefixes prevent collisions\n5. **Backward compatible** - Gradual migration with fallback reads\n\n---\n\n**Next Steps**:\n1. Review and approve proposal\n2. Implement slug generation utility\n3. Update one workflow phase as pilot\n4. Iterate based on feedback\n"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Write",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/trees/command-audit-2/ai_docs/investigations/artifact_management_patterns.md",
-      "content": "# Artifact Management Patterns - Investigation Report\n\n**Investigation Date**: 2024-11-22\n**Investigator**: Haiku 4.5 Agent\n**Working Directory**: `/Users/alexkamysz/AI/scout_plan_build_mvp/trees/command-audit-2`\n**Scope**: Current artifact and output management patterns in the scout_plan_build_mvp framework\n\n---\n\n## 1. EXECUTIVE SUMMARY\n\nThe framework has a **well-defined canonical directory structure** with centralized path constants in `adws/adw_modules/constants.py`. Output organization follows a clear hierarchy documented in `DIRECTORY_STRUCTURE.md` and `.scout_framework.yaml`. The pattern enforces \"One Location Per Output Type\" with deprecated legacy paths maintained for backward compatibility.\n\n---\n\n## 2. CANONICAL OUTPUT LOCATIONS\n\n### 2.1 Source of Truth: `adws/adw_modules/constants.py`\n\nAll paths are defined in this central module:\n\n```python\n# Scout Outputs\nSCOUT_OUTPUT_DIR = Path(\"scout_outputs\")\nSCOUT_TEMP_DIR = SCOUT_OUTPUT_DIR / \"temp\"\nSCOUT_FINAL_FILE = SCOUT_OUTPUT_DIR / \"relevant_files.json\"\nSCOUT_WORKFLOW_DIR = SCOUT_OUTPUT_DIR / \"workflows\"\n\n# Build Outputs\nAI_DOCS_DIR = Path(\"ai_docs\")\nBUILD_REPORTS_DIR = AI_DOCS_DIR / \"build_reports\"\nREVIEWS_DIR = AI_DOCS_DIR / \"reviews\"\nOUTPUTS_DIR = AI_DOCS_DIR / \"outputs\"\n\n# Specifications\nSPECS_DIR = Path(\"specs\")\n```\n\n### 2.2 Full Directory Hierarchy\n\n| Output Type | Canonical Location | Example File |\n|-------------|-------------------|--------------|\n| **Scout results** | `scout_outputs/relevant_files.json` | JSON with file list, task, method, timestamp |\n| **Implementation plans** | `specs/issue-NNN-adw-XXX-*.md` | `specs/issue-001-adw-AUTH-001-jwt-authentication.md` |\n| **Build reports** | `ai_docs/build_reports/` | `structured-error-handling-build-report.md` |\n| **Code reviews** | `ai_docs/reviews/` | `agentic-primitives-v2-review.md` |\n| **Workflow state** | `scout_outputs/workflows/{adw_id}/` | `ADW-AUTH-001/adw_state.json` (planned, directory currently empty) |\n| **Execution logs** | `scout_outputs/workflows/{adw_id}/` | `ADW-AUTH-001/execution.log` (planned) |\n| **Hook logs** | `logs/{session_id}/` | `f67ada19-d93f-49c5-97fc-b71de9cb32e7/post_tool_use.json` |\n| **Timestamped archives** | `ai_docs/outputs/{timestamp}-{adw_id}-{task}/` | `20241120-154512-ADW-AUTH-001-jwt-auth/` |\n| **Research** | `ai_docs/research/` | `videos/`, `articles/`, `implementations/`, `papers/` |\n| **Sessions/Handoffs** | `ai_docs/sessions/handoffs/` | `handoff-2024-11-22.md` |\n| **Analyses** | `ai_docs/analyses/` | `COMMAND_AUDIT_ANALYSIS.md` |\n\n---\n\n## 3. NAMING CONVENTIONS\n\n### 3.1 Spec Files (Plans)\n\n**Pattern**: `issue-{issue_num}-adw-{adw_id}-{slug}.md`\n\n**Examples**:\n- `issue-001-adw-BITBUCKET-001-bitbucket-integration.md`\n- `issue-001-adw-ext001-sdlc_planner-external-tool-support.md`\n- `issue-001-adw-AUTH-001-jwt-authentication.md`\n\n### 3.2 Build Reports\n\n**Pattern**: `{slug}-build-report.md` or `{slug}-{adw_id}-build-report.md`\n\n**Examples**:\n- `structured-error-handling-build-report.md`\n- `plan-summarize-and-versioning-build-report.md`\n\n### 3.3 Review Files\n\n**Pattern**: `{slug}-review.md`\n\n**Examples**:\n- `agentic-primitives-v2-review.md`\n- `plan-summarize-and-versioning-review.md`\n\n### 3.4 Handoff Documents\n\n**Pattern**: `handoff-{YYYY-MM-DD}.md` or `handoff-{YYYY-MM-DD}-{qualifier}.md`\n\n**Examples**:\n- `handoff-2024-11-21.md`\n- `handoff-2024-11-22.md`\n- `handoff-2024-11-22-final.md`\n\n### 3.5 Analysis Documents\n\n**Pattern**: `{TOPIC}_ANALYSIS.md` (uppercase, underscore-separated)\n\n**Examples**:\n- `COMMAND_AUDIT_ANALYSIS.md`\n- `ADW_MODULES_ANALYSIS.md`\n- `PARALLELIZATION_IMPACT_ANALYSIS.md`\n\n---\n\n## 4. TIMESTAMP PATTERNS\n\n### 4.1 FileOrganizer Format\n\n**Pattern**: `%Y%m%d-%H%M%S` (e.g., `20241120-154512`)\n\nFrom `adws/adw_modules/file_organization.py:53`:\n```python\ntimestamp = datetime.now().strftime(\"%Y%m%d-%H%M%S\")\n```\n\n### 4.2 Scout Output Format\n\n**Pattern**: ISO 8601 (e.g., `2025-11-22T00:00:00Z`)\n\nFrom `scout_outputs/relevant_files.json`:\n```json\n\"timestamp\": \"2025-11-22T00:00:00Z\"\n```\n\n### 4.3 ISO Format for Internal Use\n\n**Pattern**: `datetime.now().isoformat()` (e.g., `2024-11-20T14:30:52`)\n\nUsed in metadata, exceptions, and logging.\n\n---\n\n## 5. FILE ORGANIZATION MODULE\n\n### 5.1 Location\n\n`/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/file_organization.py`\n\n### 5.2 Key Class: `FileOrganizer`\n\n**Capabilities**:\n1. **Create timestamped directories**: `create_task_directory(task_name, adw_id)`\n2. **Save scout output**: `save_scout_output(data, task_dir, also_legacy=True)`\n3. **Save plan output**: `save_plan_output(content, issue_num, adw_id, slug, task_dir)`\n4. **Save build output**: `save_build_output(content, slug, task_dir)`\n5. **Cleanup old outputs**: `cleanup_old_outputs(days=7, dry_run=True)`\n6. **Get latest directory**: `get_latest_directory()`\n7. **Consolidate scattered files**: `consolidate_scattered_files(dry_run=True)`\n\n### 5.3 Directory Naming for Tasks\n\n**Pattern**: `{timestamp}-{adw_id}-{clean_name}` or `{timestamp}-{clean_name}`\n\n**Example**: `20241120-154512-ADW-AUTH-001-jwt-auth/`\n\n### 5.4 Dual-Write Strategy\n\nFileOrganizer writes to both:\n1. **Task directory** (timestamped archive): `ai_docs/outputs/{timestamp}-{id}-{task}/`\n2. **Legacy location** (for compatibility): `scout_outputs/relevant_files.json`, `specs/`, `ai_docs/build_reports/`\n\n---\n\n## 6. DEPRECATED LOCATIONS\n\n### 6.1 From `.scout_framework.yaml` and `constants.py`\n\n| Deprecated Location | New Location | Migration Path |\n|--------------------|--------------|----------------|\n| `ai_docs/scout/` | `scout_outputs/` | `mv ai_docs/scout/relevant_files.json scout_outputs/relevant_files.json` |\n| `agents/` | `scout_outputs/workflows/` | `mv agents/ADW-*/ scout_outputs/workflows/` |\n\n### 6.2 Backward Compatibility\n\nLegacy paths are kept as read-only in `constants.py`:\n```python\nLEGACY_SCOUT_DIR = Path(\"ai_docs/scout\")  # DO NOT WRITE\nLEGACY_AGENTS_DIR = Path(\"agents\")        # DO NOT WRITE\n```\n\n---\n\n## 7. VALIDATION & ENFORCEMENT\n\n### 7.1 Allowed Output Prefixes\n\nFrom `adws/adw_modules/constants.py`:\n\n```python\nALLOWED_OUTPUT_PREFIXES = [\n    \"specs/\",\n    \"scout_outputs/\",\n    \"scout_outputs/temp/\",\n    \"scout_outputs/workflows/\",\n    \"ai_docs/build_reports/\",\n    \"ai_docs/reviews/\",\n    \"ai_docs/outputs/\",\n    \"docs/\",\n    \"scripts/\",\n    \"adws/\",\n]\n```\n\n### 7.2 Enforcement\n\nThe `validators.py` module enforces these paths. Any write to non-allowed locations is rejected.\n\n---\n\n## 8. ACTUAL DIRECTORY STATE (OBSERVED)\n\n### 8.1 `scout_outputs/` (Actual Contents)\n\n```\nscout_outputs/\n\u251c\u2500\u2500 .gitignore\n\u251c\u2500\u2500 ADW-PARALLEL001/          # Legacy location (should be in workflows/)\n\u251c\u2500\u2500 relevant_files.json       # Current scout results\n\u251c\u2500\u2500 temp/                     # Empty\n\u251c\u2500\u2500 architecture_report.json  # Additional report files\n\u251c\u2500\u2500 configuration_report.json\n\u251c\u2500\u2500 implementation_report.json\n\u2514\u2500\u2500 tests_report.json\n```\n\n### 8.2 `ai_docs/` (Actual Contents)\n\n```\nai_docs/\n\u251c\u2500\u2500 build_reports/            # 2 files (active)\n\u251c\u2500\u2500 reviews/                  # 2 files (active)\n\u251c\u2500\u2500 analyses/                 # 13 files (active)\n\u251c\u2500\u2500 architecture/             # Subdirectories exist\n\u251c\u2500\u2500 assessments/              # 2 files\n\u251c\u2500\u2500 research/                 # videos/, articles/, implementations/, papers/\n\u251c\u2500\u2500 sessions/handoffs/        # 3 handoff documents\n\u251c\u2500\u2500 reference/                # Active\n\u251c\u2500\u2500 scout/                    # DEPRECATED (not present)\n\u251c\u2500\u2500 outputs/                  # Directory exists but empty\n\u2514\u2500\u2500 [various .md files]       # Root-level analysis indices\n```\n\n### 8.3 `specs/` (Actual Contents)\n\nContains 17 specification files following the naming convention:\n- `issue-NNN-adw-XXX-slug.md`\n- `ABANDONED-*.md` (abandoned specs)\n- `MVP_*.md` (MVP-related specs)\n- Various other planning documents\n\n---\n\n## 9. GIT HISTORY FOR ARTIFACTS\n\nFrom `git log --oneline | grep -iE \"report|output|artifact\"`:\n\n```\n38364ec refactor: rename agents/ to scout_outputs/ for clarity and fix security\n```\n\nThis confirms the migration from `agents/` to `scout_outputs/` directory structure.\n\n---\n\n## 10. KEY FINDINGS\n\n### 10.1 What Works Well\n\n1. **Centralized constants**: All paths defined in one place (`constants.py`)\n2. **Clear documentation**: `DIRECTORY_STRUCTURE.md` is comprehensive\n3. **Validation enforcement**: Paths are validated before writes\n4. **Backward compatibility**: Legacy paths supported for reading\n5. **Dual-write strategy**: FileOrganizer supports both archive and legacy locations\n\n### 10.2 Gaps/Issues\n\n1. **`scout_outputs/workflows/`**: Directory exists but is empty; workflow state not being written\n2. **ADW-PARALLEL001 in wrong location**: Located in `scout_outputs/` instead of `scout_outputs/workflows/`\n3. **`ai_docs/outputs/`**: Timestamped output directory exists but is empty (not being used)\n4. **Inconsistent naming**: Some analyses use uppercase (`ANALYSIS.md`), others use lowercase (`analysis.md`)\n5. **Root-level MD files**: Many markdown files still in `ai_docs/` root instead of subdirectories\n\n### 10.3 Recommendations\n\n1. Move `ADW-PARALLEL001` to `scout_outputs/workflows/ADW-PARALLEL001/`\n2. Activate FileOrganizer's `create_task_directory()` in actual workflows\n3. Consolidate root-level MD files in `ai_docs/` to appropriate subdirectories\n4. Enforce consistent naming conventions (pick uppercase or lowercase for analyses)\n\n---\n\n## 11. SUMMARY TABLE\n\n| Category | Status | Documentation | Enforcement |\n|----------|--------|---------------|-------------|\n| Scout outputs | Active | Excellent | Via constants.py |\n| Spec files | Active | Excellent | Via validators.py |\n| Build reports | Active | Good | Manual |\n| Reviews | Active | Good | Manual |\n| Workflow state | Planned but empty | Excellent | Not enforced |\n| Timestamped archives | Planned but empty | Excellent | Via FileOrganizer |\n| Session hooks/logs | Active | Good | Via hooks system |\n| Research | Active | Good | Manual |\n\n---\n\n**End of Investigation Report**\n"
+      "command": "echo \"=== Date comparison ===\" && \\\nls -la ai_docs/scout/relevant_files.json && \\\nls -la scout_outputs/relevant_files.json && \\\necho -e \"\\n=== Content check ===\" && \\\nwc -l ai_docs/scout/relevant_files.json scout_outputs/relevant_files.json",
+      "description": "Compare the duplicate scout files"
     }
   },
   {
@@ -93,44 +81,29 @@
     "tool_input": {
       "todos": [
         {
-          "content": "Investigate existing slug generation and artifact management",
+          "content": "Analyze Agent Box compatibility with framework",
           "status": "completed",
-          "activeForm": "Investigated slug and artifact patterns"
+          "activeForm": "Analyzed compatibility"
         },
         {
-          "content": "Launch parallel Haiku agents to analyze organization",
-          "status": "completed",
-          "activeForm": "Launched Haiku agents for analysis"
-        },
-        {
-          "content": "Create artifact organization solution",
+          "content": "Create architectural decision document",
           "status": "in_progress",
-          "activeForm": "Creating organization solution"
+          "activeForm": "Creating decision document"
         },
         {
-          "content": "Move 12 misplaced files to canonical locations",
+          "content": "Design hybrid integration approach",
           "status": "pending",
-          "activeForm": "Moving misplaced files"
+          "activeForm": "Designing integration"
         },
         {
-          "content": "Review and update CLAUDE.md with v4 proposal",
+          "content": "Consolidate duplicate directories",
           "status": "pending",
-          "activeForm": "Reviewing CLAUDE.md updates"
+          "activeForm": "Consolidating directories"
         },
         {
-          "content": "Fix scout commands to use correct Task tool",
+          "content": "Implement state management",
           "status": "pending",
-          "activeForm": "Fixing scout commands"
-        },
-        {
-          "content": "Add risk headers to slash commands",
-          "status": "pending",
-          "activeForm": "Adding risk headers"
-        },
-        {
-          "content": "Update .gitignore with better patterns",
-          "status": "pending",
-          "activeForm": "Updating .gitignore"
+          "activeForm": "Implementing state tracking"
         }
       ]
     }
@@ -143,8 +116,8 @@
     "hook_event_name": "PreToolUse",
     "tool_name": "Write",
     "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/architecture/ARTIFACT_MANAGEMENT_SOLUTION.md",
-      "content": "# Artifact Management Solution\n\n**Date**: 2025-11-22\n**Problem**: Agent outputs dumping in repo root causing chaos\n**Solution**: Enforce existing infrastructure + simple improvements\n\n## Executive Summary\n\nThe framework ALREADY HAS good artifact management (`FileOrganizer`, canonical paths in `constants.py`).\nThe problem is **enforcement**, not missing features. This solution enforces existing patterns + adds minimal enhancements.\n\n## The Problem (Quantified)\n\n- **12 files** misplaced in repo root (171KB)\n- **7 should be in ai_docs/**\n- **2 should be in docs/**\n- **2 should be in specs/**\n- Main offenders: Analysis agents, scout workflows, ad-hoc creation\n\n## The Solution: 3-Layer Approach\n\n### Layer 1: Enforce Existing Canonical Paths (Immediate)\n\nThe framework already defines these in `adws/adw_modules/constants.py`:\n\n```python\n# These paths ALREADY EXIST - just use them!\nSCOUT_OUTPUT_FILE = \"scout_outputs/relevant_files.json\"\nSPECS_DIR = \"specs\"\nBUILD_REPORTS_DIR = \"ai_docs/build_reports\"\nREVIEWS_DIR = \"ai_docs/reviews\"\nANALYSES_DIR = \"ai_docs/analyses\"\nARCHITECTURE_DIR = \"ai_docs/architecture\"\n```\n\n**Action**: Update agent prompts to ALWAYS specify output paths:\n\n```python\n# BAD (creates in root)\nWrite(\"ANALYSIS_REPORT.md\", content)\n\n# GOOD (uses canonical location)\nWrite(\"ai_docs/analyses/analysis-report.md\", content)\n```\n\n### Layer 2: Enhanced Agent Output Directory (Short-term)\n\nCreate a dedicated transient output area:\n\n```\nagent_outputs/\n\u251c\u2500\u2500 2025-11-22/              # Date-based for easy cleanup\n\u2502   \u251c\u2500\u2500 0930-auth-scout.json # Time prefix for sorting\n\u2502   \u251c\u2500\u2500 0945-auth-plan.md\n\u2502   \u251c\u2500\u2500 1015-auth-build/     # Multi-file outputs\n\u2502   \u2502   \u251c\u2500\u2500 report.md\n\u2502   \u2502   \u2514\u2500\u2500 metrics.json\n\u2502   \u2514\u2500\u2500 parallel/            # Parallel agent outputs\n\u2502       \u251c\u2500\u2500 wt1-auth.json\n\u2502       \u251c\u2500\u2500 wt2-auth.json\n\u2502       \u2514\u2500\u2500 wt3-auth.json\n\u2514\u2500\u2500 .gitkeep\n\n# Canonical imports get copied/moved to proper locations\n# Transient outputs can be bulk cleaned after 48h\n```\n\n### Layer 3: Simple Slug Pattern (Use Existing)\n\nThe framework already has `slugify()` in `adws/adw_common.py`:\n\n```python\ndef slugify(text: str) -> str:\n    \"\"\"Convert text to URL-safe slug.\"\"\"\n    slug = text.lower()\n    slug = re.sub(r'[^a-z0-9-]+', '-', slug)\n    slug = re.sub(r'-+', '-', slug)\n    return slug.strip('-')\n```\n\n**Enhanced pattern for agent outputs**:\n```\n{HHMMSS}-{slugify(task)}-{type}.{ext}\n\nExamples:\n093045-auth-debug-scout.json\n094512-auth-debug-plan.md\n101523-auth-debug-build.md\n```\n\n## Implementation Plan\n\n### Step 1: Immediate Cleanup (5 min)\n\n```bash\n# Move misplaced files to canonical locations\nmv ANALYSIS_SUMMARY.md ai_docs/analyses/\nmv SCOUT_FRAMEWORK_DEEP_ANALYSIS.md ai_docs/analyses/\nmv FRAMEWORK_ANALYSIS_INDEX.md ai_docs/analyses/\nmv FRAMEWORK_ARCHITECTURE_PATTERNS.md ai_docs/architecture/\nmv DOCUMENTATION_AUDIT_REPORT.md ai_docs/reviews/\nmv OUTDATED_REFERENCES_AUDIT.md ai_docs/reviews/\nmv GIT_WORKTREE_PARALLELIZATION_SCOUT_REPORT.md ai_docs/analyses/\nmv INSTALLATION_GUIDE.md docs/\nmv CLAUDE_v4_PROPOSED.md specs/claude-v4-proposed.md\n\n# Clean up\nrm -f run_log.md  # Should be in logs/ or .gitignored\n```\n\n### Step 2: Update .gitignore (2 min)\n\nAdd these patterns:\n```gitignore\n# Agent outputs (should use canonical paths)\n/*_REPORT.md\n/*_ANALYSIS.md\n/*_AUDIT.md\n/CLAUDE_v*.md\n/run_log.md\n\n# Transient outputs\n/agent_outputs/*/\n!/agent_outputs/.gitkeep\n\n# Keep worktrees but ignore their outputs\n/trees/*/ai_docs/\n/trees/*/agent_outputs/\n```\n\n### Step 3: Update Agent Prompts (10 min)\n\nCreate a standard header for all agent prompts:\n\n```markdown\n## Output Rules (CRITICAL)\n- NEVER write files to repository root\n- Use these canonical paths:\n  - Analyses: ai_docs/analyses/{slug}.md\n  - Reviews: ai_docs/reviews/{slug}.md\n  - Reports: ai_docs/build_reports/{slug}.md\n  - Specs: specs/{slug}.md\n  - Temp work: agent_outputs/{date}/{time}-{slug}.{ext}\n```\n\n### Step 4: Create Helper Function (5 min)\n\nAdd to `adws/adw_common.py`:\n\n```python\ndef get_output_path(output_type: str, task_name: str, ext: str = \"md\") -> str:\n    \"\"\"Get canonical output path for agent artifacts.\"\"\"\n    from datetime import datetime\n\n    slug = slugify(task_name)\n    timestamp = datetime.now().strftime(\"%H%M%S\")\n    date = datetime.now().strftime(\"%Y-%m-%d\")\n\n    paths = {\n        \"analysis\": f\"ai_docs/analyses/{slug}-analysis.{ext}\",\n        \"review\": f\"ai_docs/reviews/{slug}-review.{ext}\",\n        \"report\": f\"ai_docs/build_reports/{slug}-report.{ext}\",\n        \"spec\": f\"specs/{slug}-spec.{ext}\",\n        \"temp\": f\"agent_outputs/{date}/{timestamp}-{slug}.{ext}\",\n        \"scout\": f\"scout_outputs/{slug}.json\"\n    }\n\n    return paths.get(output_type, f\"agent_outputs/{date}/{timestamp}-{slug}.{ext}\")\n```\n\n## Benefits\n\n1. **Uses existing infrastructure** - No new systems to learn\n2. **Backward compatible** - Existing paths unchanged\n3. **Simple slug pattern** - HHMMSS prefix for sorting\n4. **Clean repo root** - Everything has a home\n5. **Easy cleanup** - Date-based directories for bulk deletion\n6. **Parallel-friendly** - Agent ID prefixes prevent collisions\n\n## Migration Strategy\n\n1. **Phase 1** (Today): Move existing files, update .gitignore\n2. **Phase 2** (This week): Update agent prompts with output rules\n3. **Phase 3** (Next week): Add helper functions to framework\n4. **Phase 4** (Future): Enforce via pre-commit hooks\n\n## Success Metrics\n\n- Zero `.md` files in repo root (except README.md)\n- All agent outputs in canonical or `agent_outputs/` paths\n- Clean `git status` after agent runs\n- Easy to find artifacts by type and date\n\n---\n\n**Next Step**: Execute Step 1 (cleanup) and Step 2 (.gitignore) immediately."
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/architecture/AGENT_BOX_INTEGRATION_DECISION.md",
+      "content": "# Agent Box Integration Decision Document\n\n**Date**: 2025-11-22\n**Decision**: Progressive Enhancement Strategy\n**Priority**: State Management > Organization > Sandboxing\n\n## Executive Summary\n\nAdopt Agent Box patterns progressively without breaking current framework. Start with state management and run isolation, evolve toward full sandboxing over time.\n\n## The Problems (Prioritized)\n\n### 1. \ud83d\udd34 No State Management (CRITICAL)\n- Can't tell if agents are running\n- Can't resume crashed sessions\n- No run tracking or history\n- No resource monitoring\n\n### 2. \ud83d\udfe1 Organizational Chaos (HIGH)\n- Duplicate directories (ai_docs/scout vs scout_outputs)\n- Outputs scattered across 5+ locations\n- No unified run artifacts\n- Hard to clean up old runs\n\n### 3. \ud83d\udfe1 Limited Sandboxing (HIGH)\n- Git worktrees provide minimal isolation\n- No resource limits\n- No network restrictions\n- Agents can read their own output (self-poisoning)\n\n## Recommended Solution: 3-Phase Progressive Enhancement\n\n### Phase 1: State Management Layer (Week 1)\n**Goal**: Track and manage agent runs without breaking changes\n\n```python\n# Create agents/supervisor.py (150 lines)\nclass RunManager:\n    def track_run(self, command, args):\n        run_id = f\"{timestamp}_{slugify(command)}_{short_hash()}\"\n        run_dir = f\"agent_runs/{run_id}/\"\n\n        # Create meta.yaml\n        meta = {\n            \"run_id\": run_id,\n            \"command\": command,\n            \"started_at\": now(),\n            \"status\": \"ACTIVE\"\n        }\n\n        # Track in state.json\n        state = {\n            \"pid\": os.getpid(),\n            \"session_id\": None,  # Capture from Claude\n            \"last_heartbeat\": now()\n        }\n\n        # Keep existing commands working\n        if command == \"scout\":\n            # Call existing scout, track outputs\n            pass\n```\n\n**Changes Required**:\n- Add `agent_runs/` directory\n- Create lightweight Python wrapper\n- No breaking changes to existing commands\n\n### Phase 2: Unified Run Directories (Week 2)\n**Goal**: Consolidate outputs without breaking canonical paths\n\n```\nagent_runs/\n\u251c\u2500\u2500 2025-11-22_1430_scout_auth_abc/\n\u2502   \u251c\u2500\u2500 meta.yaml           # Request info\n\u2502   \u251c\u2500\u2500 state.json          # Mutable status\n\u2502   \u251c\u2500\u2500 spec.md            # Symlink to specs/\n\u2502   \u251c\u2500\u2500 report.md          # Symlink to ai_docs/reports/\n\u2502   \u2514\u2500\u2500 artifacts/\n\u2502       \u251c\u2500\u2500 scout.json     # Actual scout output\n\u2502       \u2514\u2500\u2500 raw/           # Stream logs\n\u2514\u2500\u2500 latest -> 2025-11-22_1430_scout_auth_abc/\n```\n\n**Strategy**: Use symlinks to maintain backward compatibility while organizing by run\n\n### Phase 3: Sandboxing Enhancement (Month 2)\n**Goal**: Add true isolation without disrupting workflow\n\n```python\n# Progressive sandboxing levels\nclass SandboxLevel(Enum):\n    NONE = 0          # Current state\n    WORKTREE = 1      # Git isolation (current)\n    PROCESS = 2       # Agent Box model\n    CONTAINER = 3     # Docker isolation\n    CLOUD = 4         # E2B or similar\n\n# Start with PROCESS level\ndef run_sandboxed(command, level=SandboxLevel.PROCESS):\n    if level >= SandboxLevel.PROCESS:\n        # Implement Agent Box airlock\n        worktree = create_worktree(run_id)\n        ignore_patterns = [\".agents/\", \"agent_runs/\"]\n```\n\n## Implementation Priority\n\n### Immediate (This Session)\n1. **Fix duplicate directories**:\n   ```bash\n   # Consolidate to canonical location\n   mv ai_docs/scout/* scout_outputs/archive/\n   rmdir ai_docs/scout\n   # Update any hardcoded references\n   ```\n\n2. **Create state tracking structure**:\n   ```bash\n   mkdir -p agent_runs/.template\n   # Create template meta.yaml and state.json\n   ```\n\n3. **Add run ID generation**:\n   ```python\n   # In adw_common.py\n   def generate_run_id(task_type: str) -> str:\n       timestamp = datetime.now().strftime(\"%m%d-%H%M\")\n       slug = slugify(task_type)[:20]\n       hash = secrets.token_hex(2)\n       return f\"{timestamp}-{slug}-{hash}\"\n   ```\n\n### Next Week\n1. Implement RunManager class\n2. Add watchdog for zombie processes\n3. Create unified run directories\n4. Add session resumability\n\n### Month 2\n1. Docker container integration\n2. Resource limits (memory, CPU, timeout)\n3. Network isolation options\n4. Full Agent Box supervisor\n\n## Migration Path\n\n### From Current to Agent Box Structure\n\n**Current** (Distributed):\n```\nspecs/issue-001-adw-XXX.md\nai_docs/reports/auth-report.md\nscout_outputs/relevant_files.json\n```\n\n**Transitional** (Symlinks):\n```\nagent_runs/1122-1430-auth-abc/\n\u251c\u2500\u2500 spec.md -> ../../specs/issue-001-adw-XXX.md\n\u251c\u2500\u2500 report.md -> ../../ai_docs/reports/auth-report.md\n\u2514\u2500\u2500 artifacts/scout.json\n```\n\n**Future** (Unified):\n```\nagent_runs/1122-1430-auth-abc/\n\u251c\u2500\u2500 meta.yaml\n\u251c\u2500\u2500 state.json\n\u251c\u2500\u2500 spec.md         # Direct file\n\u251c\u2500\u2500 report.md       # Direct file\n\u2514\u2500\u2500 artifacts/      # All outputs\n```\n\n## Risk Assessment\n\n| Risk | Likelihood | Impact | Mitigation |\n|------|------------|--------|------------|\n| Breaking existing workflows | Low | High | Use symlinks, maintain compatibility |\n| Complexity overhead | Medium | Medium | Start simple, enhance progressively |\n| User confusion | Medium | Low | Clear documentation, gradual rollout |\n| Performance impact | Low | Low | Minimal overhead, optional features |\n\n## Success Metrics\n\n### Phase 1 (State Management)\n- \u2713 Can track running agents\n- \u2713 Can detect crashed agents\n- \u2713 Can see run history\n\n### Phase 2 (Organization)\n- \u2713 Single directory per run\n- \u2713 Easy cleanup of old runs\n- \u2713 No duplicate directories\n\n### Phase 3 (Sandboxing)\n- \u2713 Process isolation implemented\n- \u2713 Resource limits enforced\n- \u2713 Self-poisoning prevented\n\n## Decision\n\n**Proceed with Phase 1 immediately**. The state management layer adds immediate value without disruption. Phase 2 and 3 can follow based on actual needs.\n\n## Alternative Considered\n\n**Full Agent Box Implementation**: Rejected due to:\n- Major breaking changes\n- Requires complete rewrite\n- Loses Claude Code integration\n- 2-3 day implementation\n\n**Do Nothing**: Rejected due to:\n- Growing organizational chaos\n- No ability to track/resume agents\n- Security debt accumulating\n\n---\n\n**Recommendation**: Start Phase 1 today. Low risk, high value, builds toward long-term sandboxing goal."
     }
   },
   {
@@ -153,10 +126,119 @@
     "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
     "permission_mode": "bypassPermissions",
     "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
+    "tool_name": "TodoWrite",
     "tool_input": {
-      "command": "\\\nmv ANALYSIS_SUMMARY.md ai_docs/analyses/ && \\\nmv SCOUT_FRAMEWORK_DEEP_ANALYSIS.md ai_docs/analyses/ && \\\nmv FRAMEWORK_ANALYSIS_INDEX.md ai_docs/analyses/ && \\\nmv FRAMEWORK_ARCHITECTURE_PATTERNS.md ai_docs/architecture/ && \\\nmv DOCUMENTATION_AUDIT_REPORT.md ai_docs/reviews/ && \\\nmv OUTDATED_REFERENCES_AUDIT.md ai_docs/reviews/ && \\\nmv GIT_WORKTREE_PARALLELIZATION_SCOUT_REPORT.md ai_docs/analyses/ && \\\nmv INSTALLATION_GUIDE.md docs/ && \\\nmv CLAUDE_v4_PROPOSED.md specs/claude-v4-proposed.md && \\\necho \"Files moved successfully!\"",
-      "description": "Move misplaced files to canonical locations"
+      "todos": [
+        {
+          "content": "Scout for state management implementation points",
+          "status": "in_progress",
+          "activeForm": "Scouting for implementation points"
+        },
+        {
+          "content": "Create interactive framework init spec",
+          "status": "pending",
+          "activeForm": "Creating init spec"
+        },
+        {
+          "content": "Plan Phase 1 implementation",
+          "status": "pending",
+          "activeForm": "Planning implementation"
+        },
+        {
+          "content": "Build with ADW",
+          "status": "pending",
+          "activeForm": "Building with ADW"
+        },
+        {
+          "content": "Test framework portability",
+          "status": "pending",
+          "activeForm": "Testing portability"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Grep",
+    "tool_input": {
+      "pattern": "generate.*run.*id|run.*id|RunManager|supervisor",
+      "output_mode": "files_with_matches",
+      "-i": true
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Glob",
+    "tool_input": {
+      "pattern": "adws/adw*.py"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/scout_outputs/phase1-state-management.json",
+      "content": "{\n  \"relevant_files\": [\n    {\n      \"file\": \"adws/adw_common.py\",\n      \"reason\": \"Add generate_run_id() function for unique run identification\"\n    },\n    {\n      \"file\": \"adws/adw_modules/constants.py\",\n      \"reason\": \"Add AGENT_RUNS_DIR constant for new run directory structure\"\n    },\n    {\n      \"file\": \"ai_docs/scout/\",\n      \"reason\": \"Duplicate directory to consolidate into scout_outputs/\"\n    },\n    {\n      \"file\": \"adws/adw_build.py\",\n      \"reason\": \"Update to use run directories for outputs\"\n    },\n    {\n      \"file\": \"adws/adw_plan.py\",\n      \"reason\": \"Update to track run state\"\n    },\n    {\n      \"file\": \".claude/commands/init-framework.md\",\n      \"reason\": \"New interactive framework initialization command\"\n    },\n    {\n      \"file\": \"agents/supervisor.py\",\n      \"reason\": \"New RunManager class for state tracking\"\n    },\n    {\n      \"file\": \"agent_runs/.template/meta.yaml\",\n      \"reason\": \"Template for run metadata\"\n    },\n    {\n      \"file\": \"agent_runs/.template/state.json\",\n      \"reason\": \"Template for run state tracking\"\n    }\n  ],\n  \"summary\": \"Phase 1 implementation requires updating core ADW modules to add run ID generation, creating a new supervisor module for state management, consolidating duplicate directories, and adding an interactive framework initialization command.\",\n  \"timestamp\": \"2025-11-22T22:30:00Z\"\n}"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Scout for state management implementation points",
+          "status": "completed",
+          "activeForm": "Scouted implementation points"
+        },
+        {
+          "content": "Create implementation plan with ADW",
+          "status": "in_progress",
+          "activeForm": "Creating implementation plan"
+        },
+        {
+          "content": "Build Phase 1 with ADW",
+          "status": "pending",
+          "activeForm": "Building with ADW"
+        },
+        {
+          "content": "Create init-framework command",
+          "status": "pending",
+          "activeForm": "Creating init command"
+        },
+        {
+          "content": "Test framework portability",
+          "status": "pending",
+          "activeForm": "Testing portability"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "SlashCommand",
+    "tool_input": {
+      "command": "/plan_w_docs_improved \"Implement Phase 1 Agent Box state management and framework portability\" \"file:///Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/research/implementations/agent-box-supervisor-chad.md\" \"scout_outputs/phase1-state-management.json\""
     }
   },
   {
@@ -167,7 +249,198 @@
     "hook_event_name": "PreToolUse",
     "tool_name": "Read",
     "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/.gitignore"
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/scout_outputs/phase1-state-management.json"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_common.py"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/constants.py"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/specs/phase1-agent-box-state-management.md",
+      "content": "# Plan: Phase 1 Agent Box State Management & Framework Portability\n\n## Summary\nImplement Agent Box Phase 1: Add run ID generation, state tracking, directory consolidation, and interactive framework initialization. Make the framework portable to any repo.\n\n## Problem Statement\n1. **No state management**: Can't track running agents, detect crashes, or resume sessions\n2. **Duplicate directories**: `ai_docs/scout/` vs `scout_outputs/` causes confusion\n3. **No portability**: Framework requires manual setup in new repos\n4. **No interactivity**: Can't gather user preferences during setup\n\n## Inputs\n- **Scout Results**: `scout_outputs/phase1-state-management.json`\n- **Reference Doc**: `ai_docs/research/implementations/agent-box-supervisor-chad.md`\n- **Existing Infrastructure**:\n  - `adws/adw_common.py` - Has `slugify()` function\n  - `adws/adw_modules/constants.py` - Has canonical path definitions\n  - `LEGACY_SCOUT_DIR` already marked deprecated\n\n## Architecture/Approach\n\n### Run ID Format (User-Friendly)\n```\n{MMDD}-{slug}-{hash}\n\nExamples:\n- 1122-auth-fix-a1b2\n- 1122-scout-api-c3d4\n- 1123-init-db-e5f6\n```\n\n**Rationale**:\n- MMDD gives date context without year clutter\n- Slug is human-readable\n- 4-char hash prevents collisions\n- Sorts chronologically by date\n\n### Directory Structure\n```\nagent_runs/                    # NEW: Centralized run tracking\n\u251c\u2500\u2500 .template/\n\u2502   \u251c\u2500\u2500 meta.yaml             # Template for run metadata\n\u2502   \u2514\u2500\u2500 state.json            # Template for run state\n\u251c\u2500\u2500 1122-scout-auth-a1b2/     # Example run\n\u2502   \u251c\u2500\u2500 meta.yaml             # Immutable request info\n\u2502   \u251c\u2500\u2500 state.json            # Mutable status tracking\n\u2502   \u251c\u2500\u2500 output.md             # Primary output\n\u2502   \u2514\u2500\u2500 artifacts/            # Supporting files\n\u2514\u2500\u2500 latest -> 1122-scout-auth-a1b2/  # Symlink to most recent\n\nscout_outputs/                 # EXISTING: Keep for compatibility\n\u251c\u2500\u2500 relevant_files.json       # Canonical scout output\n\u251c\u2500\u2500 workflows/{adw_id}/       # Workflow state\n\u2514\u2500\u2500 archive/                  # NEW: Archived old outputs\n```\n\n### State Machine\n```\nACTIVE \u2192 DONE     (normal completion)\nACTIVE \u2192 CRASHED  (process died)\nACTIVE \u2192 STALLED  (heartbeat timeout)\nSTALLED \u2192 ACTIVE  (resume)\nCRASHED \u2192 ACTIVE  (resume)\n```\n\n## Implementation Steps\n\n### Step 1: Add Run ID Generation (adws/adw_common.py)\n**Files**: `adws/adw_common.py`\n**Lines to add**: ~15\n\n```python\nimport secrets\nfrom datetime import datetime\n\ndef generate_run_id(task_type: str, task_name: str = \"\") -> str:\n    \"\"\"Generate unique run ID in format MMDD-slug-hash.\"\"\"\n    date_part = datetime.now().strftime(\"%m%d\")\n    slug_part = slugify(task_type)[:20]\n    if task_name:\n        slug_part = f\"{slug_part}-{slugify(task_name)[:10]}\"\n    hash_part = secrets.token_hex(2)  # 4 chars\n    return f\"{date_part}-{slug_part}-{hash_part}\"\n```\n\n### Step 2: Add Constants (adws/adw_modules/constants.py)\n**Files**: `adws/adw_modules/constants.py`\n**Lines to add**: ~20\n\n```python\n# Agent Runs (NEW - Phase 1)\nAGENT_RUNS_DIR = Path(\"agent_runs\")\n\"\"\"Centralized directory for all agent run tracking.\"\"\"\n\nAGENT_RUNS_TEMPLATE_DIR = AGENT_RUNS_DIR / \".template\"\n\"\"\"Templates for run metadata and state.\"\"\"\n\ndef get_run_dir(run_id: str) -> Path:\n    \"\"\"Get the directory for a specific run.\"\"\"\n    run_dir = AGENT_RUNS_DIR / run_id\n    run_dir.mkdir(parents=True, exist_ok=True)\n    return run_dir\n\ndef get_latest_run() -> Optional[Path]:\n    \"\"\"Get the most recent run directory.\"\"\"\n    latest = AGENT_RUNS_DIR / \"latest\"\n    if latest.is_symlink():\n        return latest.resolve()\n    return None\n```\n\n### Step 3: Create RunManager (agents/supervisor.py)\n**Files**: `agents/supervisor.py` (NEW)\n**Lines**: ~100\n\n```python\n#!/usr/bin/env python3\n\"\"\"\nAgent Run Supervisor - State Management Layer\n\nTracks agent runs, monitors health, enables resumability.\nBased on Agent Box v6.2 spec (Chad/Gemini).\n\"\"\"\nimport json\nimport os\nfrom pathlib import Path\nfrom datetime import datetime\nfrom dataclasses import dataclass, asdict\nfrom typing import Optional, Literal\nfrom enum import Enum\n\nclass RunStatus(str, Enum):\n    ACTIVE = \"ACTIVE\"\n    DONE = \"DONE\"\n    CRASHED = \"CRASHED\"\n    STALLED = \"STALLED\"\n\n@dataclass\nclass RunMeta:\n    \"\"\"Immutable run metadata (meta.yaml)\"\"\"\n    run_id: str\n    task_type: str  # scout, plan, build, review\n    task_description: str\n    started_at: str\n    model: str = \"claude-sonnet-4\"\n\n@dataclass\nclass RunState:\n    \"\"\"Mutable run state (state.json)\"\"\"\n    status: RunStatus\n    pid: Optional[int] = None\n    session_id: Optional[str] = None\n    last_heartbeat: Optional[str] = None\n    error: Optional[str] = None\n\nclass RunManager:\n    def __init__(self, runs_dir: Path = Path(\"agent_runs\")):\n        self.runs_dir = runs_dir\n        self.runs_dir.mkdir(parents=True, exist_ok=True)\n\n    def create_run(self, task_type: str, task_desc: str) -> str:\n        \"\"\"Create a new run and return its ID.\"\"\"\n        from adws.adw_common import generate_run_id\n\n        run_id = generate_run_id(task_type, task_desc)\n        run_dir = self.runs_dir / run_id\n        run_dir.mkdir(parents=True, exist_ok=True)\n\n        # Write meta.yaml\n        meta = RunMeta(\n            run_id=run_id,\n            task_type=task_type,\n            task_description=task_desc,\n            started_at=datetime.now().isoformat()\n        )\n        (run_dir / \"meta.yaml\").write_text(\n            yaml.dump(asdict(meta), default_flow_style=False)\n        )\n\n        # Write initial state.json\n        state = RunState(status=RunStatus.ACTIVE, pid=os.getpid())\n        (run_dir / \"state.json\").write_text(\n            json.dumps(asdict(state), indent=2)\n        )\n\n        # Update latest symlink\n        latest = self.runs_dir / \"latest\"\n        if latest.is_symlink():\n            latest.unlink()\n        latest.symlink_to(run_id)\n\n        return run_id\n\n    def complete_run(self, run_id: str) -> None:\n        \"\"\"Mark run as completed.\"\"\"\n        self._update_status(run_id, RunStatus.DONE)\n\n    def crash_run(self, run_id: str, error: str) -> None:\n        \"\"\"Mark run as crashed.\"\"\"\n        self._update_status(run_id, RunStatus.CRASHED, error=error)\n\n    def heartbeat(self, run_id: str) -> None:\n        \"\"\"Update heartbeat timestamp.\"\"\"\n        run_dir = self.runs_dir / run_id\n        state_file = run_dir / \"state.json\"\n        if state_file.exists():\n            state = json.loads(state_file.read_text())\n            state[\"last_heartbeat\"] = datetime.now().isoformat()\n            state_file.write_text(json.dumps(state, indent=2))\n\n    def _update_status(self, run_id: str, status: RunStatus, error: str = None):\n        run_dir = self.runs_dir / run_id\n        state_file = run_dir / \"state.json\"\n        if state_file.exists():\n            state = json.loads(state_file.read_text())\n            state[\"status\"] = status.value\n            if error:\n                state[\"error\"] = error\n            state_file.write_text(json.dumps(state, indent=2))\n```\n\n### Step 4: Create Init-Framework Command (.claude/commands/init-framework.md)\n**Files**: `.claude/commands/init-framework.md` (NEW)\n**Purpose**: Interactive framework setup using AskUserQuestion\n\n```markdown\n# Initialize Scout-Plan-Build Framework\n\nSet up the framework in a new repository with interactive configuration.\n\n## Workflow\n\n1. **Gather Preferences** using AskUserQuestion tool:\n   - Directory structure preference\n   - Run ID format preference\n   - Sandboxing level\n   - Git workflow preference\n\n2. **Create Directory Structure**:\n   - agent_runs/ with templates\n   - scout_outputs/ (if not exists)\n   - specs/ (if not exists)\n   - ai_docs/ subdirectories\n\n3. **Copy Configuration Files**:\n   - CLAUDE.md (framework instructions)\n   - .gitignore additions\n   - adws/ modules (if needed)\n\n4. **Report Success**\n\n## Questions to Ask\n\nUse AskUserQuestion with these:\n\n1. \"What sandboxing level do you want?\"\n   - Git worktrees only\n   - Process isolation (recommended)\n   - Docker containers\n\n2. \"How should run IDs be formatted?\"\n   - MMDD-slug-hash (default)\n   - timestamp-slug\n   - Custom pattern\n\n3. \"Include parallel worktree support?\"\n   - Yes (recommended for complex features)\n   - No (simpler setup)\n```\n\n### Step 5: Consolidate Duplicate Directories\n**Files**: `ai_docs/scout/` \u2192 `scout_outputs/archive/`\n**Actions**:\n1. Move all files from `ai_docs/scout/` to `scout_outputs/archive/`\n2. Remove empty `ai_docs/scout/` directory\n3. Update any hardcoded references\n\n```bash\nmkdir -p scout_outputs/archive\nmv ai_docs/scout/* scout_outputs/archive/\nrmdir ai_docs/scout\n```\n\n### Step 6: Create Templates (agent_runs/.template/)\n**Files**:\n- `agent_runs/.template/meta.yaml`\n- `agent_runs/.template/state.json`\n\n**meta.yaml**:\n```yaml\n# Run Metadata Template\n# Copy this for new runs, fill in values\n\nrun_id: \"{MMDD}-{slug}-{hash}\"\ntask_type: scout|plan|build|review\ntask_description: \"Description of what this run does\"\nstarted_at: \"ISO8601 timestamp\"\nmodel: \"claude-sonnet-4\"\nconfig_hash: null  # Optional: for safety verification\n```\n\n**state.json**:\n```json\n{\n  \"status\": \"ACTIVE\",\n  \"pid\": null,\n  \"session_id\": null,\n  \"last_heartbeat\": null,\n  \"error\": null\n}\n```\n\n## Testing Strategy\n\n### Unit Tests\n- Test `generate_run_id()` returns valid format\n- Test `RunManager.create_run()` creates correct files\n- Test state transitions work correctly\n\n### Integration Tests\n- Create a run, verify files exist\n- Update heartbeat, verify timestamp changes\n- Complete run, verify status changes\n- Test latest symlink updates correctly\n\n### Validation Criteria\n- [ ] `agent_runs/` directory created with templates\n- [ ] `ai_docs/scout/` removed, contents in archive\n- [ ] New runs create proper directory structure\n- [ ] State tracking works across run lifecycle\n- [ ] `/init-framework` command works interactively\n\n## Risks and Mitigation\n\n| Risk | Mitigation |\n|------|------------|\n| Breaking existing workflows | Use symlinks for backward compat |\n| YAML parsing issues | Use standard library PyYAML |\n| Symlink issues on Windows | Fall back to regular file |\n| Import cycles | Keep RunManager standalone |\n\n## Success Criteria\n\n1. **State Tracking Works**: Can create, track, and complete runs\n2. **No Duplicates**: Single source of truth for each output type\n3. **Portable**: `/init-framework` sets up any repo\n4. **Interactive**: Uses AskUserQuestion for preferences\n5. **Non-Breaking**: Existing commands continue working\n\n## Estimated Effort\n\n| Step | Time | Risk |\n|------|------|------|\n| Run ID generation | 10 min | Low |\n| Constants update | 10 min | Low |\n| RunManager class | 30 min | Medium |\n| Init-framework command | 20 min | Low |\n| Directory consolidation | 5 min | Low |\n| Templates | 5 min | Low |\n| Testing | 20 min | Low |\n| **Total** | **~100 min** | **Low-Medium** |\n\n---\n\n**Next Step**: Run `/build_adw \"specs/phase1-agent-box-state-management.md\"` to implement"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Scout for state management implementation points",
+          "status": "completed",
+          "activeForm": "Scouted implementation points"
+        },
+        {
+          "content": "Create implementation plan with ADW",
+          "status": "completed",
+          "activeForm": "Created implementation plan"
+        },
+        {
+          "content": "Build Phase 1 with ADW",
+          "status": "pending",
+          "activeForm": "Building with ADW"
+        },
+        {
+          "content": "Create init-framework command",
+          "status": "pending",
+          "activeForm": "Creating init command"
+        },
+        {
+          "content": "Test framework portability",
+          "status": "pending",
+          "activeForm": "Testing portability"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Build Phase 1 with ADW",
+          "status": "in_progress",
+          "activeForm": "Building Phase 1 implementation"
+        },
+        {
+          "content": "Test framework portability",
+          "status": "pending",
+          "activeForm": "Testing portability"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "SlashCommand",
+    "tool_input": {
+      "command": "/build_adw \"specs/phase1-agent-box-state-management.md\""
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "uv run adws/adw_build.py \"specs/phase1-agent-box-state-management.md\"",
+      "timeout": 60000,
+      "description": "Run ADW build for Phase 1 implementation"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "head -30 adws/adw_build.py",
+      "description": "Check adw_build.py usage"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ln -sf phase1-agent-box-state-management.md specs/issue-999-adw-PHASE1-state-management.md && echo \"Created symlink for ADW build\"",
+      "description": "Create symlink with ADW naming convention"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "uv run adws/adw_build.py 999 PHASE1",
+      "timeout": 120000,
+      "description": "Run ADW build with synthetic issue/ADW ID"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Build Phase 1 implementation",
+          "status": "in_progress",
+          "activeForm": "Implementing Phase 1 changes"
+        },
+        {
+          "content": "Add generate_run_id to adw_common.py",
+          "status": "pending",
+          "activeForm": "Adding run ID generation"
+        },
+        {
+          "content": "Update constants.py with AGENT_RUNS_DIR",
+          "status": "pending",
+          "activeForm": "Updating constants"
+        },
+        {
+          "content": "Create RunManager supervisor",
+          "status": "pending",
+          "activeForm": "Creating RunManager"
+        },
+        {
+          "content": "Create init-framework command",
+          "status": "pending",
+          "activeForm": "Creating init command"
+        }
+      ]
     }
   },
   {
@@ -178,9 +451,9 @@
     "hook_event_name": "PreToolUse",
     "tool_name": "Edit",
     "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/.gitignore",
-      "old_string": "__pycache__/\n*.pyc",
-      "new_string": "__pycache__/\n*.pyc\n\n# Agent outputs (should use canonical paths instead)\n/*_REPORT.md\n/*_ANALYSIS.md\n/*_AUDIT.md\n/*_SUMMARY.md\n/CLAUDE_v*.md\n/run_log.md\n/test_*.py\n\n# Transient agent outputs\n/agent_outputs/*/\n!/agent_outputs/.gitkeep\n\n# Worktree outputs\n/trees/*/ai_docs/\n/trees/*/agent_outputs/\n/trees/*/AUDIT_RESULTS.md\n\n# Temporary files\n*.tmp\n*.log\n.DS_Store\n\n# IDE\n.vscode/\n.idea/\n\n# Environment\n.env\n.env.local\nvenv/\n.venv/"
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_common.py",
+      "old_string": "def slugify(text: str) -> str:\n    text = text.lower().strip()\n    text = re.sub(r\"[^a-z0-9]+\", \"-\", text)\n    return re.sub(r\"-+\", \"-\", text).strip(\"-\")",
+      "new_string": "def slugify(text: str) -> str:\n    text = text.lower().strip()\n    text = re.sub(r\"[^a-z0-9]+\", \"-\", text)\n    return re.sub(r\"-+\", \"-\", text).strip(\"-\")\n\ndef generate_run_id(task_type: str, task_name: str = \"\") -> str:\n    \"\"\"Generate unique run ID in format MMDD-slug-hash.\"\"\"\n    import secrets\n    from datetime import datetime\n\n    date_part = datetime.now().strftime(\"%m%d\")\n    slug_part = slugify(task_type)[:20]\n    if task_name:\n        slug_part = f\"{slug_part}-{slugify(task_name)[:10]}\"\n    hash_part = secrets.token_hex(2)  # 4 chars\n    return f\"{date_part}-{slug_part}-{hash_part}\""
     }
   },
   {
@@ -189,45 +462,11 @@
     "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
     "permission_mode": "bypassPermissions",
     "hook_event_name": "PreToolUse",
-    "tool_name": "TodoWrite",
+    "tool_name": "Edit",
     "tool_input": {
-      "todos": [
-        {
-          "content": "Create artifact organization solution",
-          "status": "completed",
-          "activeForm": "Created organization solution"
-        },
-        {
-          "content": "Move 12 misplaced files to canonical locations",
-          "status": "completed",
-          "activeForm": "Moved misplaced files"
-        },
-        {
-          "content": "Update .gitignore with better patterns",
-          "status": "completed",
-          "activeForm": "Updated .gitignore"
-        },
-        {
-          "content": "Review and update CLAUDE.md with v4 proposal",
-          "status": "in_progress",
-          "activeForm": "Reviewing CLAUDE.md updates"
-        },
-        {
-          "content": "Fix scout commands to use correct Task tool",
-          "status": "pending",
-          "activeForm": "Fixing scout commands"
-        },
-        {
-          "content": "Add risk headers to slash commands",
-          "status": "pending",
-          "activeForm": "Adding risk headers"
-        },
-        {
-          "content": "Create agent_outputs directory structure",
-          "status": "pending",
-          "activeForm": "Creating output directories"
-        }
-      ]
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/constants.py",
+      "old_string": "# =============================================================================\n# Validation Constants\n# =============================================================================",
+      "new_string": "# =============================================================================\n# Agent Runs (NEW - Phase 1)\n# =============================================================================\n\nAGENT_RUNS_DIR = Path(\"agent_runs\")\n\"\"\"Centralized directory for all agent run tracking.\"\"\"\n\nAGENT_RUNS_TEMPLATE_DIR = AGENT_RUNS_DIR / \".template\"\n\"\"\"Templates for run metadata and state.\"\"\"\n\ndef get_run_dir(run_id: str) -> Path:\n    \"\"\"Get the directory for a specific run.\"\"\"\n    run_dir = AGENT_RUNS_DIR / run_id\n    run_dir.mkdir(parents=True, exist_ok=True)\n    return run_dir\n\ndef get_latest_run() -> Optional[Path]:\n    \"\"\"Get the most recent run directory.\"\"\"\n    from typing import Optional\n    latest = AGENT_RUNS_DIR / \"latest\"\n    if latest.is_symlink():\n        return latest.resolve()\n    return None\n\n# =============================================================================\n# Validation Constants\n# ============================================================================="
     }
   },
   {
@@ -238,32 +477,8 @@
     "hook_event_name": "PreToolUse",
     "tool_name": "Bash",
     "tool_input": {
-      "command": "mkdir -p agent_outputs && touch agent_outputs/.gitkeep && echo \"agent_outputs/ directory created\"",
-      "description": "Create agent_outputs directory with gitkeep"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "ls -la *.md 2>/dev/null | wc -l && echo \"MD files in root\" && ls -la *.md 2>/dev/null || echo \"Only README.md should remain\"",
-      "description": "Check if repo root is clean"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "mv CLAUDE_v4.md docs/archive/ 2>/dev/null || (mkdir -p docs/archive && mv CLAUDE_v4.md docs/archive/) && rm -f run_log.md && echo \"Additional cleanup complete\"",
-      "description": "Clean up remaining misplaced files"
+      "command": "mkdir -p agent_runs/.template scout_outputs/archive && \\\nmv ai_docs/scout/* scout_outputs/archive/ 2>/dev/null || true && \\\nrmdir ai_docs/scout 2>/dev/null || true && \\\necho \"Directories created and duplicates consolidated\"",
+      "description": "Create agent_runs structure and consolidate scout dirs"
     }
   },
   {
@@ -274,8 +489,20 @@
     "hook_event_name": "PreToolUse",
     "tool_name": "Write",
     "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/CLAUDE.md",
-      "content": "# Scout Plan Build MVP - Command Router v4\n\n**Your role**: Execute deterministic workflows through slash commands. Pick the right tool for the task.\n**Date Updated**: 2025-11-22\n**Framework Version**: 4.0\n\n## \ud83c\udfaf Task Router - START HERE\n\n```mermaid\nWhat do you need?\n\u2502\n\u251c\u2500 \ud83d\udd0d EXPLORE/RESEARCH \u2500\u2500\u2192 Native tools (Grep/Glob)\n\u2502                           \u2514\u2500 Fallback: /sc:analyze\n\u2502\n\u251c\u2500 \ud83d\udccb PLAN A FEATURE \u2500\u2500\u2500\u2500\u2192 Have files? \u2192 /plan_w_docs_improved\n\u2502                           \u2514\u2500 Need files? \u2192 Native tools first\n\u2502\n\u251c\u2500 \ud83d\udd28 BUILD CODE \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2192 Have spec? \u2192 /build_adw\n\u2502                           \u2514\u2500 No spec? \u2192 /plan_w_docs_improved first\n\u2502\n\u251c\u2500 \ud83e\uddea TEST/ANALYZE \u2500\u2500\u2500\u2500\u2500\u2500\u2192 /sc:test (runs pytest)\n\u2502                           \u2514\u2500 /sc:analyze (code review)\n\u2502\n\u2514\u2500 \ud83d\ude80 TRY MULTIPLE WAYS \u2500\u2192 /init-parallel-worktrees\n                            \u2514\u2500 Then: /run-parallel-agents\n```\n\n## \ud83d\udcca Command Menu with Risk Levels\n\n### \ud83d\udfe2 Safe Commands (Auto-invokable)\n<!-- risk: read-only -->\n<!-- auto-invoke: safe -->\n\n| Command | Purpose | When to Use |\n|---------|---------|-------------|\n| `Grep/Glob/Read` | Find files/content | Always start here for searching |\n| `/sc:analyze` | Analyze code | Code review, understanding |\n| `/sc:explain` | Explain code | Documentation needs |\n| `/sc:design` | Design architecture | Planning phase |\n| `/compare-worktrees` | Compare branches | After parallel work |\n\n### \ud83d\udfe1 Local Changes (Require Approval)\n<!-- risk: mutate-local -->\n<!-- auto-invoke: gated -->\n\n| Command | Purpose | Example |\n|---------|---------|---------|\n| `/plan_w_docs_improved` | Create spec | `/plan_w_docs_improved \"Add auth\" \"\" \"files.json\"` |\n| `/build_adw` | Build from spec | `/build_adw \"specs/auth.md\"` |\n| `/sc:implement` | Implement feature | `/sc:implement` |\n| `/sc:test` | Run tests | `/sc:test` |\n| `/init-parallel-worktrees` | Create branches | `/init-parallel-worktrees feature 3` |\n\n### \ud83d\udd34 External Changes (Never Auto-invoke)\n<!-- risk: mutate-external -->\n<!-- auto-invoke: never -->\n\n| Command | Purpose | Risk |\n|---------|---------|------|\n| `/sc:git` | Git operations | Can push to remote |\n| `/sc:spawn` | Spawn agents | Resource consumption |\n| `/merge-worktree` | Merge branches | Affects main branch |\n\n## \ud83d\udcc1 Output Organization (CRITICAL)\n\n**NEVER write files to repository root!** Use these canonical paths:\n\n| Output Type | Location | Example |\n|------------|----------|---------|\n| Analyses | `ai_docs/analyses/` | `ai_docs/analyses/auth-analysis.md` |\n| Reviews | `ai_docs/reviews/` | `ai_docs/reviews/code-review.md` |\n| Reports | `ai_docs/build_reports/` | `ai_docs/build_reports/auth-report.md` |\n| Specs | `specs/` | `specs/issue-001-adw-AUTH-login.md` |\n| Scout | `scout_outputs/` | `scout_outputs/relevant_files.json` |\n| Temp work | `agent_outputs/YYYY-MM-DD/` | `agent_outputs/2025-11-22/143052-auth.json` |\n\n## \ud83d\udd04 Workflow Patterns (Tested & Working)\n\n### Pattern 1: Simple Feature (1-3 files)\n```bash\n# Just implement directly - no commands needed\nEdit files \u2192 Test \u2192 Commit\n```\n\n### Pattern 2: Standard Feature (4-10 files)\n```bash\n# 1. Find relevant files\nGrep \"pattern\" \u2192 Glob \"**/*.py\"\n\n# 2. Create plan\n/plan_w_docs_improved \"Feature description\" \"\" \"scout_outputs/relevant_files.json\"\n\n# 3. Build\n/build_adw \"specs/feature.md\"\n```\n\n### Pattern 3: Complex/Uncertain Feature\n```bash\n# 1. Parallel exploration\n/init-parallel-worktrees feature-name 3\n\n# 2. Each agent tries different approach\n/run-parallel-agents \"specs/feature.md\" feature-name\n\n# 3. Compare and merge best\n/compare-worktrees feature-name\n/merge-worktree trees/feature-name-2  # Best one\n```\n\n## \u26a0\ufe0f Critical Setup\n\n### Environment Variables (REQUIRED)\n```bash\nexport CLAUDE_CODE_MAX_OUTPUT_TOKENS=32768  # Prevents token limit errors\nexport ANTHROPIC_API_KEY=\"sk-ant-...\"      # Your actual key\nexport GITHUB_PAT=\"ghp_...\"                # For GitHub operations\nexport GITHUB_REPO_URL=\"https://github.com/owner/repo\"\n```\n\n### Known Issues & Fixes\n\n| Issue | Root Cause | Fix |\n|-------|------------|-----|\n| Scout commands fail | Missing Task tool | Use native Grep/Glob |\n| Token limit errors | Default 8192 limit | Set env var above |\n| Files in repo root | No path enforcement | Use canonical paths |\n| Git on main | No branch check | Always create feature branch first |\n\n## \ud83d\udee1\ufe0f Safety Rules\n\n1. **Git Safety**: ALWAYS create feature branch before changes\n   ```bash\n   git checkout -b feature/issue-XXX-adw-YYY\n   ```\n\n2. **Output Safety**: NEVER write to repo root\n   ```python\n   # BAD\n   Write(\"REPORT.md\", content)\n\n   # GOOD\n   Write(\"ai_docs/reports/report.md\", content)\n   ```\n\n3. **Approval Gates**: Get user confirmation for:\n   - Any file modifications (\ud83d\udfe1 commands)\n   - Any git push operations (\ud83d\udd34 commands)\n   - Any agent spawning (\ud83d\udd34 commands)\n\n## \ud83c\udf93 Command Decision Helper\n\n**Not sure which command?** Answer these:\n\n1. **How many files?**\n   - 1-3 \u2192 Just do it\n   - 4-10 \u2192 Use `/plan_w_docs_improved` \u2192 `/build_adw`\n   - 11+ \u2192 Use parallel worktrees\n\n2. **How clear is the requirements?**\n   - Crystal clear \u2192 Standard workflow\n   - Need exploration \u2192 `/sc:analyze` \u2192 `/sc:design`\n   - Multiple approaches \u2192 Parallel worktrees\n\n3. **What's the risk level?**\n   - Reading only \u2192 Use any \ud83d\udfe2 command freely\n   - Changing files \u2192 Get approval for \ud83d\udfe1 commands\n   - External changes \u2192 Manual only for \ud83d\udd34 commands\n\n## \ud83d\udcca System Status (2025-11-22)\n\n| Component | Status | Notes |\n|-----------|--------|-------|\n| **Native Tools** | \u2705 100% | Grep, Glob, Read always work |\n| **Plan/Build** | \u2705 80% | Working, needs validation |\n| **Scout Commands** | \u274c 40% | Broken - use native tools |\n| **SuperClaude** | \u2705 90% | Working, well-designed |\n| **Parallel Execution** | \u2705 100% | Worktrees fully functional |\n| **Output Organization** | \u2705 70% | Infrastructure exists, needs enforcement |\n\n## \ud83d\ude80 Quick Examples\n\n### \"Find all auth files\"\n```bash\nGrep -l \"auth\" --type py\nGlob \"**/auth*.py\"\n```\n\n### \"Plan a new feature\"\n```bash\n# First find files\nGrep \"relevant_pattern\" > temp_results\n\n# Then plan\n/plan_w_docs_improved \"Feature description\" \"https://docs.example.com\" \"scout_outputs/relevant_files.json\"\n\n# Then build\n/build_adw \"specs/issue-001-adw-XXX-feature.md\"\n```\n\n### \"Try multiple approaches\"\n```bash\n/init-parallel-worktrees explore-approaches 3\n/run-parallel-agents \"specs/exploration.md\" explore-approaches\n/compare-worktrees explore-approaches\n/merge-worktree trees/explore-approaches-2\n```\n\n---\n\n**Remember**: Commands are deterministic. The LLM suggests, the user decides, the command executes predictably.\n**Never forget**: Always specify output paths. Never write to repo root."
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/agent_runs/.template/meta.yaml",
+      "content": "# Run Metadata Template\n# Copy this for new runs, fill in values\n\nrun_id: \"{MMDD}-{slug}-{hash}\"\ntask_type: scout|plan|build|review\ntask_description: \"Description of what this run does\"\nstarted_at: \"ISO8601 timestamp\"\nmodel: \"claude-sonnet-4\"\nconfig_hash: null  # Optional: for safety verification"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/agent_runs/.template/state.json",
+      "content": "{\n  \"status\": \"ACTIVE\",\n  \"pid\": null,\n  \"session_id\": null,\n  \"last_heartbeat\": null,\n  \"error\": null\n}"
     }
   },
   {
@@ -288,24 +515,14 @@
     "tool_input": {
       "todos": [
         {
-          "content": "Review and update CLAUDE.md with v4 proposal",
+          "content": "Build Phase 1 implementation",
           "status": "completed",
-          "activeForm": "Updated CLAUDE.md to v4"
+          "activeForm": "Built Phase 1"
         },
         {
-          "content": "Create agent_outputs directory structure",
-          "status": "completed",
-          "activeForm": "Created output directories"
-        },
-        {
-          "content": "Fix scout commands to use correct Task tool",
+          "content": "Test run ID generation",
           "status": "pending",
-          "activeForm": "Fixing scout commands"
-        },
-        {
-          "content": "Add risk headers to slash commands",
-          "status": "pending",
-          "activeForm": "Adding risk headers"
+          "activeForm": "Testing run ID generation"
         }
       ]
     }
@@ -318,8 +535,8 @@
     "hook_event_name": "PreToolUse",
     "tool_name": "Bash",
     "tool_input": {
-      "command": "echo \"=== Repository Root Cleanup Status ===\" && ls -la *.md | grep -v README | wc -l && echo \"non-README .md files in root (should be minimal)\" && echo \"\" && echo \"=== Git Status Summary ===\" && git status --short | head -10",
-      "description": "Check repository cleanliness"
+      "command": "python3 -c \"from adws.adw_common import generate_run_id; print('Test run ID:', generate_run_id('scout', 'auth-fix'))\"",
+      "description": "Test run ID generation"
     }
   },
   {
@@ -330,8 +547,8 @@
     "hook_event_name": "PreToolUse",
     "tool_name": "Bash",
     "tool_input": {
-      "command": "git add -A && git status --short | head -20",
-      "description": "Stage all improvements"
+      "command": "git add -A && git status --short | head -10",
+      "description": "Stage all changes for commit"
     }
   }
 ]

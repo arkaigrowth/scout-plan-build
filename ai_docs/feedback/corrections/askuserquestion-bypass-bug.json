@@ -1,0 +1,15 @@
+{
+  "pattern": "askuserquestion_tool_bypass",
+  "discovered": "2025-11-22",
+  "severity": "medium",
+  "status": "open",
+  "lesson": "AskUserQuestion tool auto-skips when permission bypass mode is enabled. Use plain text confirmation as fallback.",
+  "root_cause": "Tool incorrectly classifies interactive questions as permission requests that can be bypassed",
+  "related_issues": [
+    "https://github.com/anthropics/claude-code/issues/10400",
+    "https://github.com/anthropics/claude-code/issues/10267"
+  ],
+  "workaround": "If AskUserQuestion returns empty/instant response, fall back to plain text questions in chat",
+  "affected_commands": ["/research-add"],
+  "fix_when": "Anthropic deploys fix OR disable bypass mode when interactive questions needed"
+}

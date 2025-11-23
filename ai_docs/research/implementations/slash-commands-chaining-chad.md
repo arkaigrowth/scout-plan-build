@@ -1,6 +1,7 @@
 # Claude Code Slash Commands + Chaining ... Design, Use, and Security
 
 **Source**: Analysis compiled by Chad (ChatGPT)
+**Topic**: Claude Code Slash Commands + Chaining Patterns
 **Author**: Chad
 **Date Analyzed**: 2025-11-22 18:54
 **Analyzed By**: Chad (ChatGPT)

@@ -29,6 +29,18 @@ def slugify(text: str) -> str:
     text = re.sub(r"[^a-z0-9]+", "-", text)
     return re.sub(r"-+", "-", text).strip("-")
 
+def generate_run_id(task_type: str, task_name: str = "") -> str:
+    """Generate unique run ID in format MMDD-slug-hash."""
+    import secrets
+    from datetime import datetime
+
+    date_part = datetime.now().strftime("%m%d")
+    slug_part = slugify(task_type)[:20]
+    if task_name:
+        slug_part = f"{slug_part}-{slugify(task_name)[:10]}"
+    hash_part = secrets.token_hex(2)  # 4 chars
+    return f"{date_part}-{slug_part}-{hash_part}"
+
 @dataclass
 class PlanDoc:
     title: str

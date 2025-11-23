@@ -1,0 +1,42 @@
+{
+  "relevant_files": [
+    {
+      "file": "adws/adw_common.py",
+      "reason": "Add generate_run_id() function for unique run identification"
+    },
+    {
+      "file": "adws/adw_modules/constants.py",
+      "reason": "Add AGENT_RUNS_DIR constant for new run directory structure"
+    },
+    {
+      "file": "ai_docs/scout/",
+      "reason": "Duplicate directory to consolidate into scout_outputs/"
+    },
+    {
+      "file": "adws/adw_build.py",
+      "reason": "Update to use run directories for outputs"
+    },
+    {
+      "file": "adws/adw_plan.py",
+      "reason": "Update to track run state"
+    },
+    {
+      "file": ".claude/commands/init-framework.md",
+      "reason": "New interactive framework initialization command"
+    },
+    {
+      "file": "agents/supervisor.py",
+      "reason": "New RunManager class for state tracking"
+    },
+    {
+      "file": "agent_runs/.template/meta.yaml",
+      "reason": "Template for run metadata"
+    },
+    {
+      "file": "agent_runs/.template/state.json",
+      "reason": "Template for run state tracking"
+    }
+  ],
+  "summary": "Phase 1 implementation requires updating core ADW modules to add run ID generation, creating a new supervisor module for state management, consolidating duplicate directories, and adding an interactive framework initialization command.",
+  "timestamp": "2025-11-22T22:30:00Z"
+}

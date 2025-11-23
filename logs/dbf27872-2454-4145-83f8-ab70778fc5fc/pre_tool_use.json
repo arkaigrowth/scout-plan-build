@@ -1,0 +1,77 @@
+[
+  {
+    "session_id": "dbf27872-2454-4145-83f8-ab70778fc5fc",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/dbf27872-2454-4145-83f8-ab70778fc5fc.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "WebFetch",
+    "tool_input": {
+      "url": "https://github.com/anthropics/claude-code/issues/10400",
+      "prompt": "Get the full details of this bug: AskUserQuestion returns empty when bypass permissions is enabled. What is the exact behavior and any workarounds?"
+    }
+  },
+  {
+    "session_id": "dbf27872-2454-4145-83f8-ab70778fc5fc",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/dbf27872-2454-4145-83f8-ab70778fc5fc.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/feedback/README.md"
+    }
+  },
+  {
+    "session_id": "dbf27872-2454-4145-83f8-ab70778fc5fc",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/dbf27872-2454-4145-83f8-ab70778fc5fc.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Complete research-add test with manual confirmation",
+          "status": "in_progress",
+          "activeForm": "Waiting for user metadata confirmation"
+        },
+        {
+          "content": "Debug AskUserQuestion tool (subagent)",
+          "status": "completed",
+          "activeForm": "Debugging AskUserQuestion tool"
+        },
+        {
+          "content": "Document bug in corrections + update slash command",
+          "status": "in_progress",
+          "activeForm": "Documenting bug and adding fallback"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "dbf27872-2454-4145-83f8-ab70778fc5fc",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/dbf27872-2454-4145-83f8-ab70778fc5fc.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/feedback/corrections/askuserquestion-bypass-bug.json",
+      "content": "{\n  \"pattern\": \"askuserquestion_tool_bypass\",\n  \"discovered\": \"2025-11-22\",\n  \"severity\": \"medium\",\n  \"status\": \"open\",\n  \"lesson\": \"AskUserQuestion tool auto-skips when permission bypass mode is enabled. Use plain text confirmation as fallback.\",\n  \"root_cause\": \"Tool incorrectly classifies interactive questions as permission requests that can be bypassed\",\n  \"related_issues\": [\n    \"https://github.com/anthropics/claude-code/issues/10400\",\n    \"https://github.com/anthropics/claude-code/issues/10267\"\n  ],\n  \"workaround\": \"If AskUserQuestion returns empty/instant response, fall back to plain text questions in chat\",\n  \"affected_commands\": [\"/research-add\"],\n  \"fix_when\": \"Anthropic deploys fix OR disable bypass mode when interactive questions needed\"\n}\n"
+    }
+  },
+  {
+    "session_id": "dbf27872-2454-4145-83f8-ab70778fc5fc",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/dbf27872-2454-4145-83f8-ab70778fc5fc.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/.claude/commands/research-add.md",
+      "old_string": "### Step 3: Interactive Confirmation (AskUserQuestion)\n\nUse the AskUserQuestion tool to confirm metadata with the user:\n\n**Question 1 - Type** (header: \"Type\"):\n- Options: Video, Article, Implementation, Paper\n- Pre-select based on type hint from analysis\n\n**Question 2 - Topic** (header: \"Topic\"):\n- Options: [Extracted topic], [Shorter alternative], [Title-based fallback]\n- User can select \"Other\" to enter custom topic\n\n**Question 3 - Source** (header: \"Source\"):\n- Options: [Extracted source/URL], [Author as source], [Filename-based]\n- User can select \"Other\" to enter custom source\n\n**Question 4 - Author** (header: \"Author\"):\n- Options: [Extracted author], [Inferred from source], \"Unknown\"\n- User can select \"Other\" to enter custom author",
+      "new_string": "### Step 3: Interactive Confirmation\n\n**Try AskUserQuestion first**, but if it returns instantly without user interaction (known bug with permission bypass modes), **fall back to plain text confirmation**:\n\n#### Option A: AskUserQuestion Tool (if working)\nUse the AskUserQuestion tool to confirm metadata with pre-filled options.\n\n#### Option B: Plain Text Fallback (if AskUserQuestion fails)\nIf AskUserQuestion returns empty or instant response, ask in plain text:\n\n```\nPlease confirm the following metadata (reply with changes or \"OK\"):\n\n| Field    | Extracted Value           |\n|----------|---------------------------|\n| Type     | [detected type]           |\n| Topic    | [extracted topic]         |\n| Source   | [extracted source]        |\n| Author   | [extracted author]        |\n```\n\nWait for user response before proceeding.\n\n**Note**: AskUserQuestion may auto-skip if `--dangerously-skip-permissions` or similar bypass mode is enabled. See: ai_docs/feedback/corrections/askuserquestion-bypass-bug.json"
+    }
+  }
+]

@@ -2,6 +2,7 @@
 
 **Video ID:** f8RnRuaxee8
 **URL:** https://youtu.be/f8RnRuaxee8
+**Topic**: Git Worktree Parallelization for Claude Code
 **Creator:** IndyDevDan
 **Duration:** 28:18
 **Date Analyzed:** 2025-11-21

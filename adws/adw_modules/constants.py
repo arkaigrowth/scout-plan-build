@@ -72,6 +72,30 @@ DO NOT WRITE new files here.
 
 
 # =============================================================================
+# Agent Runs (NEW - Phase 1)
+# =============================================================================
+
+AGENT_RUNS_DIR = Path("agent_runs")
+"""Centralized directory for all agent run tracking."""
+
+AGENT_RUNS_TEMPLATE_DIR = AGENT_RUNS_DIR / ".template"
+"""Templates for run metadata and state."""
+
+def get_run_dir(run_id: str) -> Path:
+    """Get the directory for a specific run."""
+    run_dir = AGENT_RUNS_DIR / run_id
+    run_dir.mkdir(parents=True, exist_ok=True)
+    return run_dir
+
+def get_latest_run() -> Optional[Path]:
+    """Get the most recent run directory."""
+    from typing import Optional
+    latest = AGENT_RUNS_DIR / "latest"
+    if latest.is_symlink():
+        return latest.resolve()
+    return None
+
+# =============================================================================
 # Validation Constants
 # =============================================================================
 

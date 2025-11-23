@@ -49,19 +49,35 @@ MULTIPLE APPROACHES           → /init-parallel-worktrees
 
 ---
 
-## QUICK RESUME - 2024-11-23
+## QUICK RESUME - 2025-11-23
 
-**Branch:** main | **Commit:** 9ac852b | **Handoff:** `ai_docs/sessions/handoffs/handoff-2024-11-23.md`
+**Branch:** main | **Commit:** da4855b | **Handoff:** `ai_docs/sessions/handoffs/handoff-2025-11-23.md`
 
-### Done This Session
-- Git cleanup: .DS_Store, ARCHIVE_OLD, logs (131MB freed)
-- Doc audit: 131 files → ~115 files (16 deleted/consolidated)
-- Phase 1+3: Skills docs (3→1), parallelization (4→1), config (3→2)
+### Done This Session (Major Cleanup)
 
-### Next Priority: Phase 4 Diagrams
-- 8 files in docs/ need diagrams
-- 22 files in ai_docs/ need diagrams
-- Key targets: INSTALLATION_GUIDE, SKILLS_ARCHITECTURE, TEAM_ONBOARDING
+- README complete revamp (value prop, decision tree, examples)
+- Created `/session:resume` command
+- ai_docs/ triage: 28 files → 4 in root (89% reduction)
+- Path migration: 65 occurrences fixed (`agents/` → `scout_outputs/`)
+- Guide consolidation: 3 docs → 2 (FRAMEWORK_USAGE archived)
+- Added data flow diagram + future infrastructure docs
+- Command naming standardized to colon notation
+- Added hero banner image
+
+### Pending Items
+
+| Priority | Item | Effort |
+|----------|------|--------|
+| 1 | Fix 2025 date inconsistencies | 30 min |
+| 2 | Document all 48 commands | 2 hrs |
+| 3 | Style standardization | 1 hr |
+| 4 | Implement feedback/ V2 loop | 4+ hrs |
+
+### Key Insight
+
+feedback/ folder is **future infrastructure** for V2 Feedback Loop (Agentic Primitives V2).
+Don't delete empty predictions/ and outcomes/ folders - they're scaffolding.
 
 ### Framework Validated
-ADW workflow used 3x successfully. Use `/plan_w_docs_improved` → `/build_adw` pattern.
+
+ADW + parallel subagents used throughout. Pattern: `/plan_w_docs_improved` → `/workflow:build_adw`

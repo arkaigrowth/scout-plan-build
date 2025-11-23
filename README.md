@@ -192,12 +192,14 @@ Grep "user_auth" --type py
 
 | Component | Status |
 |-----------|--------|
-| Scout (file discovery) | Working |
+| Scout (file discovery) | Use native tools (Grep/Glob) |
 | Plan (spec generation) | Working |
 | Build (implementation) | Working |
 | Parallel execution | Working (40-50% speedup) |
 | Session continuity | Working |
 | Portability | 85% (some paths hardcoded) |
+
+> **Note**: The `/scout` slash commands are partially broken. Use native Grep/Glob tools or Task(Explore) agents for file discovery instead.
 
 ---
 
@@ -213,4 +215,4 @@ Grep "user_auth" --type py
 ---
 
 **Version**: MVP
-**Last Updated**: November 2024
+**Last Updated**: 2024-11-23

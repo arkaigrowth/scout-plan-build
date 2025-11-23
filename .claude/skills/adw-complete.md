@@ -191,7 +191,7 @@ scout_output = {
     }
 }
 
-scout_file = "agents/scout_files/relevant_files.json"
+scout_file = "scout_outputs/relevant_files.json"
 Write(scout_file, json.dumps(scout_output, indent=2))
 
 print(f"✅ Scout complete: {len(scout_result)} files found")

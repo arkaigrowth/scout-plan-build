@@ -1,49 +1,52 @@
 ---
-description: FIXED Scout - uses Task agents instead of broken external tools
+description: FIXED Scout - uses working Python scripts instead of broken external tools
 argument-hint: [user-prompt] [scale]
 ---
+
+<!-- risk: read-only -->
+<!-- auto-invoke: safe -->
 
 # Scout (FIXED VERSION)
 
 ## What Changed
-- Commented out external tools (gemini, opencode, etc.) that don't exist
-- Replaced with Task agent using "explore" subagent
-- Kept all the good stuff: parallel execution, timeouts, git safety
+- Removed ALL external tool calls (gemini, opencode, Task agents)
+- Uses working Python scripts with native Glob/Grep
+- Keeps all the good stuff: parallel execution, timeouts, git safety
 
 ## Variables
-USER_PROMPT: $1
-SCALE: $2 (defaults to 3)
-RELEVANT_FILE_OUTPUT_DIR: "ai_docs/scout"
+- `USER_PROMPT`: $1 - The task/feature to scout for
+- `SCALE`: $2 (defaults to 3) - Number of parallel workers
 
 ## Workflow
 
-Kick off `SCALE` parallel subagents using Task tool with "explore" type:
+Execute via Bash (this actually works!):
 
-```python
-# Launch parallel exploration agents
-agents = []
-for i in range(int(SCALE)):
-    agent = Task(
-        subagent_type="explore",
-        prompt=f"Find files related to: {USER_PROMPT} (search {i+1}/{SCALE})"
-    )
-    agents.append(agent)
+```bash
+# Parallel scout (recommended)
+python adws/adw_scout_parallel.py "$USER_PROMPT" --scale $SCALE
 
-# OLD CODE (commented out):
-# gemini -p "[prompt]"  # Doesn't exist
-# opencode run "[prompt]"  # Doesn't exist
-# codex exec "[prompt]"  # Doesn't exist
+# Or single-threaded
+python adws/scout_simple.py "$USER_PROMPT"
 ```
 
-After agents complete:
-1. Run `git diff --stat` to check for changes
-2. If changes detected: `git reset --hard`
-3. Aggregate results to `ai_docs/scout/relevant_files.json`
-4. Sort files for determinism
+**What the scripts do:**
+1. Launch parallel workers with different search strategies
+2. Use native Glob/Grep (guaranteed to work)
+3. Handle 60-second timeout per worker
+4. Git safety (stash uncommitted changes, restore after)
+5. Aggregate and sort results for determinism
 
 ## Why This Works
-- Task agents with "explore" type ACTUALLY EXIST in Claude Code
-- Keeps parallel execution (good!)
-- Keeps timeout management (good!)
-- Keeps git safety (good!)
-- Just replaces the broken tool calls
+- Native tools (Glob/Grep) always available in Claude Code
+- No external dependencies (no gemini, opencode, codex)
+- No Task subagent syntax (which doesn't work as documented)
+- Same parallel pattern as working Test/Review/Document commands
+
+## Output
+- Results: `scout_outputs/relevant_files.json`
+- Individual reports: `scout_outputs/{focus}_report.json`
+
+## Next Steps
+```bash
+/plan_w_docs_improved "$USER_PROMPT" "" "scout_outputs/relevant_files.json"
+```

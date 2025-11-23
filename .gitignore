@@ -24,6 +24,9 @@ __pycache__/
 *.log
 .DS_Store
 
+# Session tracking (auto-updated by Claude hooks)
+.current_session
+
 # IDE
 .vscode/
 .idea/

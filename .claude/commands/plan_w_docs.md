@@ -1,3 +1,6 @@
+<!-- risk: mutate-local -->
+<!-- auto-invoke: gated -->
+
 # Quick Plan (with Docs)
 
 # Purpose

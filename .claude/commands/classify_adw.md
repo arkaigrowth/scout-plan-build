@@ -1,3 +1,6 @@
+<!-- risk: read-only -->
+<!-- auto-invoke: safe -->
+
 # ADW Workflow Extraction
 
 Extract ADW workflow information from the text below and return a JSON response.

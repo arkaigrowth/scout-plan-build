@@ -2,44 +2,50 @@
 
 **Use this after `/compact` to restore session context.**
 
-Copy everything below the line and paste as your first message:
+## How Session Tracking Works
+
+Handoffs now use **Claude session IDs** for traceability:
+
+| Component | Source | Example |
+|-----------|--------|---------|
+| Session ID | `.current_session` file (auto-updated) | `f67ada19-d93f-49c5-97fc-b71de9cb32e7` |
+| Short ID | First 8 chars of session | `f67ada19` |
+| Git Hash | Current commit | `35c29af` |
+| Filename | `MMDD-handoff-{short_id}.md` | `1123-handoff-f67ada19.md` |
+
+**Correlation chain**: Handoff filename → Session ID → Transcript JSONL → Full conversation
+
+## Template: Copy Below Line After /compact
 
 ---
 
 ## SESSION RESUME - Scout-Plan-Build Framework
 
-**Branch:** `feature/bitbucket-integration`
-**Last Commit:** `35c29af` - Phase 1 Agent Box state management foundation
-**Date:** 2025-11-23
+**Session:** `{SESSION_SHORT_ID}` (full: `{FULL_SESSION_ID}`)
+**Branch:** `{BRANCH_NAME}`
+**Last Commit:** `{GIT_HASH}` - {COMMIT_MESSAGE}
+**Date:** {DATE}
 
 ### CRITICAL FILES TO READ FIRST
 
 ```text
-1. ai_docs/sessions/handoffs/1123-handoff-565e274.md      ← Today's full session
-2. ai_docs/architecture/AGENT_BOX_INTEGRATION_DECISION.md ← Phase 2/3 plan
-3. specs/phase1-agent-box-state-management.md             ← What we implemented
-4. CLAUDE.md                                              ← Framework v4 routing
+1. ai_docs/sessions/handoffs/{MMDD}-handoff-{SESSION_SHORT}.md  ← This session's handoff
+2. .current_session                                              ← Session metadata (JSON)
+3. CLAUDE.md                                                     ← Framework v4 routing
 ```
 
-### WHAT WAS ACCOMPLISHED
+### SESSION PROVENANCE
 
-✅ **Framework v4** - Deterministic routing, risk classification (🟢🟡🔴), command audit
-✅ **Phase 1 State Management** - Run IDs (`MMDD-slug-hash`), agent_runs/ directory, templates
-✅ **Duplicate Directories Fixed** - Consolidated ai_docs/scout/ → scout_outputs/archive/
-✅ **Agent Box Research** - Integration decision doc, implementation spec
-✅ **All committed** - 2 major commits to `feature/bitbucket-integration`
-
-### PENDING ACTION ITEMS (Prioritized)
-
-| Priority | Item | Route | Effort |
-|----------|------|-------|--------|
-| 1 | Create RunManager class | Direct implementation | 30 min |
-| 2 | Create /init-framework command | Direct or ADW | 20 min |
-| 3 | Integrate handoffs with RunManager | Quick enhancement | 15 min |
-| 4 | Fix scout commands (Task tool) | Investigation + fixes | 1 hr |
-| 5 | Add risk headers to commands | Quick edits | 20 min |
-
-**Future**: Wrap handoff process in state management (track sessions with RunManager)
+Check `.current_session` for:
+```json
+{
+  "session_id": "{FULL_UUID}",
+  "short_id": "{8_CHARS}",
+  "git_hash": "{SHORT_HASH}",
+  "git_branch": "{BRANCH}",
+  "timestamp": "{ISO8601}"
+}
+```
 
 ### FRAMEWORK ROUTING RULES
 
@@ -51,24 +57,17 @@ RESEARCH/EXPLORE              → Task(Explore) agent
 MULTIPLE APPROACHES           → /init-parallel-worktrees
 ```
 
-### KEY INSIGHTS FROM SESSION
-
-1. **Scout commands broken** - They reference a Task tool that doesn't exist in standard Claude Code
-2. **ADW needs state** - Build command expects state files from plan phase
-3. **Run ID format matters** - We chose `MMDD-slug-hash` for user-friendliness vs Agent Box's long format
-4. **Framework v4 working** - Deterministic routing reduces token waste and ambiguity
-
-### QUICK START COMMANDS
+### QUICK VERIFICATION COMMANDS
 
 ```bash
-# Test the run ID generation we built
-python3 -c "from adws.adw_common import generate_run_id; print(generate_run_id('test', 'resume'))"
+# Check current session info
+cat .current_session | python3 -m json.tool
 
-# Continue with RunManager implementation
-vim agents/supervisor.py  # Create from spec Step 3
+# Test provenance helpers
+python3 -c "from adws.adw_common import get_current_session, get_provenance_block; print(get_provenance_block('markdown'))"
 
-# Or test parallel worktrees
-/init-parallel-worktrees test-feature 2
+# Generate handoff filename
+python3 -c "from adws.adw_common import generate_handoff_filename; print(generate_handoff_filename())"
 ```
 
 ### REFERENCE FILES
@@ -76,13 +75,11 @@ vim agents/supervisor.py  # Create from spec Step 3
 | Purpose | Path |
 |---------|------|
 | Main instructions | `CLAUDE.md` |
+| Session helpers | `adws/adw_common.py` (get_current_session, get_provenance_block) |
+| Hook that writes session | `.claude/hooks/user_prompt_submit.py` |
+| Agent run templates | `agent_runs/.template/` |
 | Framework manifest | `.scout_framework.yaml` |
-| Directory structure | `DIRECTORY_STRUCTURE.md` |
-| V2 primitives | `ai_docs/reference/AGENTIC_ENGINEERING_PRIMITIVES_V2.md` |
-| Worktree spec | `specs/git-worktree-parallel-agents.md` |
-| V2 review | `ai_docs/reviews/agentic-primitives-v2-review.md` |
-| Full handoff | `ai_docs/sessions/handoffs/handoff-2024-11-22-final.md` |
 
 ---
 
-**Please read the handoff file first, then ask what I'd like to work on next.**
+**Please read the latest handoff file first, then ask what I'd like to work on next.**

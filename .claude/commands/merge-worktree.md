@@ -1,3 +1,6 @@
+<!-- risk: mutate-external -->
+<!-- auto-invoke: never -->
+
 # Merge Selected Worktree
 
 Merge the chosen parallel implementation back to the main branch and clean up.

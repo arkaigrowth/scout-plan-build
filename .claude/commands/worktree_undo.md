@@ -1,3 +1,6 @@
+<!-- risk: mutate-local -->
+<!-- auto-invoke: gated -->
+
 # /worktree_undo - Undo Checkpoints
 
 **Purpose**: Undo n checkpoints (revert to previous state)

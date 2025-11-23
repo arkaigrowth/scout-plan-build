@@ -1,3 +1,6 @@
+<!-- risk: mutate-external -->
+<!-- auto-invoke: never -->
+
 # Create Pull Request
 
 Based on the `Instructions` below, take the `Variables` follow the `Run` section to create a pull request. Then follow the `Report` section to report the results of your work.

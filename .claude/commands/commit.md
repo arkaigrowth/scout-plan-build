@@ -1,3 +1,6 @@
+<!-- risk: mutate-external -->
+<!-- auto-invoke: never -->
+
 # Generate Git Commit
 
 Based on the `Instructions` below, take the `Variables` follow the `Run` section to create a git commit with a properly formatted message. Then follow the `Report` section to report the results of your work.

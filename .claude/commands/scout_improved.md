@@ -4,70 +4,62 @@ argument-hint: [user-prompt] [scale]
 model: claude-sonnet-4-5-20250929
 ---
 
-# Purpose
+<!-- risk: read-only -->
+<!-- auto-invoke: safe -->
 
-Search the codebase for files needed to complete the task using a fast, token-efficient agent.
+# Scout Improved
 
-# Variables
-USER_PROMPT: $1
-SCALE: $2 (defaults to 4)
-RELEVANT_FILE_OUTPUT_DIR: "ai_docs/scout"
+## Purpose
+Search the codebase for files needed to complete the task using native tools.
 
-# Instructions
-- We're executing a three step engineering workflow to deliver on the `USER_PROMPT`.
-- Execute each step in order, top to bottom.
-- If you're returned an unexpected result, stop and notify the user.
-- Place each argument for the SlashCommands arguments within double quotes and convert any nested double quotes to single quotes.
-- Do not alter the `USER_PROMPT` variable in anyway, pass it in as is.
-- IMPORTANT: Flow through each step in the workflow in order, top to bottom. Only waiting for the previous step to complete before starting the next step. Do not stop in between steps. Complete every step in the workflow before stopping.
+## Variables
+- `USER_PROMPT`: $1 - The task/feature to scout for
+- `SCALE`: $2 (defaults to 4) - Number of parallel workers
+- Output directory: `scout_outputs/`
 
 ## Workflow
 
-- Write a prompt for `SCALE` number of agents to the Task tool that will immediately call the Bash tool to run these commands to kick off your agents to conduct the search:
-  - `gemini -p "[prompt]" --model gemini-2.5-flash-preview-09-2025` (if count >= 2)
-  - `opencode run [prompt] --model cerebras/qwen-3-coder-480b` (if count >= 2)
-  - `gemini -p "[prompt]" --model gemini-2.5-flash-lite-preview-09-2025` (if count >= 3)
-  - `codex exec -m gpt-5-codex -s read-only -c model_reasoning_effort="low" "[prompt]"` (if count >= 4)
-  - `claude -p "[prompt]" --model haiku` (if count >= 5)
-- How to prompt the agents:
-  - IMPORTANT: Kick these agents off in parallel using the Task tool.
-  - IMPORTANT: These agents are calling OTHER agentic coding tools to search the codebase. DO NOT call any search tools yourself.
-  - IMPORTANT: That means with the Task tool, you'll immediately call the Bash tool to run the respective agentic coding tool (gemini, opencode, claude, etc.)
-  - IMPORTANT: Instruct the agents to quickly search the codebase for files needed to complete the task. This isn't about a full blown search, just a quick search to find the files needed to complete the task.
-  - Instruct the subagent to use a timeout of 3 minutes for each agent's bash call. Skip any agents that don't return within the timeout, don't restart them.
-  - Make it absolutely clear that the Task tool is ONLY going to call the Bash tool and pass in the appropriate prompt, replacing the [prompt] with the actual prompt you want to run.
-  - Make it absolutely clear the agent is NOT implementing the task, the agent is ONLY searching the codebase for files needed to complete the task.
-  - Prompt the agent to return a structured list of files with specific line ranges in this format:
-    - `- <path to file> (offset: N, limit: M)` where offset is the starting line number and limit is the number of lines to read
-    - If there are multiple relevant sections in the same file, repeat the entry with different offset/limit values
-  - Execute additional agent calls in round robin fashion.
-  - Give them the relevant information needed to complete the task.
-  - Skip any agent outputs that are not relevant to the task including failures and errors.
-  - If any agent doesn't return in the proper format, don't try to fix it for them, just ignore their output and continue with the next agents responses.
-  - IMPORTANT: Again, don't search for the agents themselves, just call the Bash tool with the appropriate prompt.
-- After the agents complete, run `git diff --stat` to make sure no files were changed. If there are any changes run `git reset --hard` to reset the changes.
-- Follow the `Report` section to manage and report the results. We're going to create a file to store the results.
+Execute the parallel scout via Bash:
 
-## Report
-- Store the results of the scout in a JSON file at `${RELEVANT_FILE_OUTPUT_DIR}/relevant_files.json`
-- The JSON should have this structure:
-  ```json
-  {
-    "task": "[USER_PROMPT]",
-    "timestamp": "ISO-8601 timestamp",
-    "files": [
-      {
-        "path": "relative/path/to/file.ext",
-        "reason": "Why this file is relevant",
-        "offset": 0,
-        "limit": 100
-      }
-    ],
-    "key_findings": {
-      "summary": "High-level insights from scouting",
-      "gaps": "What was not found",
-      "recommendations": "Suggested next steps"
-    }
+```bash
+python adws/adw_scout_parallel.py "$USER_PROMPT" --scale $SCALE
+```
+
+**What this does:**
+1. Launches `SCALE` parallel scout agents (each with different focus: implementation, tests, config, architecture, dependencies, documentation)
+2. Uses native Glob/Grep tools (guaranteed to work - no external dependencies)
+3. Enforces 60-second timeout per scout
+4. Aggregates results from all scouts
+5. Handles git safety (stash/restore uncommitted changes)
+6. Returns sorted file list for determinism
+
+## Performance
+```
+Sequential Scout: 3-5 minutes (one search at a time)
+Parallel Scout: 30-60 seconds (all searches concurrent!)
+Speedup: 4-6x faster!
+```
+
+## Output Format
+Results saved to `scout_outputs/relevant_files.json`:
+```json
+{
+  "task": "[USER_PROMPT]",
+  "timestamp": "ISO-8601 timestamp",
+  "duration_seconds": 45.2,
+  "scout_count": 4,
+  "files": ["path/to/file1.py", "path/to/file2.py"],
+  "file_count": 25,
+  "performance": {
+    "sequential_estimate": 120,
+    "parallel_actual": 45.2,
+    "speedup": "2.7x"
   }
-  ```
-- Return the path to `relevant_files.json`
+}
+```
+
+## Next Steps
+After scouting, run plan:
+```bash
+/plan_w_docs_improved "$USER_PROMPT" "" "scout_outputs/relevant_files.json"
+```

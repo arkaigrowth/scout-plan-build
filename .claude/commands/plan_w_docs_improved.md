@@ -5,6 +5,9 @@ argument-hint: [user-prompt] [documentation-urls] [relevant-files]
 model: claude-sonnet-4-5-20250929
 ---
 
+<!-- risk: mutate-local -->
+<!-- auto-invoke: gated -->
+
 # Quick Plan
 
 Create a detailed implementation plan based on the user's requirements provided through the `USER_PROMPT` variable. Analyze the request, pull in the documentation, think through the implementation approach, and save a comprehensive specification document to `PLAN_OUTPUT_DIRECTORY/<name-of-plan>.md` that can be used as a blueprint for actual development work. Follow the `Instructions` and work through the `Workflow` to create the plan.

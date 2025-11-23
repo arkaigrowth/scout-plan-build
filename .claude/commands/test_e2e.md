@@ -1,3 +1,6 @@
+<!-- risk: read-only -->
+<!-- auto-invoke: safe -->
+
 # E2E Test Runner
 
 Execute end-to-end (E2E) tests using Playwright browser automation (MCP Server). If any errors occur and assertions fail mark the test as failed and explain exactly what went wrong.

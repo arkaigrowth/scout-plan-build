@@ -1,3 +1,6 @@
+<!-- risk: mutate-local -->
+<!-- auto-invoke: gated -->
+
 # Implement the following plan
 Follow the `Instructions` to implement the `Plan` then `Report` the completed work.
 

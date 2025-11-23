@@ -1,3 +1,6 @@
+<!-- risk: read-only -->
+<!-- auto-invoke: safe -->
+
 # Application Validation Test Suite
 
 Execute comprehensive validation tests for both frontend and backend components, returning results in a standardized JSON format for automated processing.

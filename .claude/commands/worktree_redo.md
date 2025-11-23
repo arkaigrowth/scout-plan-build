@@ -1,3 +1,6 @@
+<!-- risk: mutate-local -->
+<!-- auto-invoke: gated -->
+
 # /worktree_redo - Redo Undone Checkpoint
 
 **Purpose**: Redo the last undone checkpoint (restore after undo)

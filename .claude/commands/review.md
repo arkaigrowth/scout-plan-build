@@ -1,3 +1,6 @@
+<!-- risk: read-only -->
+<!-- auto-invoke: safe -->
+
 # Review
 
 Follow the `Instructions` below to **review work done against a specification file** (spec/*.md) to ensure implemented features match requirements. Use the spec file to understand the requirements and then use the git diff if available to understand the changes made. Capture screenshots of critical functionality paths as documented in the `Instructions` section. If there are issues, report them if not then report success.

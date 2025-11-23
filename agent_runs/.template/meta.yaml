@@ -1,9 +1,25 @@
 # Run Metadata Template
 # Copy this for new runs, fill in values
 
+# Run identification
 run_id: "{MMDD}-{slug}-{hash}"
 task_type: scout|plan|build|review
 task_description: "Description of what this run does"
+
+# Timing
 started_at: "ISO8601 timestamp"
+completed_at: null  # Filled when run completes
+
+# Provenance (for traceability)
+session_id: "{full-uuid}"        # Claude session UUID (from .current_session)
+session_short: "{8-char}"        # First 8 chars of session_id
+git_hash: "{short-hash}"         # Git commit when run started
+git_branch: "{branch-name}"      # Git branch when run started
+
+# Execution context
 model: "claude-sonnet-4"
 config_hash: null  # Optional: for safety verification
+
+# Correlation
+parent_run_id: null     # If spawned by another run
+transcript_path: null   # Path to Claude transcript JSONL

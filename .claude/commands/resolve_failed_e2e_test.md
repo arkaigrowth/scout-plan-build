@@ -1,3 +1,6 @@
+<!-- risk: mutate-local -->
+<!-- auto-invoke: gated -->
+
 # Resolve Failed E2E Test
 
 Fix a specific failing E2E test using the provided failure details.

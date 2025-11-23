@@ -1,6 +1,8 @@
+<!-- risk: mutate-local -->
+<!-- auto-invoke: gated -->
+
 # Add Research Document (Smart Import)
 
-<!-- risk: mutate -->
 <!-- scope: ai_docs/research/** -->
 
 Add a new research document to the ai_docs/research library. Accepts either a **filepath** to an existing file OR **pasted content**. Uses interactive confirmation before creating.

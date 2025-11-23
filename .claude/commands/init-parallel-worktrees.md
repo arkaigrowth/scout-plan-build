@@ -1,3 +1,6 @@
+<!-- risk: mutate-local -->
+<!-- auto-invoke: gated -->
+
 # Initialize Parallel Worktrees
 
 Create N parallel git worktrees for concurrent agent development.

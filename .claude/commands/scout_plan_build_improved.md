@@ -4,6 +4,9 @@ argument-hint: [user-prompt] [documentation-urls]
 model: claude-sonnet-4-5-20250929
 ---
 
+<!-- risk: mutate-local -->
+<!-- auto-invoke: gated -->
+
 # Scout Plan Build
 
 # Purpose

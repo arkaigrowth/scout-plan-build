@@ -1,30 +1,41 @@
+<!-- risk: read-only -->
+<!-- auto-invoke: safe -->
+
 # Scout
 
-# Purpose
-Search the codebase for files needed to complete the task using a fast, token-efficient agent.
+## Purpose
+Search the codebase for files needed to complete the task using native tools (Glob/Grep).
 
-# Variables
-USER_PROMPT: $1
-SCALE: $2 (defaults to 4)
-RELEVANT_FILE_OUTPUT_DIR: "ai_docs/scout"
+## Variables
+- `USER_PROMPT`: $1 - The task/feature to scout for
+- `SCALE`: $2 (defaults to 4) - Number of parallel workers
 
-# Workflow
-- Kick off `SCALE` subagents via Task tool; each **only** calls Bash to run an external agentic coding tool quickly.
-- Enforce a 3-minute timeout per subagent; skip timeouts, do not restart.
-- Require a return format per file: `<path> (offset: N, limit: M)` — enough to retrieve the relevant ranges.
-- After subagents finish, run `git diff --stat`; if any file changed, `git reset --hard`.
-- Write the aggregated file list to `${RELEVANT_FILE_OUTPUT_DIR}/relevant_files.json` and return that path.
+## Workflow
 
-# Use Task agents (THESE ACTUALLY WORK)
-- Task(subagent_type="explore", prompt="[prompt] - focus on models/schemas")
-- Task(subagent_type="explore", prompt="[prompt] - focus on routes/controllers")
-- Task(subagent_type="explore", prompt="[prompt] - focus on tests")
-- Task(subagent_type="python-expert", prompt="[prompt] - find implementation files")
+Execute the scout via Bash:
 
-# OLD BROKEN TOOLS (commented out):
-# - `gemini-g "[prompt]"` - doesn't exist
-# - `opencode run "[prompt]"` - doesn't exist
-# - `codex exec "[prompt]"` - doesn't exist
+```bash
+# For parallel scouts (recommended - 4-6x faster)
+python adws/adw_scout_parallel.py "$USER_PROMPT" --scale $SCALE
 
-# Output
-- Path to `relevant_files.json`
+# Or for single-threaded scout
+python adws/scout_simple.py "$USER_PROMPT"
+```
+
+**What the script does:**
+- Uses native Glob/Grep tools (guaranteed to work)
+- Handles parallel execution via subprocess
+- Saves results to `scout_outputs/relevant_files.json`
+- Includes git safety (stash/restore uncommitted changes)
+- Returns sorted file list for determinism
+
+## Output
+- Results saved to: `scout_outputs/relevant_files.json`
+- Individual scout reports: `scout_outputs/{focus}_report.json`
+- Path to `relevant_files.json` is returned for use in next step
+
+## Next Steps
+After scouting, run plan:
+```bash
+/plan_w_docs_improved "$USER_PROMPT" "" "scout_outputs/relevant_files.json"
+```

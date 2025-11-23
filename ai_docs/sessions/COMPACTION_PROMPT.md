@@ -9,33 +9,34 @@ Copy everything below the line and paste as your first message:
 ## SESSION RESUME - Scout-Plan-Build Framework
 
 **Branch:** `feature/bitbucket-integration`
-**Last Commit:** `0559753` - Git worktree parallelization + research + feedback
-**Date:** 2024-11-22
+**Last Commit:** `35c29af` - Phase 1 Agent Box state management foundation
+**Date:** 2025-11-23
 
 ### CRITICAL FILES TO READ FIRST
 
 ```text
-1. ai_docs/sessions/handoffs/handoff-2024-11-22-final.md  ← Full session summary
-2. ai_docs/reviews/agentic-primitives-v2-review.md        ← V2 adoption roadmap
-3. specs/git-worktree-parallel-agents.md                  ← Worktree spec
+1. ai_docs/sessions/handoffs/handoff-2025-11-23.md        ← Today's full session
+2. ai_docs/architecture/AGENT_BOX_INTEGRATION_DECISION.md ← Phase 2/3 plan
+3. specs/phase1-agent-box-state-management.md             ← What we implemented
+4. CLAUDE.md                                              ← Framework v4 routing
 ```
 
 ### WHAT WAS ACCOMPLISHED
 
-✅ **Research Infrastructure** - `ai_docs/research/` created with videos/, articles/, etc.
-✅ **Git Worktree Parallelization** - 4 new slash commands: `/init-parallel-worktrees`, `/run-parallel-agents`, `/compare-worktrees`, `/merge-worktree`
-✅ **V2 Primitives Review** - Full architectural review with adoption recommendations
-✅ **Feedback Structure** - `ai_docs/feedback/{predictions,outcomes,corrections}/` created
-✅ **All committed** to `feature/bitbucket-integration` branch
+✅ **Framework v4** - Deterministic routing, risk classification (🟢🟡🔴), command audit
+✅ **Phase 1 State Management** - Run IDs (`MMDD-slug-hash`), agent_runs/ directory, templates
+✅ **Duplicate Directories Fixed** - Consolidated ai_docs/scout/ → scout_outputs/archive/
+✅ **Agent Box Research** - Integration decision doc, implementation spec
+✅ **All committed** - 2 major commits to `feature/bitbucket-integration`
 
 ### PENDING ACTION ITEMS (Prioritized)
 
 | Priority | Item | Route | Effort |
 |----------|------|-------|--------|
-| 1 | Add CLAUDE.md routing decision tree | Quick | 30 min |
-| 2 | Langfuse observability integration | ADW-Full | 2-3 hrs |
-| 3 | Multi-model router spec | ADW-Plan | 1 hr |
-| 4 | Test worktree commands | Quick | 15 min |
+| 1 | Create RunManager class | Direct implementation | 30 min |
+| 2 | Create /init-framework command | Direct or ADW | 20 min |
+| 3 | Fix scout commands (Task tool) | Investigation + fixes | 1 hr |
+| 4 | Add risk headers to commands | Quick edits | 20 min |
 
 ### FRAMEWORK ROUTING RULES
 
@@ -47,21 +48,24 @@ RESEARCH/EXPLORE              → Task(Explore) agent
 MULTIPLE APPROACHES           → /init-parallel-worktrees
 ```
 
-### KEY INSIGHT FROM SESSION
+### KEY INSIGHTS FROM SESSION
 
-The framework needs a **deterministic router** in CLAUDE.md showing which workflow to use based on task complexity. This makes the framework portable and reduces token waste.
+1. **Scout commands broken** - They reference a Task tool that doesn't exist in standard Claude Code
+2. **ADW needs state** - Build command expects state files from plan phase
+3. **Run ID format matters** - We chose `MMDD-slug-hash` for user-friendliness vs Agent Box's long format
+4. **Framework v4 working** - Deterministic routing reduces token waste and ambiguity
 
 ### QUICK START COMMANDS
 
 ```bash
-# Test worktree commands
+# Test the run ID generation we built
+python3 -c "from adws.adw_common import generate_run_id; print(generate_run_id('test', 'resume'))"
+
+# Continue with RunManager implementation
+vim agents/supervisor.py  # Create from spec Step 3
+
+# Or test parallel worktrees
 /init-parallel-worktrees test-feature 2
-
-# Or enhance CLAUDE.md with routing
-# Add decision tree section showing task→workflow mapping
-
-# Or start Langfuse ADW
-/scout "Langfuse observability integration for adws modules"
 ```
 
 ### REFERENCE FILES

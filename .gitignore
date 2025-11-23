@@ -30,6 +30,9 @@ __pycache__/
 # Hook logs (session-specific, not needed in repo)
 /logs/
 
+# Archive of old/deprecated files
+/archive_old/
+
 # Agent runs (transient state)
 /agent_runs/*/
 !/agent_runs/.template/

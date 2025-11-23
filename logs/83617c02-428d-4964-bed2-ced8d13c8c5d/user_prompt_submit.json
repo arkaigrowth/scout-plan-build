@@ -1,0 +1,10 @@
+[
+  {
+    "session_id": "83617c02-428d-4964-bed2-ced8d13c8c5d",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/83617c02-428d-4964-bed2-ced8d13c8c5d.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "hey claude. I'm jumping into a chat with a cofounder of a VC funded startup that is building something that helps correlate logs/metrics/traces with AI. a tool that helps with on-call devops pain. Their differentiation: Slack-native workflow (react with emoji) vs traditional dashboards\n  \u2022 They're solving the investigation bottleneck, not the fixing part (yet, or so i think. not 100% sure). \n\nwhat key parts of this scout plan build workflow could i showcase to show that I understand the challenge and what they're doing, that would have direct applications to what they're doing. Perhaps some of he ADW .py workflows? or the frameowork in general? think super hard. we want to make a good impression and make me seem like a fit. but we want to be honest. and even explore possible gaps if appropriate. lmk what you think and ask me any Qs you have that would help you go about this better. feel freer to spawn subgents to manage context smartly (to review the framework and docs). and point me to filepaths and docs that I could use as talking points. tysm!"
+  }
+]

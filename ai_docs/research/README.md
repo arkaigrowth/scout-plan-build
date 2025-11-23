@@ -22,10 +22,10 @@ research/
 
 ## Semantic Clarification
 
-| Folder | Contains | Purpose |
-|--------|----------|---------|
+| Folder                 | Contains            | Purpose                           |
+| ---------------------- | ------------------- | --------------------------------- |
 | `ai_docs/reference/` | Internal quick refs | Generated docs about THIS project |
-| `ai_docs/research/` | External analyses | Learning from EXTERNAL sources |
+| `ai_docs/research/`  | External analyses   | Learning from EXTERNAL sources    |
 
 **Research = INPUT** (external knowledge coming in)
 **Reference = OUTPUT** (internal knowledge distilled out)
@@ -34,27 +34,27 @@ research/
 
 ### Videos
 
-| Source | Topic | File | Date Added |
-|--------|-------|------|------------|
+| Source               | Topic                                        | File                                                            | Date Added |
+| -------------------- | -------------------------------------------- | --------------------------------------------------------------- | ---------- |
 | IndyDevDan (YouTube) | Git Worktree Parallelization for Claude Code | [Analysis](videos/idd-video-git-worktrees-f8RnRuaxee8-analysis.md) | 2024-11-21 |
 
 ### Articles
 
-| Source | Topic | File | Date Added |
-|--------|-------|------|------------|
-| *Coming soon* | | | |
+| Source          | Topic | File | Date Added |
+| --------------- | ----- | ---- | ---------- |
+| *Coming soon* |       |      |            |
 
 ### Implementations
 
 | Repository | Topic | File | Date Added |
 |------------|-------|------|------------|
-| *Coming soon* | | | |
+| Chad/Claude Code | Claude Code Slash Commands + Chaining | [Analysis](implementations/slash-commands-chaining-chad.md) | 2025-11-22 |
 
 ### Papers
 
-| Title | Topic | File | Date Added |
-|-------|-------|------|------------|
-| *Coming soon* | | | |
+| Title           | Topic | File | Date Added |
+| --------------- | ----- | ---- | ---------- |
+| *Coming soon* |       |      |            |
 
 ## Adding New Research
 
@@ -76,6 +76,7 @@ When adding a new analysis:
 ## Why This Exists
 
 In agentic engineering, AI assistants benefit from curated external knowledge:
+
 - Patterns from successful implementations
 - Best practices from industry experts
 - Academic foundations for complex features

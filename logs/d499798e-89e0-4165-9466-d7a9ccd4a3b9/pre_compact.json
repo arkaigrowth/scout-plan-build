@@ -1,0 +1,10 @@
+[
+  {
+    "session_id": "d499798e-89e0-4165-9466-d7a9ccd4a3b9",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/d499798e-89e0-4165-9466-d7a9ccd4a3b9.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "hook_event_name": "PreCompact",
+    "trigger": "manual",
+    "custom_instructions": "and please capture all the critical details (particularly filepaths and names) of what we've accomplished, and the details of what we've discovered about how the framework works and how it doesn't. We want to continue building it out after we resume, so ensure compaction summary has all necessary context to continue where we left off reg. bitbucket integration when we return. tysm! lmk if you have Qs on compaction!"
+  }
+]

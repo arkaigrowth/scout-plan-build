@@ -1,0 +1,50 @@
+[
+  {
+    "session_id": "d499798e-89e0-4165-9466-d7a9ccd4a3b9",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/d499798e-89e0-4165-9466-d7a9ccd4a3b9.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "Hey claude. we want to get this framework into ship shape for portability, and make sure it's all organized, and we have clear understanding and instructions on how to use\n  it, with examples... slash commands, natural language, the whole nine.\n\n  right now i'm not sure that we're using the ADWs properly, nor the git worktree parallelization. We need some kind of... idk. hints? to keep users on track? or at least\n  examples of how to use it end to end? And that should include the git worktree parallelization, and how it can work with bitbucket (if at all).\n\n  think super hard plz... and use subagents where appropriate to explore and get lay of the land... we did some reorganization of the repo... if anything is not clear in the\n  claude.md, or is outdated, we will need to update that. we want this to work as frictionlessly as possible and have it read for the team to use.\n\n  another problem is that whenever we run scouts (like now for instance) we're dumping md files into the repo root, which doesn't seem like the corret organized approach...\n  also it can be hard to know what the created md files are from... like what task? or request? or even... what date? they don't have timestmaps... let's think hard about all\n  of the above, and consider the best approach of resolving these challenges, and getting everything ready for a presentation to share with the team, and allow them to hit the\n  ground running.  \n\nultimately, we want to understand how all the pieces fit together and work together and how to use them seamlesssly. If we already have docs about this, then we can reference them, but need to make sure they're up-to-date. because this has been a constantly changing piece of work. tysm! appreciate u!"
+  },
+  {
+    "session_id": "d499798e-89e0-4165-9466-d7a9ccd4a3b9",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/d499798e-89e0-4165-9466-d7a9ccd4a3b9.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "default",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "Hang on... let's make sure I understand this. few things in FRAMEWORK_USAGE_GUIDE.md i'm not fully understanding...\n\nfirst off, If we're using this Framework within Claude code. Why do we need an Anthropic API key as stated in step 0?\n\nalso, i thought that we were trying to lean heavily into the natural language usage? so for step 1 in the @docs/FRAMEWORK_USAGE_GUIDE.md... why are we forcing devs to type all that? shouldn't it be smart enough to handle natural language requests??\n\nalso not understanding the '/plan_w_docs' slash command... what if we don't have docs? and what does does it reference by default? do we have to specify? and if we do have docs, where should they be dropped?\n\nalso... explain when the '/build_adw' command should be used? I think we need a higher level big picture understanding of when to use what... with examples. and that includes the step 4 stuff. need to better understand what the adw_sdlc.py script does... and again, we don't want to force too many flags and stuff on them. we want natural language biased!\n\nand the other big shortcoming... we want this to be completely tailored for bitbucket usage, which is what the team uses. \n\nif we wanted to try usign the framework for the above... woudl it be appropriate? and how would we do so? think hard about all of the above.\n\nthink hard, use subagents where appropriate to preserve context, and lmk if you have any questions... i feel like i have this framework, but am not using it correctly... want to master the ADW use cases and patterns, and have them NL-biased. tysm!"
+  },
+  {
+    "session_id": "d499798e-89e0-4165-9466-d7a9ccd4a3b9",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/d499798e-89e0-4165-9466-d7a9ccd4a3b9.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "Hmm... le's think about how to do the bitbucket integration. one of our senior devs sent this: https://www.atlassian.com/blog/bitbucket/rovo-chat-bitbucket-beta and was leaning toward using it... \n\nso this is a good test, if i tell you to research this now, how would you go about it within the context of the framework? plz do so, and walk me through what your'e doing, explaining every step of the way and how it fits within the framework. what was automatic, how it was initiated, etc. tysm! think about this."
+  },
+  {
+    "session_id": "d499798e-89e0-4165-9466-d7a9ccd4a3b9",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/d499798e-89e0-4165-9466-d7a9ccd4a3b9.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "let's begin creating the bitbucket integration piece. use the framework, and explain things play by play as they happen so we can be aware of and see the framework in action. tysm! lmk if you have any Qs."
+  },
+  {
+    "session_id": "d499798e-89e0-4165-9466-d7a9ccd4a3b9",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/d499798e-89e0-4165-9466-d7a9ccd4a3b9.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "awesome! Let's integrate w/ git_ops.py and add tests. adn git commit and PR...\n\nwe are running low on ctxt... but perhaps we can try automatic mode with adw_sdlc.py for this? wdyt? we got 20% ctxt remaining. continue to give the play by play. tysm!"
+  },
+  {
+    "session_id": "d499798e-89e0-4165-9466-d7a9ccd4a3b9",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/d499798e-89e0-4165-9466-d7a9ccd4a3b9.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "UserPromptSubmit",
+    "prompt": "great! Let's continue with the bitbucket integration where we left off... I do have a repo that is connected to bitbucket (catsy frontend). think hard about how we can build and actually test this to show it in action... lmk how i can help and what u need. "
+  }
+]

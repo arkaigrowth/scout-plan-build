@@ -1,0 +1,32 @@
+{
+  "task": "Find all test files, test patterns, and test utilities for: outdated or redundant documentation. Look for test_, _test.py, .test.js, specs/",
+  "files": [
+    "./FRAMEWORK_ANALYSIS_INDEX.md",
+    "./FRAMEWORK_ARCHITECTURE_PATTERNS.md",
+    "./SCOUT_FRAMEWORK_DEEP_ANALYSIS.md",
+    "./archive/planning/STRATEGIC_ROADMAP_2025.md",
+    "./archive/plans/2024-10-25-mcp-hooks-fix.md",
+    "./archive/research/ANALYSIS_INDEX.md",
+    "./archive/research/KEY_INSIGHTS_AND_LEARNINGS.md",
+    "./archive/research/PARALLELIZATION_DELIVERABLES.md",
+    "./archive/research/README_WORKFLOW_ANALYSIS.md",
+    "./archive/research/SKILLS_DETERMINISM_ANALYSIS.md",
+    "./archive/research/SKILLS_IMPLEMENTATION_CHECKLIST.md",
+    "./archive/research/SKILLS_IMPLEMENTATION_GUIDE.md",
+    "./archive/research/SPECS_ALIGNMENT_REVIEW.md",
+    "./archive/research/WORKFLOW_PATTERNS_ANALYSIS.md",
+    "./archive/specs/skill-000-mvp-scout.md",
+    "./archive/specs/skill-000-scout-determinism.md",
+    "./archive/specs/skill-001-workflow-orchestrator.md",
+    "./archive/specs/skill-002-mvp-validation.md",
+    "./archive/specs/skill-002-validating-inputs.md",
+    "./archive/specs/skill-003-managing-state.md",
+    "./archive/specs/skill-003-mvp-state.md",
+    "./archive/specs/skill-004-adw-orchestrating.md",
+    "./archive/specs/skill-005-handling-errors.md",
+    "./archive/specs/skill-005-mvp-errors.md",
+    "./run_log.md"
+  ],
+  "count": 25,
+  "method": "native_tools"
+}

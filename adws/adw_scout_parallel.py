@@ -16,9 +16,14 @@ from datetime import datetime
 # Import our modules
 try:
     from adw_modules.utils import setup_environment
+    from adw_modules.constants import SCOUT_FINAL_FILE, get_scout_output_path
     setup_environment()
 except ImportError:
-    pass
+    # Fallback for standalone execution
+    SCOUT_FINAL_FILE = Path("scout_outputs/relevant_files.json")
+    def get_scout_output_path():
+        SCOUT_FINAL_FILE.parent.mkdir(parents=True, exist_ok=True)
+        return SCOUT_FINAL_FILE
 
 
 def launch_scout_squadron(task: str, scale: int = 4) -> List[Tuple[str, subprocess.Popen]]:
@@ -69,10 +74,6 @@ def launch_scout_squadron(task: str, scale: int = 4) -> List[Tuple[str, subproce
     for strategy in strategies_to_use:
         print(f"  → Launching {strategy['focus']} scout...")
 
-        # Create a temp output file for this scout
-        output_file = Path(f"scout_outputs/temp/{strategy['focus']}_scout.json")
-        output_file.parent.mkdir(parents=True, exist_ok=True)
-
         # Build command (using scout_simple.py as the worker)
         cmd = [
             "python", "adws/scout_simple.py",
@@ -116,8 +117,8 @@ def aggregate_scout_reports(processes: List[Tuple[str, subprocess.Popen]], task:
             if proc.returncode == 0:
                 print(f"  ✅ {focus} scout completed")
 
-                # Read the scout output from ai_docs/scout/relevant_files.json
-                scout_output = Path("ai_docs/scout/relevant_files.json")
+                # Read from canonical location (scout_simple.py writes here now)
+                scout_output = SCOUT_FINAL_FILE
                 if scout_output.exists():
                     with open(scout_output) as f:
                         data = json.load(f)
@@ -170,27 +171,17 @@ def aggregate_scout_reports(processes: List[Tuple[str, subprocess.Popen]], task:
 
 
 def save_scout_report(report: Dict) -> Path:
-    """Save the aggregated scout report to the standard location."""
+    """Save the aggregated scout report to the canonical location."""
 
-    # Primary location (for plan phase)
-    primary_output = Path("scout_outputs/relevant_files.json")
-    primary_output.parent.mkdir(parents=True, exist_ok=True)
+    # Single source of truth - no more duplicate writes!
+    output_path = get_scout_output_path()
 
-    with open(primary_output, 'w') as f:
+    with open(output_path, 'w') as f:
         json.dump(report, f, indent=2)
 
-    # Backup location
-    backup_output = Path("ai_docs/scout/relevant_files.json")
-    backup_output.parent.mkdir(parents=True, exist_ok=True)
+    print(f"\n✅ Scout report saved to: {output_path}")
 
-    with open(backup_output, 'w') as f:
-        json.dump(report, f, indent=2)
-
-    print(f"\n✅ Scout report saved to:")
-    print(f"  • {primary_output}")
-    print(f"  • {backup_output}")
-
-    return primary_output
+    return output_path
 
 
 def parallel_scout(task: str, scale: int = 4) -> Dict:

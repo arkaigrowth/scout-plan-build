@@ -17,6 +17,23 @@ from urllib.parse import urlparse
 from pydantic import BaseModel, Field, field_validator, HttpUrl, ConfigDict
 from typing_extensions import Annotated
 
+# Import canonical path constants for enforcement
+try:
+    from .constants import ALLOWED_OUTPUT_PREFIXES
+except ImportError:
+    # Fallback if constants not available (shouldn't happen in production)
+    ALLOWED_OUTPUT_PREFIXES = [
+        "specs/",
+        "scout_outputs/",
+        "scout_outputs/temp/",
+        "scout_outputs/workflows/",
+        "ai_docs/build_reports/",
+        "ai_docs/reviews/",
+        "ai_docs/outputs/",
+        "docs/",
+        "scripts/",
+        "adws/",
+    ]
 
 # Security Constants
 MAX_PROMPT_LENGTH = 100000  # 100KB max for prompts
@@ -26,16 +43,8 @@ MAX_FILE_PATH_LENGTH = 4096  # Filesystem limit
 MAX_ADW_ID_LENGTH = 64  # Reasonable identifier length
 MAX_ISSUE_NUMBER_LENGTH = 10  # GitHub issue numbers are typically < 10 digits
 
-# Allowed path prefixes for file operations
-ALLOWED_PATH_PREFIXES = [
-    "specs/",
-    "scout_outputs/", "scout_outputs/ADW-", "scout_outputs/temp/",
-    "ai_docs/",
-    "docs/",
-    "scripts/",
-    "adws/",
-    "app/",
-]
+# Allowed path prefixes for file operations (imported from constants)
+ALLOWED_PATH_PREFIXES = ALLOWED_OUTPUT_PREFIXES
 
 # Dangerous shell metacharacters
 SHELL_METACHARACTERS = [";", "|", "&", "$", "`", "\n", "\r", "(", ")", "<", ">"]

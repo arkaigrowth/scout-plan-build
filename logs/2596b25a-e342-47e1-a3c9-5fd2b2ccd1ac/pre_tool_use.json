@@ -1,0 +1,694 @@
+[
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Verify refinery-data-refiner repo exists and check structure",
+          "status": "in_progress",
+          "activeForm": "Verifying destination repo"
+        },
+        {
+          "content": "Run clean framework installation",
+          "status": "pending",
+          "activeForm": "Running framework installation"
+        },
+        {
+          "content": "Set up environment variables for refinery repo",
+          "status": "pending",
+          "activeForm": "Setting up environment"
+        },
+        {
+          "content": "Create initial project scaffold using framework",
+          "status": "pending",
+          "activeForm": "Creating project scaffold"
+        },
+        {
+          "content": "Test framework functionality in new repo",
+          "status": "pending",
+          "activeForm": "Testing framework"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la /Users/alexkamysz/AI/refinery-data-refiner 2>&1 | head -20",
+      "description": "Check if destination repo exists and its current state"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /Users/alexkamysz/AI/refinery-data-refiner && git status --short 2>&1 | head -10 || echo \"Not a git repo\"",
+      "description": "Check git status of refinery repo"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/refinery-data-refiner/README.md"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /Users/alexkamysz/AI/refinery-data-refiner && find src -type f -name \"*.ts\" -o -name \"*.tsx\" | head -20 && echo \"---\" && find docs -type f -name \"*.md\" | head -10",
+      "description": "Check existing source files and documentation"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Verify refinery-data-refiner repo exists and check structure",
+          "status": "completed",
+          "activeForm": "Verifying destination repo"
+        },
+        {
+          "content": "Run clean framework installation",
+          "status": "in_progress",
+          "activeForm": "Running framework installation"
+        },
+        {
+          "content": "Set up environment variables for refinery repo",
+          "status": "pending",
+          "activeForm": "Setting up environment"
+        },
+        {
+          "content": "Create initial project scaffold using framework",
+          "status": "pending",
+          "activeForm": "Creating project scaffold"
+        },
+        {
+          "content": "Test framework functionality in new repo",
+          "status": "pending",
+          "activeForm": "Testing framework"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "bash scripts/install_to_new_repo.sh /Users/alexkamysz/AI/refinery-data-refiner <<< \"y\"",
+      "timeout": 30000,
+      "description": "Install Scout-Plan-Build framework to refinery repo"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /Users/alexkamysz/AI/refinery-data-refiner && mkdir -p agents && echo \"# ADW state files\" > agents/.gitkeep && python test_installation.py",
+      "description": "Create agents directory and validate installation"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Verify refinery-data-refiner repo exists and check structure",
+          "status": "completed",
+          "activeForm": "Verifying destination repo"
+        },
+        {
+          "content": "Run clean framework installation",
+          "status": "completed",
+          "activeForm": "Running framework installation"
+        },
+        {
+          "content": "Create refinery-specific USAGE guide",
+          "status": "in_progress",
+          "activeForm": "Creating USAGE guide"
+        },
+        {
+          "content": "Set up environment variables for refinery repo",
+          "status": "pending",
+          "activeForm": "Setting up environment"
+        },
+        {
+          "content": "Test framework with first feature build",
+          "status": "pending",
+          "activeForm": "Testing with first build"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md",
+      "content": "# Scout-Plan-Build Framework - Refinery Data Refiner Usage\n\n**Project**: Refinery Data Refiner (E-commerce Data Cleaning Engine)\n**Framework**: Scout-Plan-Build v2024.11.8\n**Installed**: 2025-11-15\n\n---\n\n## \ud83c\udfaf Purpose: Agentic Development for Stubbed Implementation\n\nThis framework helps you build out the **intentionally stubbed** refinery engine implementation while:\n- \u2705 Respecting documented invariants (`docs/INVARIANTS.md`)\n- \u2705 Following the agent protocol (`docs/AGENT_PROTOCOL.md`)\n- \u2705 Using provided scaffolds (`docs/SCAFFOLDS.md`)\n- \u2705 Meeting performance expectations (`docs/PERF_NOTES.md`)\n\n---\n\n## \ud83d\ude80 Quick Start (5 Minutes)\n\n### 1. Environment Setup (One-Time)\n\n```bash\n# Copy and configure environment\ncp .env.template .env\n\n# Required: Add your API key\nnano .env  # Add: ANTHROPIC_API_KEY=sk-ant-...\n\n# Load environment\nexport $(grep -v '^#' .env | xargs)\n\n# Verify installation\npython test_installation.py\n```\n\n### 2. Your First Build Task\n\nThe framework works best with **documentation-driven development**. Since your project has comprehensive docs, use them:\n\n```\n\"Implement the dataset patch engine in src/lib/dataset/dataset-engine.ts.\nUse the specs from docs/INVARIANTS.md section 'Patch Engine Rules'.\nThe engine should apply patches immutably and maintain audit history.\"\n```\n\n**Framework will automatically:**\n1. Scout relevant files (types.ts, dataset-engine.ts, docs/INVARIANTS.md)\n2. Create implementation plan in `specs/`\n3. Build the engine respecting documented constraints\n4. Generate tests based on examples in docs\n5. Create build report in `ai_docs/build_reports/`\n\n---\n\n## \ud83d\udca1 How to Use for This Project\n\n### **Option A: Natural Language (Recommended)**\n\nDescribe what you want referencing your docs:\n\n#### \u2705 Implement Core Engine\n```\n\"Implement the CSV parser in src/lib/csv/csv-parser.ts.\nFollow the column type inference rules from docs/INVARIANTS.md.\nSupport the coercion strategies: strict, lenient, skip-errors.\"\n```\n\n#### \u2705 Build Filters\n```\n\"Implement text filters in src/lib/dataset/filters.ts.\nSupport: contains, equals, startsWith, endsWith, regex.\nFollow the filter composition pattern from docs/SCAFFOLDS.md.\"\n```\n\n#### \u2705 Implement Store\n```\n\"Complete the Zustand store in src/lib/state/dataset-store.ts.\nAdd selectors for: getCompiledRows, getFilteredRows, getPatchCount.\nRespect the immutability invariants from docs/INVARIANTS.md.\"\n```\n\n### **Option B: Slash Commands (Explicit Control)**\n\nFor precise control over each phase:\n\n#### Scout Phase\n```\n\"Find all files related to the dataset patch engine and type definitions\"\n```\n\n#### Plan Phase\n```bash\n/plan_w_docs \"Implement patch engine\" \"docs/INVARIANTS.md\" \"ai_docs/scout/relevant_files.json\"\n```\n\n#### Build Phase\n```bash\n/build_adw \"specs/issue-001-adw-PATCH-001-patch-engine.md\"\n```\n\n---\n\n## \ud83d\udcc2 File Organization\n\nThe framework adds these to your existing structure:\n\n```\nrefinery-data-refiner/\n\u251c\u2500\u2500 src/                           # Your TypeScript code (existing)\n\u2502   \u251c\u2500\u2500 lib/dataset/              # Core engine (stubbed \u2192 implement)\n\u2502   \u251c\u2500\u2500 lib/csv/                  # CSV parser (stubbed \u2192 implement)\n\u2502   \u2514\u2500\u2500 lib/state/                # Zustand store (stubbed \u2192 implement)\n\u2502\n\u251c\u2500\u2500 docs/                          # Your invariants (existing)\n\u2502   \u251c\u2500\u2500 INVARIANTS.md             # Source of truth for constraints\n\u2502   \u251c\u2500\u2500 AGENT_PROTOCOL.md         # How agents should behave\n\u2502   \u251c\u2500\u2500 SCAFFOLDS.md              # Code patterns to follow\n\u2502   \u2514\u2500\u2500 PERF_NOTES.md             # Performance expectations\n\u2502\n\u251c\u2500\u2500 adws/                          # Framework modules (NEW)\n\u251c\u2500\u2500 specs/                         # Implementation plans (NEW)\n\u2502   \u2514\u2500\u2500 issue-001-*.md            # AI-generated specs\n\u2502\n\u251c\u2500\u2500 ai_docs/                       # AI-generated docs (NEW)\n\u2502   \u251c\u2500\u2500 scout/                    # Discovery results\n\u2502   \u251c\u2500\u2500 build_reports/            # Build execution logs\n\u2502   \u2514\u2500\u2500 reviews/                  # Code review reports\n\u2502\n\u251c\u2500\u2500 scripts/                       # Validation tools (NEW)\n\u2502   \u2514\u2500\u2500 validate_pipeline.sh\n\u2502\n\u251c\u2500\u2500 .env                          # Your API keys (git-ignored)\n\u2514\u2500\u2500 .adw_config.json              # Framework settings\n```\n\n---\n\n## \ud83c\udfaf Refinery-Specific Examples\n\n### Example 1: Implement Patch Engine\n\n**Task:**\n```\n\"Implement the patch engine in src/lib/dataset/dataset-engine.ts.\n\nRequirements from docs/INVARIANTS.md:\n- Patches are immutable records with {rowId, columnKey, newValue, timestamp}\n- Engine applies patches to originalRows to produce compiledRows\n- Must maintain audit history for undo/redo\n- Performance target: <50ms for 10k rows with 100 patches\n\nUse TypeScript with strict mode enabled.\"\n```\n\n**Framework will:**\n1. Read `docs/INVARIANTS.md` for constraints\n2. Examine existing types in `src/lib/dataset/types.ts`\n3. Create detailed implementation plan\n4. Implement `applyPatches()`, `getPatchHistory()`, `revertPatch()`\n5. Add tests for immutability and performance\n6. Generate build report showing compliance with invariants\n\n### Example 2: Build Filter System\n\n**Task:**\n```\n\"Implement the filter system in src/lib/dataset/filters.ts.\n\nFrom docs/SCAFFOLDS.md, implement these filter types:\n- TextFilter: {type: 'text', column: string, operator: 'contains'|'equals', value: string}\n- NumberFilter: {type: 'number', column: string, operator: '<'|'>'|'=', value: number}\n- DateFilter: {type: 'date', column: string, operator: 'before'|'after', value: Date}\n\nSupport filter composition with AND/OR logic.\nPerformance: <100ms for 50k rows with 5 filters.\"\n```\n\n**Framework will:**\n1. Scout existing types and filter stubs\n2. Read scaffold patterns from docs\n3. Plan filter implementation with composition\n4. Build filters with TypeScript generics for type safety\n5. Add comprehensive tests\n6. Benchmark against performance targets\n\n### Example 3: Complete Zustand Store\n\n**Task:**\n```\n\"Complete the Zustand store in src/lib/state/dataset-store.ts.\n\nMissing functionality:\n- Selectors: getCompiledRows, getFilteredRows, getActivePatchCount\n- Actions: applyFilter, clearFilters, exportToCSV\n- Computed state: filteredRowCount, patchHistory\n\nFollow Zustand best practices and maintain immutability per docs/INVARIANTS.md.\"\n```\n\n**Framework will:**\n1. Examine current store structure\n2. Read immutability requirements\n3. Plan selector and action implementations\n4. Build with proper TypeScript types\n5. Add tests for state transitions\n6. Verify immutability with structural sharing tests\n\n---\n\n## \u2699\ufe0f Configuration for TypeScript Project\n\nEdit `.adw_config.json`:\n\n```json\n{\n  \"project\": {\n    \"name\": \"refinery-data-refiner\",\n    \"type\": \"typescript\"\n  },\n  \"paths\": {\n    \"specs\": \"specs/\",\n    \"app_code\": \"src/\",\n    \"docs\": \"docs/\",\n    \"allowed\": [\"src\", \"tests\", \"specs\", \"ai_docs\", \"docs\"]\n  },\n  \"workflow\": {\n    \"use_github\": false,\n    \"auto_branch\": false,\n    \"branch_prefix\": \"feature/\"\n  },\n  \"typescript\": {\n    \"strict\": true,\n    \"target\": \"ES2022\",\n    \"test_framework\": \"vitest\"\n  }\n}\n```\n\n---\n\n## \ud83d\udd27 Advanced Workflows\n\n### Documentation-Driven Implementation\n\nYour project's docs are the source of truth. Reference them explicitly:\n\n```\n\"Implement CSV column type inference.\n\nRules from docs/INVARIANTS.md section 'CSV Parsing':\n- Try number coercion first (parseInt/parseFloat)\n- Detect ISO dates with regex pattern\n- Detect booleans: true/false, yes/no, 1/0\n- Fallback to string type\n- Support lenient mode (coerce errors \u2192 null) vs strict mode (throw)\"\n```\n\n### Parallel Feature Development\n\nBuild multiple independent features simultaneously:\n\n```bash\n# Terminal 1: Implement patch engine\n\"Implement patch engine from docs/INVARIANTS.md\"\n\n# Terminal 2: Implement filters (in parallel)\n\"Implement text filters from docs/SCAFFOLDS.md\"\n\n# Terminal 3: Complete CSV parser\n\"Implement CSV parser with type inference from docs/INVARIANTS.md\"\n```\n\nThe framework maintains separate state for each workflow in `agents/ADW-*/`.\n\n### Test-Driven Development\n\nGenerate tests from documentation:\n\n```\n\"Create comprehensive tests for the patch engine.\n\nTest cases from docs/INVARIANTS.md:\n- Test immutability: original rows never mutated\n- Test audit history: all patches tracked with timestamps\n- Test conflict resolution: last-write-wins for same rowId+column\n- Test performance: 10k rows + 100 patches < 50ms\n- Test edge cases: patches to non-existent rows, invalid columns\"\n```\n\n---\n\n## \ud83d\udc1b Troubleshooting\n\n### \"Framework doesn't understand TypeScript\"\n\nThe framework works with any language. Just be explicit:\n\n```\n\"Implement in TypeScript with:\n- Strict null checks enabled\n- Return types explicitly declared\n- Zod schemas for runtime validation\n- Vitest for testing\"\n```\n\n### \"Build doesn't respect invariants\"\n\nAlways reference your docs explicitly:\n\n```\n# \u274c Vague\n\"Implement the patch engine\"\n\n# \u2705 Explicit\n\"Implement the patch engine following docs/INVARIANTS.md section 'Patch Rules':\n- Immutable patches\n- Audit history\n- No mutations of originalRows\"\n```\n\n### \"Implementation incomplete\"\n\nBreak large tasks into smaller pieces:\n\n```\n# Instead of: \"Complete the entire engine\"\n# Use:\n\"Step 1: Implement applyPatches() function only\"\n\"Step 2: Add getPatchHistory() method\"\n\"Step 3: Implement revertPatch() with undo\"\n```\n\n---\n\n## \ud83d\udcca Development Workflow\n\n### Phase 1: Core Engine (Week 1)\n```\n1. \"Implement patch engine (src/lib/dataset/dataset-engine.ts)\"\n2. \"Implement CSV parser with type inference (src/lib/csv/csv-parser.ts)\"\n3. \"Add dataset selectors (src/lib/dataset/dataset-selectors.ts)\"\n4. \"Complete Zustand store (src/lib/state/dataset-store.ts)\"\n```\n\n### Phase 2: Filters (Week 2)\n```\n1. \"Implement text filters (contains, equals, startsWith, endsWith, regex)\"\n2. \"Implement number filters (<, >, =, >=, <=, between)\"\n3. \"Implement date filters (before, after, between)\"\n4. \"Add filter composition logic (AND/OR)\"\n```\n\n### Phase 3: Advanced Features (Week 3)\n```\n1. \"Implement group-by functionality for dataset aggregation\"\n2. \"Add agent run tracking (agentRuns state)\"\n3. \"Implement CSV export with applied filters\"\n4. \"Add undo/redo for patch history\"\n```\n\n---\n\n## \ud83c\udf93 Learning from Generated Code\n\nAfter each build:\n\n1. **Review the spec**: `cat specs/issue-*.md`\n   - See how framework interpreted your docs\n   - Understand the implementation plan\n   - Check if invariants were correctly identified\n\n2. **Check the build report**: `cat ai_docs/build_reports/*.md`\n   - See what code was generated\n   - Understand the approach taken\n   - Identify any TODOs or gaps\n\n3. **Improve your prompts**:\n   - If output misses invariants \u2192 reference docs more explicitly\n   - If code is incomplete \u2192 break task into smaller pieces\n   - If style is wrong \u2192 specify TypeScript patterns explicitly\n\n---\n\n## \ud83d\udcda Key Files Reference\n\n| File | Purpose |\n|------|---------|\n| **docs/INVARIANTS.md** | Source of truth for constraints and rules |\n| **docs/AGENT_PROTOCOL.md** | How agents should interact with the engine |\n| **docs/SCAFFOLDS.md** | Code patterns and examples to follow |\n| **docs/PERF_NOTES.md** | Performance expectations and benchmarks |\n| **FRAMEWORK_USAGE.md** | This file - framework usage for refinery |\n| **CLAUDE.md** | Quick reference (installed by framework) |\n| **.env** | Your API keys (create from .env.template) |\n| **.adw_config.json** | Framework configuration |\n\n---\n\n## \ud83d\udea6 Next Steps\n\n### 1. Set up environment (2 minutes)\n```bash\ncp .env.template .env\nnano .env  # Add ANTHROPIC_API_KEY\nexport $(grep -v '^#' .env | xargs)\n```\n\n### 2. Initialize git (optional but recommended)\n```bash\ngit init\ngit add .\ngit commit -m \"chore: Initial refinery scaffold + Scout-Plan-Build framework\"\n```\n\n### 3. Start with your first implementation\n```\n\"Implement the patch engine in src/lib/dataset/dataset-engine.ts.\nFollow the immutability rules from docs/INVARIANTS.md.\nThe engine should apply patches to produce compiled rows without mutating originals.\"\n```\n\n### 4. Review the output\n```bash\n# Check the generated spec\ncat specs/issue-001-*\n\n# Review the implementation\ncat ai_docs/build_reports/*\n\n# Run tests\npnpm test\n```\n\n---\n\n## \ud83d\udca1 Pro Tips for This Project\n\n1. **Always reference your docs**: They're your source of truth\n   ```\n   \"...following docs/INVARIANTS.md section 'X'\"\n   ```\n\n2. **Be explicit about TypeScript**: Specify types, strictness, patterns\n   ```\n   \"Use TypeScript strict mode with explicit return types\"\n   ```\n\n3. **Reference existing code**: Point to files that should be consistent\n   ```\n   \"Following the pattern in src/lib/dataset/types.ts\"\n   ```\n\n4. **Specify test framework**: Vitest is configured\n   ```\n   \"Add Vitest tests for immutability and performance\"\n   ```\n\n5. **Performance matters**: Cite the benchmarks\n   ```\n   \"Must meet <50ms target from docs/PERF_NOTES.md\"\n   ```\n\n---\n\n*Framework installed: 2025-11-15*\n*Project: Refinery Data Refiner - E-commerce Data Cleaning Engine*\n*Ready to build with AI agents!* \ud83d\ude80\n"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Verify refinery-data-refiner repo exists and check structure",
+          "status": "completed",
+          "activeForm": "Verifying destination repo"
+        },
+        {
+          "content": "Run clean framework installation",
+          "status": "completed",
+          "activeForm": "Running framework installation"
+        },
+        {
+          "content": "Create refinery-specific USAGE guide",
+          "status": "completed",
+          "activeForm": "Creating USAGE guide"
+        },
+        {
+          "content": "Verify installation and create summary",
+          "status": "in_progress",
+          "activeForm": "Creating summary"
+        },
+        {
+          "content": "Test framework with first feature build",
+          "status": "pending",
+          "activeForm": "Testing with first build"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /Users/alexkamysz/AI/refinery-data-refiner && echo \"=== Framework Installation Summary ===\" && echo \"\" && echo \"Python modules:\" && find adws -name \"*.py\" 2>/dev/null | wc -l && echo \"Slash commands:\" && ls -1 .claude/commands/*.md 2>/dev/null | wc -l && echo \"Documentation:\" && ls -1 *.md 2>/dev/null && echo \"\" && echo \"Total disk usage:\" && du -sh adws ai_docs specs scripts 2>/dev/null",
+      "description": "Summarize framework installation"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/refinery-data-refiner/.adw_config.json"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/refinery-data-refiner/.adw_config.json",
+      "old_string": "{\n  \"project\": {\n    \"name\": \"refinery-data-refiner\",\n    \"type\": \"auto-detect\"\n  },\n  \"paths\": {\n    \"specs\": \"specs/\",\n    \"agents\": \"agents/\",\n    \"ai_docs\": \"ai_docs/\",\n    \"app_code\": \".\",\n    \"allowed\": [\"specs\", \"agents\", \"ai_docs\", \"app\", \"src\", \"lib\"]\n  },\n  \"workflow\": {\n    \"use_github\": true,\n    \"auto_branch\": true,\n    \"branch_prefix\": \"feature/\"\n  }\n}",
+      "new_string": "{\n  \"project\": {\n    \"name\": \"refinery-data-refiner\",\n    \"type\": \"typescript\"\n  },\n  \"paths\": {\n    \"specs\": \"specs/\",\n    \"agents\": \"agents/\",\n    \"ai_docs\": \"ai_docs/\",\n    \"app_code\": \"src/\",\n    \"docs\": \"docs/\",\n    \"allowed\": [\"specs\", \"agents\", \"ai_docs\", \"src\", \"tests\", \"docs\"]\n  },\n  \"workflow\": {\n    \"use_github\": false,\n    \"auto_branch\": false,\n    \"branch_prefix\": \"feature/\"\n  },\n  \"typescript\": {\n    \"strict\": true,\n    \"test_framework\": \"vitest\"\n  }\n}"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Verify refinery-data-refiner repo exists and check structure",
+          "status": "completed",
+          "activeForm": "Verifying destination repo"
+        },
+        {
+          "content": "Run clean framework installation",
+          "status": "completed",
+          "activeForm": "Running framework installation"
+        },
+        {
+          "content": "Create refinery-specific USAGE guide",
+          "status": "completed",
+          "activeForm": "Creating USAGE guide"
+        },
+        {
+          "content": "Verify installation and create summary",
+          "status": "completed",
+          "activeForm": "Creating summary"
+        },
+        {
+          "content": "Test framework with first feature build",
+          "status": "pending",
+          "activeForm": "Testing with first build"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md",
+      "limit": 50
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "AskUserQuestion",
+    "tool_input": {
+      "questions": [
+        {
+          "question": "How should I update the documentation?",
+          "header": "Update Method",
+          "options": [
+            {
+              "label": "Update FRAMEWORK_USAGE.md with all changes above",
+              "description": "Apply all three section replacements to clarify API key is optional"
+            },
+            {
+              "label": "Just give me the starter prompt, skip doc updates",
+              "description": "I'll figure out the docs later, just want to start building"
+            },
+            {
+              "label": "Create a separate QUICK_START.md with just essentials",
+              "description": "Keep detailed guide, add simple 1-page quick start"
+            }
+          ],
+          "multiSelect": false
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Read full FRAMEWORK_USAGE.md to understand structure",
+          "status": "in_progress",
+          "activeForm": "Reading documentation structure"
+        },
+        {
+          "content": "Update environment setup section (API key optional)",
+          "status": "pending",
+          "activeForm": "Updating environment setup"
+        },
+        {
+          "content": "Add 'Two Ways to Use' section",
+          "status": "pending",
+          "activeForm": "Adding usage modes section"
+        },
+        {
+          "content": "Update starter prompt with framework orientation",
+          "status": "pending",
+          "activeForm": "Updating starter prompt"
+        },
+        {
+          "content": "Validate all examples are still correct",
+          "status": "pending",
+          "activeForm": "Validating examples"
+        },
+        {
+          "content": "Test framework with first feature build",
+          "status": "pending",
+          "activeForm": "Testing framework"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Read full FRAMEWORK_USAGE.md to understand structure",
+          "status": "completed",
+          "activeForm": "Reading documentation structure"
+        },
+        {
+          "content": "Use subagent to validate and apply doc updates",
+          "status": "in_progress",
+          "activeForm": "Using subagent for updates"
+        },
+        {
+          "content": "Update environment setup section (API key optional)",
+          "status": "pending",
+          "activeForm": "Updating environment setup"
+        },
+        {
+          "content": "Add 'Two Ways to Use' section after Quick Start",
+          "status": "pending",
+          "activeForm": "Adding usage modes section"
+        },
+        {
+          "content": "Update Next Steps section",
+          "status": "pending",
+          "activeForm": "Updating Next Steps"
+        },
+        {
+          "content": "Add improved starter prompt",
+          "status": "pending",
+          "activeForm": "Adding starter prompt"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Task",
+    "tool_input": {
+      "description": "Update framework documentation precisely",
+      "prompt": "Update `/Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md` with surgical precision.\n\n**CRITICAL: Preserve ALL examples** (lines 62-208 with \"\u2705 Implement Core Engine\", \"\u2705 Build Filters\", etc.)\n\n**Required Changes:**\n\n## Change 1: Update Lines 19-35 (Quick Start / Environment Setup)\n\n**Current:**\n```markdown\n## \ud83d\ude80 Quick Start (5 Minutes)\n\n### 1. Environment Setup (One-Time)\n\n```bash\n# Copy and configure environment\ncp .env.template .env\n\n# Required: Add your API key\nnano .env  # Add: ANTHROPIC_API_KEY=sk-ant-...\n\n# Load environment\nexport $(grep -v '^#' .env | xargs)\n\n# Verify installation\npython test_installation.py\n```\n```\n\n**Replace with:**\n```markdown\n## \ud83d\ude80 Quick Start (30 Seconds with Claude Code)\n\n### 1. Environment Setup\n\n**Using Claude Code (you are here):** \u2705 No setup needed! You're already authenticated.\n\n**Only if running framework Python scripts directly** (advanced):\n```bash\n# Optional: For subprocess-spawned agents only\ncp .env.template .env\nnano .env  # Add: ANTHROPIC_API_KEY=sk-ant-...\nexport $(grep -v '^#' .env | xargs)\n```\n\n**Verify installation** (works without API key):\n```bash\npython test_installation.py\n```\n\n**Note:** `ANTHROPIC_API_KEY` is ONLY needed if you run framework scripts that spawn subprocess agents (e.g., `python adws/adw_sdlc.py`). For natural language usage in Claude Code, you're already authenticated. \u2705\n```\n\n## Change 2: Insert NEW Section After Line 53\n\n**Insert this NEW section after line 53** (after \"Create build report in `ai_docs/build_reports/`\"):\n\n```markdown\n\n---\n\n## \u2699\ufe0f Two Ways to Use the Framework\n\n### **Method 1: Natural Language in Claude Code** \u2728 (What you're doing now)\n\nJust describe what you want. Claude Code uses the framework automatically:\n\n```\n\"Implement the patch engine in src/lib/dataset/dataset-engine.ts\nfollowing docs/INVARIANTS.md section 'Patch Engine Rules'.\"\n```\n\n**Why this is best:**\n- \u2705 No environment setup required\n- \u2705 Already authenticated  \n- \u2705 Natural conversation flow\n- \u2705 Framework used transparently behind the scenes\n\n### **Method 2: Explicit Python Scripts** (Advanced users only)\n\nRun framework scripts directly for full control:\n\n```bash\n# Requires ANTHROPIC_API_KEY in .env\npython adws/adw_plan.py --issue 001 --task \"implement patch engine\"\npython adws/adw_build.py --spec specs/issue-001-*.md\n```\n\n**When to use:**\n- Need precise control over each phase\n- Debugging framework behavior  \n- CI/CD automation\n\n**Most users should use Method 1 (natural language in Claude Code).**\n\n---\n```\n\n## Change 3: Update Lines 400-407 (Next Steps Section)\n\n**Current:**\n```markdown\n### 1. Set up environment (2 minutes)\n```bash\ncp .env.template .env\nnano .env  # Add ANTHROPIC_API_KEY\nexport $(grep -v '^#' .env | xargs)\n```\n```\n\n**Replace with:**\n```markdown\n### 1. You're ready! (No setup needed with Claude Code)\n\nAlready using Claude Code? Skip to step 2.\n\n**Only if running Python scripts directly:**\n```bash\ncp .env.template .env\nnano .env  # Add ANTHROPIC_API_KEY (for subprocess agents only)\nexport $(grep -v '^#' .env | xargs)\n```\n```\n\n## Change 4: Add NEW Section at End (After Line 463, Before Footer)\n\n**Insert before the footer** (before \"*Framework installed: 2025-11-15*\"):\n\n```markdown\n\n---\n\n## \ud83c\udfaf STARTER PROMPT (Copy-Paste to Begin)\n\n**Open Claude Code in this repo and paste this to get started:**\n\n```\nFramework context: Scout-Plan-Build is installed (adws/, specs/, ai_docs/).\n\nProject: Refinery Data Refiner - TypeScript e-commerce data cleaning engine\n- Documentation: docs/INVARIANTS.md, docs/SCAFFOLDS.md (source of truth for constraints)\n- Source code: src/lib/ (TypeScript strict mode, Vitest tests)\n- Current status: Core types defined, implementations intentionally stubbed\n\nFirst task: Implement the patch engine in src/lib/dataset/dataset-engine.ts\n\nRequirements from docs/INVARIANTS.md section \"Patch Engine Rules\":\n- Patches are immutable records: {rowId, columnKey, newValue, timestamp, userId?}\n- Engine applies patches: originalRows \u2192 compiledRows (never mutate originals)\n- Maintain audit history for undo/redo capability\n- Performance target: <50ms for 10k rows + 100 patches\n\nPlease:\n1. Use the Scout-Plan-Build framework to find relevant files\n2. Read docs/INVARIANTS.md for constraints  \n3. Create an implementation plan in specs/\n4. Implement: applyPatches(), getPatchHistory(), revertPatch()\n5. Add Vitest tests for immutability and performance\n6. Use structural sharing for efficiency\n\nFollow TypeScript patterns from src/lib/dataset/types.ts.\n\nReady when you are!\n```\n\n**That's it!** This prompt orients Claude to use the framework and reference your docs as the source of truth.\n\n---\n```\n\n**CRITICAL RULES:**\n1. \u2705 PRESERVE all example sections (lines 62-208)\n2. \u2705 PRESERVE \"## \ud83d\udca1 How to Use for This Project\" section completely\n3. \u2705 PRESERVE \"## \ud83c\udfaf Refinery-Specific Examples\" section completely  \n4. \u2705 PRESERVE all other sections not mentioned in changes above\n5. \u2705 Make ONLY the four changes specified above\n\n**Return:** Confirmation that changes were applied correctly, with a summary of what was preserved vs. changed.",
+      "subagent_type": "general-purpose"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md",
+      "old_string": "## \ud83d\ude80 Quick Start (5 Minutes)\n\n### 1. Environment Setup (One-Time)\n\n```bash\n# Copy and configure environment\ncp .env.template .env\n\n# Required: Add your API key\nnano .env  # Add: ANTHROPIC_API_KEY=sk-ant-...\n\n# Load environment\nexport $(grep -v '^#' .env | xargs)\n\n# Verify installation\npython test_installation.py\n```",
+      "new_string": "## \ud83d\ude80 Quick Start (30 Seconds with Claude Code)\n\n### 1. Environment Setup\n\n**Using Claude Code (you are here):** \u2705 No setup needed! You're already authenticated.\n\n**Only if running framework Python scripts directly** (advanced):\n```bash\n# Optional: For subprocess-spawned agents only\ncp .env.template .env\nnano .env  # Add: ANTHROPIC_API_KEY=sk-ant-...\nexport $(grep -v '^#' .env | xargs)\n```\n\n**Verify installation** (works without API key):\n```bash\npython test_installation.py\n```\n\n**Note:** `ANTHROPIC_API_KEY` is ONLY needed if you run framework scripts that spawn subprocess agents (e.g., `python adws/adw_sdlc.py`). For natural language usage in Claude Code, you're already authenticated. \u2705"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md",
+      "old_string": "4. Generate tests based on examples in docs\n5. Create build report in `ai_docs/build_reports/`\n\n---\n\n## \ud83d\udca1 How to Use for This Project",
+      "new_string": "4. Generate tests based on examples in docs\n5. Create build report in `ai_docs/build_reports/`\n\n---\n\n## \u2699\ufe0f Two Ways to Use the Framework\n\n### **Method 1: Natural Language in Claude Code** \u2728 (What you're doing now)\n\nJust describe what you want. Claude Code uses the framework automatically:\n\n```\n\"Implement the patch engine in src/lib/dataset/dataset-engine.ts\nfollowing docs/INVARIANTS.md section 'Patch Engine Rules'.\"\n```\n\n**Why this is best:**\n- \u2705 No environment setup required\n- \u2705 Already authenticated\n- \u2705 Natural conversation flow\n- \u2705 Framework used transparently behind the scenes\n\n### **Method 2: Explicit Python Scripts** (Advanced users only)\n\nRun framework scripts directly for full control:\n\n```bash\n# Requires ANTHROPIC_API_KEY in .env\npython adws/adw_plan.py --issue 001 --task \"implement patch engine\"\npython adws/adw_build.py --spec specs/issue-001-*.md\n```\n\n**When to use:**\n- Need precise control over each phase\n- Debugging framework behavior\n- CI/CD automation\n\n**Most users should use Method 1 (natural language in Claude Code).**\n\n---\n\n## \ud83d\udca1 How to Use for This Project"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md",
+      "old_string": "## \ud83d\udea6 Next Steps\n\n### 1. Set up environment (2 minutes)\n```bash\ncp .env.template .env\nnano .env  # Add ANTHROPIC_API_KEY\nexport $(grep -v '^#' .env | xargs)\n```",
+      "new_string": "## \ud83d\udea6 Next Steps\n\n### 1. You're ready! (No setup needed with Claude Code)\n\nAlready using Claude Code? Skip to step 2.\n\n**Only if running Python scripts directly:**\n```bash\ncp .env.template .env\nnano .env  # Add ANTHROPIC_API_KEY (for subprocess agents only)\nexport $(grep -v '^#' .env | xargs)\n```"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Edit",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md",
+      "old_string": "5. **Performance matters**: Cite the benchmarks\n   ```\n   \"Must meet <50ms target from docs/PERF_NOTES.md\"\n   ```\n\n---\n\n*Framework installed: 2025-11-15*\n*Project: Refinery Data Refiner - E-commerce Data Cleaning Engine*\n*Ready to build with AI agents!* \ud83d\ude80",
+      "new_string": "5. **Performance matters**: Cite the benchmarks\n   ```\n   \"Must meet <50ms target from docs/PERF_NOTES.md\"\n   ```\n\n---\n\n## \ud83c\udfaf STARTER PROMPT (Copy-Paste to Begin)\n\n**Open Claude Code in this repo and paste this to get started:**\n\n```\nFramework context: Scout-Plan-Build is installed (adws/, specs/, ai_docs/).\n\nProject: Refinery Data Refiner - TypeScript e-commerce data cleaning engine\n- Documentation: docs/INVARIANTS.md, docs/SCAFFOLDS.md (source of truth for constraints)\n- Source code: src/lib/ (TypeScript strict mode, Vitest tests)\n- Current status: Core types defined, implementations intentionally stubbed\n\nFirst task: Implement the patch engine in src/lib/dataset/dataset-engine.ts\n\nRequirements from docs/INVARIANTS.md section \"Patch Engine Rules\":\n- Patches are immutable records: {rowId, columnKey, newValue, timestamp, userId?}\n- Engine applies patches: originalRows \u2192 compiledRows (never mutate originals)\n- Maintain audit history for undo/redo capability\n- Performance target: <50ms for 10k rows + 100 patches\n\nPlease:\n1. Use the Scout-Plan-Build framework to find relevant files\n2. Read docs/INVARIANTS.md for constraints\n3. Create an implementation plan in specs/\n4. Implement: applyPatches(), getPatchHistory(), revertPatch()\n5. Add Vitest tests for immutability and performance\n6. Use structural sharing for efficiency\n\nFollow TypeScript patterns from src/lib/dataset/types.ts.\n\nReady when you are!\n```\n\n**That's it!** This prompt orients Claude to use the framework and reference your docs as the source of truth.\n\n---\n\n*Framework installed: 2025-11-15*\n*Project: Refinery Data Refiner - E-commerce Data Cleaning Engine*\n*Ready to build with AI agents!* \ud83d\ude80"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "grep -n \"\u2705 Implement Core Engine\" /Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md",
+      "description": "Verify example sections preserved"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "grep -n \"## \ud83c\udfaf Refinery-Specific Examples\" /Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md",
+      "description": "Verify refinery examples section preserved"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "grep -n \"Example 1: Implement Patch Engine\" /Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md",
+      "description": "Verify example 1 preserved"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "grep -n \"Example 2: Build Filter System\" /Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md",
+      "description": "Verify example 2 preserved"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "grep -n \"Example 3: Complete Zustand Store\" /Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md",
+      "description": "Verify example 3 preserved"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "wc -l /Users/alexkamysz/AI/refinery-data-refiner/FRAMEWORK_USAGE.md",
+      "description": "Count total lines in updated file"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "TodoWrite",
+    "tool_input": {
+      "todos": [
+        {
+          "content": "Read full FRAMEWORK_USAGE.md to understand structure",
+          "status": "completed",
+          "activeForm": "Reading documentation structure"
+        },
+        {
+          "content": "Use subagent to validate and apply doc updates",
+          "status": "completed",
+          "activeForm": "Using subagent for updates"
+        },
+        {
+          "content": "Update environment setup section (API key optional)",
+          "status": "completed",
+          "activeForm": "Updating environment setup"
+        },
+        {
+          "content": "Add 'Two Ways to Use' section after Quick Start",
+          "status": "completed",
+          "activeForm": "Adding usage modes section"
+        },
+        {
+          "content": "Update Next Steps section",
+          "status": "completed",
+          "activeForm": "Updating Next Steps"
+        },
+        {
+          "content": "Add improved starter prompt",
+          "status": "completed",
+          "activeForm": "Adding starter prompt"
+        }
+      ]
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /Users/alexkamysz/AI/refinery-data-refiner && ls -la | grep -i claude",
+      "description": "Check which Claude instruction files exist"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /Users/alexkamysz/AI/refinery-data-refiner && ls -1 *.md",
+      "description": "List all markdown files in repo root"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Read",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/refinery-data-refiner/claude.md"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /Users/alexkamysz/AI/refinery-data-refiner && git log --all --full-history --oneline -- claude.md 2>/dev/null | head -5 || echo \"Not a git repo - can't recover\"",
+      "description": "Check if original claude.md is in git history"
+    }
+  },
+  {
+    "session_id": "2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/2596b25a-e342-47e1-a3c9-5fd2b2ccd1ac.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Write",
+    "tool_input": {
+      "file_path": "/Users/alexkamysz/AI/refinery-data-refiner/claude.md",
+      "content": "# Refinery Data Refiner - Claude Code Instructions\n\n**Project Type:** TypeScript data-cleaning engine for e-commerce (Shopify-first)\n**Framework:** Scout-Plan-Build v2024.11.8 installed\n**Your Role:** Help implement stubbed modules following documented invariants\n\n---\n\n## \ud83d\udccb Project Context\n\nThis repo is a **data-cleaning engine + workspace scaffold** with:\n\n- **Core Engine** (`src/lib/dataset/`): Patch engine, filters, selectors (stubbed \u2192 implement)\n- **CSV Parser** (`src/lib/csv/`): Column inference, type coercion (stubbed \u2192 implement)\n- **State Management** (`src/lib/state/`): Zustand store (stubbed \u2192 implement)\n- **Documentation** (`docs/`): INVARIANTS.md, AGENT_PROTOCOL.md, SCAFFOLDS.md, PERF_NOTES.md\n\n**Intentionally stubbed implementations** - your job is to fill them in while respecting documented constraints.\n\n---\n\n## \ud83c\udfaf Source of Truth: docs/\n\n**CRITICAL:** Always reference these documents when implementing:\n\n1. **docs/INVARIANTS.md** - Hard constraints (immutability, performance targets)\n2. **docs/AGENT_PROTOCOL.md** - How agents should interact with engine\n3. **docs/SCAFFOLDS.md** - Code patterns and examples to follow\n4. **docs/PERF_NOTES.md** - Performance expectations (<50ms for 10k rows, etc.)\n\nWhen asked to implement something, **always read the relevant docs first** to understand constraints.\n\n---\n\n## \u2699\ufe0f Framework Integration\n\nThe Scout-Plan-Build framework is installed in this repo:\n- `adws/` - Framework Python modules\n- `specs/` - Implementation plans (generated)\n- `ai_docs/` - Build reports and reviews (generated)\n- `.adw_config.json` - TypeScript project configuration\n\n**You don't need to set up anything** - the framework is ready to use with natural language.\n\n---\n\n## \ud83d\udca1 How to Use the Framework\n\n### **Natural Language (Recommended)**\n\nJust describe what to implement, referencing the docs:\n\n```\n\"Implement the patch engine in src/lib/dataset/dataset-engine.ts.\n\nFollow docs/INVARIANTS.md section 'Patch Engine Rules':\n- Immutable patches: {rowId, columnKey, newValue, timestamp}\n- Apply to originalRows \u2192 compiledRows (no mutations)\n- Audit history for undo/redo\n- Target: <50ms for 10k rows + 100 patches\n\nUse TypeScript strict mode + Vitest tests.\"\n```\n\nThe framework will:\n1. Scout relevant files and docs\n2. Create implementation plan in `specs/`\n3. Build the feature respecting documented constraints\n4. Generate Vitest tests\n5. Create build report in `ai_docs/build_reports/`\n\n### **Explicit Commands (Advanced)**\n\nFor precise control:\n- `/scout \"description\" \"4\"` - Find relevant files\n- `/plan_w_docs \"task\" \"docs/INVARIANTS.md\" \"scout_outputs/relevant_files.json\"` - Create plan\n- `/build_adw \"specs/issue-001-*.md\"` - Build from plan\n\n---\n\n## \ud83c\udfd7\ufe0f Implementation Priorities\n\n### Phase 1: Core Engine\n1. Patch engine (`src/lib/dataset/dataset-engine.ts`)\n2. CSV parser with type inference (`src/lib/csv/csv-parser.ts`)\n3. Dataset selectors (`src/lib/dataset/dataset-selectors.ts`)\n4. Zustand store completion (`src/lib/state/dataset-store.ts`)\n\n### Phase 2: Filters\n1. Text filters (contains, equals, startsWith, endsWith, regex)\n2. Number filters (<, >, =, between)\n3. Date filters (before, after, between)\n4. Filter composition (AND/OR logic)\n\n### Phase 3: Advanced Features\n1. Group-by functionality\n2. Agent run tracking\n3. CSV export with filters\n4. Undo/redo system\n\n---\n\n## \u2705 Code Requirements\n\nAll implementations must:\n- \u2705 Use **TypeScript strict mode** with explicit return types\n- \u2705 Follow patterns from `src/lib/dataset/types.ts`\n- \u2705 Never mutate `originalRows` (immutability invariant)\n- \u2705 Include **Vitest tests** (unit + performance benchmarks)\n- \u2705 Meet performance targets from `docs/PERF_NOTES.md`\n- \u2705 Use **structural sharing** for efficiency (don't clone entire datasets)\n- \u2705 Add JSDoc comments for public APIs\n\n---\n\n## \ud83d\udcda Key References\n\n| File | Purpose |\n|------|---------|\n| **docs/INVARIANTS.md** | Hard constraints - READ FIRST |\n| **docs/SCAFFOLDS.md** | Code patterns to follow |\n| **docs/PERF_NOTES.md** | Performance benchmarks |\n| **FRAMEWORK_USAGE.md** | Comprehensive framework guide (548 lines) |\n| **src/lib/dataset/types.ts** | Existing type definitions |\n| **.adw_config.json** | Framework configuration |\n\n---\n\n## \ud83c\udfaf Example Tasks (Copy-Paste Ready)\n\n### Implement Patch Engine\n```\nImplement the patch engine in src/lib/dataset/dataset-engine.ts.\n\nFrom docs/INVARIANTS.md section \"Patch Engine Rules\":\n- Patches: {rowId, columnKey, newValue, timestamp, userId?}\n- Function: applyPatches(originalRows, patches) \u2192 compiledRows\n- Never mutate originalRows (create new array with structural sharing)\n- Maintain audit history: getPatchHistory() returns all patches chronologically\n- Support revertPatch(patchId) for undo\n- Performance: <50ms for 10k rows + 100 patches\n\nUse TypeScript strict mode. Add Vitest tests for:\n- Immutability (original rows never change)\n- Audit history (all patches tracked)\n- Performance (benchmark with 10k rows)\n- Edge cases (invalid rowId, missing columns)\n\nFollow patterns from src/lib/dataset/types.ts.\n```\n\n### Implement CSV Parser\n```\nImplement CSV parser in src/lib/csv/csv-parser.ts.\n\nFrom docs/INVARIANTS.md section \"CSV Parsing\":\n- Column type inference: try number \u2192 date \u2192 boolean \u2192 string\n- Number: parseInt/parseFloat (check !isNaN)\n- Date: ISO 8601 regex pattern\n- Boolean: true/false, yes/no, 1/0 (case insensitive)\n- Coercion modes:\n  - strict: throw on coercion errors\n  - lenient: coerce errors \u2192 null\n  - skip-errors: skip rows with errors\n\nExport: parseCSV(csv: string, options: ParseOptions) \u2192 ParseResult\nAdd Vitest tests for all type inference cases.\n```\n\n### Implement Text Filters\n```\nImplement text filters in src/lib/dataset/filters.ts.\n\nFrom docs/SCAFFOLDS.md, support:\n- TextFilter type: {type: 'text', column: string, operator: 'contains'|'equals'|'startsWith'|'endsWith'|'regex', value: string}\n- Function: applyTextFilter(rows, filter) \u2192 filteredRows\n- Operators: case-insensitive by default (add caseSensitive?: boolean option)\n- Regex: compile once, cache for performance\n\nPerformance: <100ms for 50k rows with 5 filters\nAdd Vitest tests for each operator + composition.\n```\n\n---\n\n## \ud83d\udc1b Common Patterns\n\n### Reading Docs Before Implementation\n```\n# Step 1: Check what docs say\n\"What does docs/INVARIANTS.md say about patch engine immutability?\"\n\n# Step 2: Implement based on constraints\n\"Implement patch engine following the immutability rules you just read\"\n```\n\n### Performance Validation\n```\n# After implementation\n\"Benchmark the patch engine with 10k rows + 100 patches.\nVerify it meets the <50ms target from docs/PERF_NOTES.md.\"\n```\n\n### Test-Driven Approach\n```\n\"First write Vitest tests for the patch engine based on docs/INVARIANTS.md examples.\nThen implement the engine to pass those tests.\"\n```\n\n---\n\n## \ud83d\udea8 Important Notes\n\n1. **Always read docs first** - Don't guess at constraints\n2. **Never mutate originalRows** - This is a hard invariant\n3. **Use structural sharing** - Don't clone entire datasets for performance\n4. **Add performance tests** - Verify benchmarks from PERF_NOTES.md\n5. **Reference existing types** - Use types.ts as the foundation\n\n---\n\n## \ud83d\udcd6 Need More Help?\n\n- **Comprehensive guide**: See `FRAMEWORK_USAGE.md` (548 lines with detailed examples)\n- **Test installation**: Run `python test_installation.py`\n- **Validate setup**: Run `./scripts/validate_pipeline.sh`\n\n---\n\n**Ready to build!** \ud83d\ude80\n"
+    }
+  }
+]

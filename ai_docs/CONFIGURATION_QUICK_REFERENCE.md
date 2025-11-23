@@ -265,9 +265,114 @@ python -c "from adws.adw_modules.r2_uploader import R2Uploader; logger=__import_
 
 ---
 
+## Setup Patterns
+
+### Setup Sequence (CRITICAL ORDER)
+
+1. **Start**: Copy `.env.sample` to `.env`
+2. **First**: Set `ANTHROPIC_API_KEY` (blocks all Claude Code execution if missing)
+3. **Second**: Set `GITHUB_REPO_URL` (blocks GitHub operations if missing)
+4. **Third**: Set `CLAUDE_CODE_MAX_OUTPUT_TOKENS=32768` (prevents token limit errors early)
+5. **Fourth**: Set `GITHUB_PAT` if using non-default gh auth
+6. **Optional**: Configure R2 storage if handling screenshots/uploads
+
+### Common Configuration Mistakes
+
+| Mistake | Problem | Fix |
+|---------|---------|-----|
+| Token limit not increased | Default 8192 causes errors | Set to 32768 |
+| GITHUB_PAT not set | Falls back to local gh auth | May fail in CI |
+| ANTHROPIC_API_KEY missing | Agent execution fails | Set in .env |
+| GITHUB_REPO_URL format wrong | Must be full URL | Use https://github.com/owner/repo |
+| R2 partial config | Uploader silently disables | Set all 4 R2 vars |
+
+### Validation Constants (DO NOT CHANGE)
+
+```python
+MAX_PROMPT_LENGTH = 100000         # 100KB max for prompts
+MAX_COMMIT_MESSAGE_LENGTH = 5000   # Git commit message limit
+MAX_BRANCH_NAME_LENGTH = 255       # Git filename limit
+MAX_FILE_PATH_LENGTH = 4096        # Filesystem limit
+MAX_ADW_ID_LENGTH = 64             # Identifier length
+MAX_ISSUE_NUMBER_LENGTH = 10       # GitHub issue number digits
+```
+
+### Allowed Path Prefixes (Whitelist)
+
+Files can only be accessed in these directories:
+- `specs/`
+- `agents/`
+- `ai_docs/`
+- `docs/`
+- `scripts/`
+- `adws/`
+- `app/`
+
+### GitHub Integration Pitfalls
+
+1. **No gh CLI**: Silently fails, returns EnvironmentError
+2. **Wrong GITHUB_PAT**: gh falls back to local auth
+3. **GITHUB_REPO_URL format**: Must be https://github.com/owner/repo
+4. **Rate limits**: gh CLI will enforce GitHub API limits
+5. **Bot comment loops**: SafeGitHubComment filters "[ADW-BOT]" prefix
+
+### R2 Configuration Behavior
+
+- **Partial config (1-3 vars missing)**: Silently disabled, no error
+- **All vars present but wrong values**: boto3 connection fails, logged as warning
+- **Bucket doesn't exist**: Will fail on upload attempt (not init time)
+- **Invalid credentials**: boto3 raises ClientError on upload
+
+### Agent Model Mapping
+
+| Command | Model | Use Case |
+|---------|-------|----------|
+| `/classify_issue`, `/classify_adw` | sonnet | Lightweight classification |
+| `/implement`, `/feature`, `/bug`, `/patch` | opus | Complex implementation |
+| `/test`, `/resolve_failed_test` | sonnet | Testing |
+| `/review` | opus | Thorough review |
+| `/document` | sonnet | Documentation |
+
+### Environment Variables Passed to Agent
+
+```
+ANTHROPIC_API_KEY          # Required
+GITHUB_PAT / GH_TOKEN      # Optional
+CLAUDE_CODE_PATH           # Default: "claude"
+CLAUDE_CODE_MAX_OUTPUT_TOKENS
+CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR
+HOME, USER, PATH, SHELL
+LANG, LC_ALL, TERM
+PYTHONPATH, PYTHONUNBUFFERED
+PWD (current working directory)
+```
+
+### Setup Checklist
+
+```
+[ ] REQUIRED: Copy .env.sample to .env
+[ ] REQUIRED: Set ANTHROPIC_API_KEY
+[ ] REQUIRED: Set GITHUB_REPO_URL
+[ ] REQUIRED: Set CLAUDE_CODE_MAX_OUTPUT_TOKENS=32768
+[ ] REQUIRED: Verify git remote: git remote -v
+[ ] REQUIRED: Install gh CLI: brew install gh
+[ ] REQUIRED: Authenticate gh: gh auth login
+[ ] REQUIRED: Install Claude Code CLI
+
+[ ] RECOMMENDED: Set GITHUB_PAT (for CI automation)
+[ ] RECOMMENDED: Test: claude --version
+
+[ ] OPTIONAL: Configure R2 storage (if handling uploads)
+  [ ] CLOUDFLARE_ACCOUNT_ID
+  [ ] CLOUDFLARE_R2_ACCESS_KEY_ID
+  [ ] CLOUDFLARE_R2_SECRET_ACCESS_KEY
+  [ ] CLOUDFLARE_R2_BUCKET_NAME
+```
+
+---
+
 ## Further Reading
 
-- **Full Details**: `ai_docs/CONFIGURATION_SETUP_PATTERNS.md`
 - **Spec Schema**: `docs/SPEC_SCHEMA.md`
 - **Validation Rules**: `adws/adw_modules/validators.py`
 - **Error Handling**: `adws/adw_modules/exceptions.py`

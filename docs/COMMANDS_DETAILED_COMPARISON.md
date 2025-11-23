@@ -16,7 +16,7 @@ The current commands work in **complete isolation** - they don't share context, 
 1. Launch 4 parallel AI agents (gemini, opencode, codex, claude)
 2. Each agent explores the codebase from different angles
 3. Combine their findings into relevant_files.json
-4. Save to agents/scout_files/ directory
+4. Save to scout_outputs/ directory
 ```
 
 **What ACTUALLY happens:**
@@ -65,7 +65,7 @@ Result: Empty or partial relevant_files.json (mostly empty)
    - Check if RELEVANT_FILES_COLLECTION exists (else stop)
 
 2. FILE READING PHASE:
-   - Read agents/scout_files/relevant_files.json
+   - Read scout_outputs/relevant_files.json
    - Parse the JSON structure
    - Extract file paths with line ranges:
      Example: "auth/middleware.py (offset: 45, limit: 100)"
@@ -213,7 +213,7 @@ graph LR
 ```bash
 # 1. Scout fails silently
 /scout "add user authentication" "4"
-# Creates: agents/scout_files/relevant_files.json with:
+# Creates: scout_outputs/relevant_files.json with:
 {
   "files": [],  # Empty because tools don't exist!
   "key_findings": {
@@ -222,7 +222,7 @@ graph LR
 }
 
 # 2. Plan works but creates bad plan
-/plan_w_docs "add auth" "https://jwt.io" "agents/scout_files/relevant_files.json"
+/plan_w_docs "add auth" "https://jwt.io" "scout_outputs/relevant_files.json"
 # Creates plan but with generic steps because no files to reference
 
 # 3. Build fails or creates wrong code
@@ -349,13 +349,13 @@ memory: enabled
 $ /scout "add JWT authentication to API" "4"
 Trying gemini... ERROR: command not found
 Trying opencode... ERROR: command not found
-Created: agents/scout_files/relevant_files.json
+Created: scout_outputs/relevant_files.json
 {
   "files": []  # Empty!
 }
 
 # 2. Plan works but generic
-$ /plan_w_docs "add JWT" "https://jwt.io" "agents/scout_files/relevant_files.json"
+$ /plan_w_docs "add JWT" "https://jwt.io" "scout_outputs/relevant_files.json"
 Created: specs/add-jwt.md
 # Generic plan because no files to reference
 

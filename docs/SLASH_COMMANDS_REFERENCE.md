@@ -63,7 +63,7 @@ graph TD
 **Status**: ✅ Works well
 
 ```bash
-/plan_w_docs "add authentication" "https://auth-docs.com" "agents/scout_files/relevant_files.json"
+/plan_w_docs "add authentication" "https://auth-docs.com" "scout_outputs/relevant_files.json"
 # Creates: specs/issue-NNN-adw-XXX-slug.md
 ```
 
@@ -371,7 +371,7 @@ sequenceDiagram
 Task(subagent_type="explore", prompt="find auth files")
 
 # 2. Use working plan command
-/plan_w_docs "add auth" "https://docs.com" "agents/scout_files/relevant_files.json"
+/plan_w_docs "add auth" "https://docs.com" "scout_outputs/relevant_files.json"
 
 # 3. Create worktree for isolation
 /worktree_create "feature-auth" "main"

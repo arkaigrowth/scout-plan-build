@@ -199,7 +199,7 @@ git() {
 ```python
 # Before starting work
 import json
-with open("agents/AUTH-001/adw_state.json") as f:
+with open("scout_outputs/workflows/AUTH-001/adw_state.json") as f:
     state = json.load(f)
     print(f"Working on: {state['issue_number']}")
     print(f"Branch: {state['branch_name']}")

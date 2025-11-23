@@ -174,7 +174,7 @@ Execute every command to validate the feature works correctly with zero regressi
 - `CLAUDE_CODE_MAX_OUTPUT_TOKENS=16384 /scout "large analysis" "4"` - Test with increased token limit
 - `mv $(which gemini) $(which gemini).bak 2>/dev/null; /scout "test fallback" "4"; mv $(which gemini).bak $(which gemini) 2>/dev/null` - Test fallback when tool unavailable
 - `cd adws && uv run pytest adw_tests/test_external_tools.py` - Run tests in ADW environment
-- `cat agents/scout_files/relevant_files.json | jq '.files | length'` - Verify scout produces valid output
+- `cat scout_outputs/relevant_files.json | jq '.files | length'` - Verify scout produces valid output
 - `git diff --stat` - Ensure no unintended changes to codebase
 
 ## Notes

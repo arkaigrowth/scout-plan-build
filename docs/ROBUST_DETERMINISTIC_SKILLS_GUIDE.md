@@ -107,7 +107,7 @@ log_operation({
 with TransactionContext(operation_id) as txn:
     try:
         # All file writes go through transaction
-        txn.write_file("agents/scout_files/relevant_files.json", data)
+        txn.write_file("scout_outputs/relevant_files.json", data)
 
         # If anything fails, transaction auto-rollback
         txn.commit()
@@ -467,7 +467,7 @@ with Transaction(operation_id) as txn:
 
         # Phase 3: Save results (idempotent)
         save_result = idempotent_save(
-            "agents/scout_files/relevant_files.json",
+            "scout_outputs/relevant_files.json",
             scout_result
         )
         txn.checkpoint("save_complete")

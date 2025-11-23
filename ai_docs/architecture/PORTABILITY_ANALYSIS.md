@@ -112,7 +112,7 @@ project:
 # Directory structure
 paths:
   specs: "specs/"           # Where plans are stored
-  agents: "agents/"         # Agent state and logs
+  scout_outputs: "scout_outputs/"  # Scout outputs and workflow state
   ai_docs: "ai_docs/"       # AI-generated documentation
   app_code: "app/"          # Application source code
   tests: "tests/"           # Test files
@@ -223,7 +223,7 @@ project:
 
 paths:
   specs: "specs/"
-  agents: "agents/"
+  scout_outputs: "scout_outputs/"
   ai_docs: "ai_docs/"
   app_code: "src/"  # Adjust based on project type
   tests: "tests/"
@@ -580,7 +580,7 @@ project:
 
 paths:
   specs: "specs/"
-  agents: "agents/"
+  scout_outputs: "scout_outputs/"
   ai_docs: "ai_docs/"
 ```
 
@@ -594,7 +594,7 @@ project:
 
 paths:
   specs: "documents/tech-specs/"
-  agents: ".adw/agents/"            # Hidden directory
+  workflows: ".adw/workflows/"      # Hidden directory
   ai_docs: "documents/ai-generated/"
   app_code: "src/main/java/"
   tests: "src/test/java/"
@@ -647,7 +647,7 @@ project:
 
 paths:
   specs: "docs/specs/"
-  agents: "../../.adw/agents/auth-service/"  # Shared agents dir
+  workflows: "../../.adw/workflows/auth-service/"  # Shared workflows dir
   ai_docs: "docs/ai-generated/"
   app_code: "src/"
   tests: "tests/"

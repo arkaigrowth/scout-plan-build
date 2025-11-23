@@ -4,7 +4,7 @@
 
 ### 📊 Scout Analysis Phase
 
-**Scout Report Location**: `agents/scout_files/skills_scout_report.json`
+**Scout Report Location**: `scout_outputs/skills_scout_report.json`
 
 The Opus scouts analyzed your repository from 5 different perspectives and identified:
 
@@ -72,7 +72,7 @@ These 5 skills target the highest-impact patterns in your codebase. The scout an
 
 ```
 scout_plan_build_mvp/
-├── agents/scout_files/
+├── scout_outputs/
 │   └── skills_scout_report.json          # Consolidated scout findings
 ├── specs/
 │   ├── skill-001-workflow-orchestrator.md # Generic orchestration

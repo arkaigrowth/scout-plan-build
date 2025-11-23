@@ -302,7 +302,7 @@ The real power of these skills isn't just code reduction—it's the emergent cap
 
 All detailed scout analysis reports are available at:
 
-- **Scout Report Summary**: `agents/scout_files/skills_scout_report.json`
+- **Scout Report Summary**: `scout_outputs/skills_scout_report.json`
 - **Workflow Analysis**: `ai_docs/WORKFLOW_PATTERNS_ANALYSIS.md`
 - **Configuration Analysis**: `ai_docs/CONFIGURATION_SETUP_PATTERNS.md`
 - **Command Analysis**: `ai_docs/COMMAND_SKILL_ANALYSIS_REPORT.md`

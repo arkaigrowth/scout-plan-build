@@ -5,12 +5,12 @@ This patch adds:
 - `adws/adw_plan.py` — writes a spec under `specs/`
 - `adws/adw_build.py` — consumes a plan, emits `ai_docs/build_reports/<slug>-build-report.md`
 - `adws/adw_review.py` — summarizes diff + plan; emits `ai_docs/reviews/<slug>-review.md`
-- `agents/commands/build_adw.md` — a build command that calls the shim
+- `.claude/commands/build_adw.md` — a build command that calls the shim
 
 ## How to use
 1) Generate a plan:
    ```bash
-   uv run adws/adw_plan.py --prompt "Your task" --docs "https://docs..." --relevant agents/scout_files/relevant_files.json
+   uv run adws/adw_plan.py --prompt "Your task" --docs "https://docs..." --relevant scout_outputs/relevant_files.json
    ```
    → returns `specs/<kebab>.md`
 

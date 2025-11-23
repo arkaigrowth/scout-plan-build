@@ -188,10 +188,10 @@ adw_plan.py 123 && adw_build.py 123
 ### 2. Check State Files After Each Phase
 ```bash
 # Verify state was saved
-cat agents/a1b2c3d4/adw_state.json
+cat scout_outputs/workflows/a1b2c3d4/adw_state.json
 
 # Understand what went wrong
-cat agents/a1b2c3d4/planner/raw_output.jsonl | tail -1 | jq .
+cat scout_outputs/workflows/a1b2c3d4/planner/raw_output.jsonl | tail -1 | jq .
 ```
 
 ### 3. Use Orchestrator Scripts, Not Manual Piping
@@ -306,12 +306,12 @@ cat ai_docs/scout/relevant_files.json
 
 ### Check if state persisted
 ```bash
-cat agents/a1b2c3d4/adw_state.json
+cat scout_outputs/workflows/a1b2c3d4/adw_state.json
 ```
 
 ### Check what agent did
 ```bash
-tail -1 agents/a1b2c3d4/planner/raw_output.jsonl | jq .
+tail -1 scout_outputs/workflows/a1b2c3d4/planner/raw_output.jsonl | jq .
 ```
 
 ### Check git branch

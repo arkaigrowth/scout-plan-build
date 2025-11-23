@@ -122,7 +122,7 @@ USER REQUEST: "Add authentication to the API"
      │   ├─→ api/routes.py
      │   └─→ tests/test_auth.py
      │
-     └─→ OUTPUT: agents/scout_files/relevant_files.json
+     └─→ OUTPUT: scout_outputs/relevant_files.json
          │
          ▼
 [2] PLAN PHASE
@@ -268,10 +268,10 @@ $ export CLAUDE_CODE_MAX_OUTPUT_TOKENS=32768
 
 # 2. Scout for files (often partially fails)
 $ claude "/scout 'add user authentication' '3'"
-# Creates: agents/scout_files/relevant_files.json
+# Creates: scout_outputs/relevant_files.json
 
 # 3. Create plan
-$ claude "/plan_w_docs 'add user authentication' 'https://docs.example.com' 'agents/scout_files/relevant_files.json'"
+$ claude "/plan_w_docs 'add user authentication' 'https://docs.example.com' 'scout_outputs/relevant_files.json'"
 # Creates: specs/issue-001-adw-abc123-auth.md
 
 # 4. Build implementation

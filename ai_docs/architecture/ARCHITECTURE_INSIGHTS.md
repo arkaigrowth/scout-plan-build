@@ -455,7 +455,7 @@ Test 1: /scout "add error handling" "4"
   → Verify: JSON output structure correct
   → Verify: git reset --hard works
 
-Test 2: /plan_w_docs "add error handling" "https://docs.python.org" "agents/scout_files/relevant_files.json"
+Test 2: /plan_w_docs "add error handling" "https://docs.python.org" "scout_outputs/relevant_files.json"
   → Verify: THINK HARD phase mentioned in output
   → Verify: 8 sections present in plan
   → Verify: Docs scraped in parallel

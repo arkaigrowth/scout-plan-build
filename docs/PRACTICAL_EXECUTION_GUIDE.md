@@ -63,10 +63,10 @@ claude
 # Then in Claude:
 > Use the Task tool with subagent_type="explore" to find all files related to [your task]
 > Focus on models, routes, tests, and configuration files
-> Save the results to agents/scout_files/relevant_files.json
+> Save the results to scout_outputs/relevant_files.json
 
 # Continue with working commands:
-> /plan_w_docs "[task]" "[docs_url]" "agents/scout_files/relevant_files.json"
+> /plan_w_docs "[task]" "[docs_url]" "scout_outputs/relevant_files.json"
 > /build_adw "specs/[generated-plan].md"
 ```
 
@@ -93,7 +93,7 @@ scout_result = {
     "timestamp": datetime.now().isoformat(),
     "files": [{"path": f, "reason": "..."} for f in relevant]
 }
-Write("agents/scout_files/relevant_files.json", json.dumps(scout_result))
+Write("scout_outputs/relevant_files.json", json.dumps(scout_result))
 
 # 4. Continue with plan and build
 SlashCommand("/plan_w_docs ...")
@@ -124,7 +124,7 @@ tasks = [
          description="Analyze structure"),
 ]
 
-Combine results and save to agents/scout_files/relevant_files.json
+Combine results and save to scout_outputs/relevant_files.json
 ```
 
 ## 🚀 Best Execution Pattern for Complex Tasks

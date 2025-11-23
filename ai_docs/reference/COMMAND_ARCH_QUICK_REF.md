@@ -71,7 +71,7 @@
 │  ├─ Task #3: Bash → codex exec ...
 │  └─ Task #4: Bash → claude -p "..."
 │
-└─ Aggregate → Write agents/scout_files/relevant_files.json
+└─ Aggregate → Write scout_outputs/relevant_files.json
 ```
 
 **Key Code**:
@@ -91,7 +91,7 @@
 │ INPUT:  USER_PROMPT, SCALE                  │
 │ Task tool (parallel) → External agents      │
 │ Aggregate + git safety check                │
-│ OUTPUT: agents/scout_files/relevant_files.json
+│ OUTPUT: scout_outputs/relevant_files.json
 └─────────────────────────────────────────────┘
   │
   ▼

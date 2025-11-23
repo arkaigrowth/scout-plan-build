@@ -343,7 +343,7 @@ response = execute_template(request)
 ```
 Core Workflow:
 /scout (broken)
-  └─> outputs: agents/scout_files/relevant_files.json
+  └─> outputs: scout_outputs/relevant_files.json
       └─> /plan_w_docs (reads)
           └─> outputs: specs/issue-NNN-adw-XXX.md
               └─> /build_adw (reads)

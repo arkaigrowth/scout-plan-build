@@ -616,7 +616,7 @@ flowchart TB
         TaskAgent[Task Tool with<br/>explore subagent]:::working
 
         ScoutAttempt -.->|Tools Don't Exist| ScoutFallback
-        ScoutFallback --> ScoutOutput[agents/scout_files/<br/>relevant_files.json]:::working
+        ScoutFallback --> ScoutOutput[scout_outputs/<br/>relevant_files.json]:::working
         TaskAgent --> ScoutOutput
     end
 
@@ -1080,7 +1080,7 @@ Task(subagent_type="explore", prompt="Find auth-related files")
 
 # 2. Plan phase - generate implementation spec
 /plan_w_docs "Add login feature" "https://docs.example.com" \
-  "agents/scout_files/relevant_files.json"
+  "scout_outputs/relevant_files.json"
 
 # 3. Build phase - implement the plan
 /build_adw "specs/issue-123-adw-abc12345-add-login.md"

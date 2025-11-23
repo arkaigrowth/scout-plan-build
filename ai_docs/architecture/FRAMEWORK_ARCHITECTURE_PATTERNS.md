@@ -190,7 +190,7 @@ Phase 1: Plan
 ├─ ensure_adw_id() → creates ADWState
 ├─ state.update(issue_number=123)
 ├─ state.update(plan_file="specs/...")
-└─ save() → agents/abc123/adw_state.json
+└─ save() → scout_outputs/workflows/abc123/adw_state.json
 
 Phase 2: Build
 ├─ ADWState.load(adw_id) → reads plan_file from state

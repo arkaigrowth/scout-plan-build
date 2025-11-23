@@ -479,7 +479,7 @@ uv run adw_plan_build.py 123  # Verbose output
 ### ADW Tracking
 Each workflow run gets a unique 8-character ID (e.g., `a1b2c3d4`) that appears in:
 - Issue comments: `a1b2c3d4_ops: ✅ Starting ADW workflow`
-- Output files: `agents/a1b2c3d4/sdlc_planner/raw_output.jsonl`
+- Output files: `scout_outputs/workflows/a1b2c3d4/sdlc_planner/raw_output.jsonl`
 - Git commits and PRs
 
 ### Model Selection

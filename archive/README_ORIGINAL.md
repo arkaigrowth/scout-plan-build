@@ -56,7 +56,7 @@ python scripts/migrate_specs.py --from 1.0.0 --to 1.1.0 --apply
 
 Use the slash command to generate properly formatted specs:
 ```bash
-/plan_w_docs "[task description]" "[docs url]" "agents/scout_files/relevant_files.json"
+/plan_w_docs "[task description]" "[docs url]" "scout_outputs/relevant_files.json"
 ```
 
 For detailed schema documentation, validation rules, and migration procedures, see [`docs/SPEC_SCHEMA.md`](docs/SPEC_SCHEMA.md).

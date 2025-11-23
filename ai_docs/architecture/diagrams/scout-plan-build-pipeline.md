@@ -35,7 +35,7 @@ flowchart TB
         TaskAgent[Task Tool with<br/>explore subagent]:::working
 
         ScoutAttempt -.->|Tools Don't Exist| ScoutFallback
-        ScoutFallback --> ScoutOutput[agents/scout_files/<br/>relevant_files.json]:::working
+        ScoutFallback --> ScoutOutput[scout_outputs/<br/>relevant_files.json]:::working
         TaskAgent --> ScoutOutput
     end
 

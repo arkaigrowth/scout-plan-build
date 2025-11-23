@@ -1427,7 +1427,7 @@ class IntegratedWorkflow:
 3. Test with simple skill:
    ```bash
    /adw-scout "test"
-   # Should create agents/scout_files/relevant_files.json
+   # Should create scout_outputs/relevant_files.json
    ```
 
 **If Memory Doesn't Grow:**

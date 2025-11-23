@@ -86,7 +86,7 @@ The current scout/plan/build workflow commands lack:
    ```
 2. **Plan-only test**: Test documentation scraping
    ```bash
-   /plan_w_docs "Implement rate limiting" "https://docs.api.com" "agents/scout_files/test.json"
+   /plan_w_docs "Implement rate limiting" "https://docs.api.com" "scout_outputs/test.json"
    ```
 3. **Full workflow test**: End-to-end validation
    ```bash

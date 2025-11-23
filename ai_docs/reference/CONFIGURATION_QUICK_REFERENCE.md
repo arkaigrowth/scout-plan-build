@@ -52,7 +52,7 @@ gh issue list
 ❌ Invalid: `main`, `master`, `feature/..--test`, `feature/_start`
 
 ### File Paths
-✅ Valid: `specs/plan.md`, `agents/abc123/output.json`
+✅ Valid: `specs/plan.md`, `scout_outputs/workflows/abc123/output.json`
 ❌ Invalid: `../../../etc/passwd`, `/etc/passwd`, `other/path.txt`
 
 ### Commit Messages

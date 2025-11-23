@@ -59,7 +59,7 @@ Activate this skill when:
 ### Path Validation
 ```python
 # Validates against allowed prefixes and traversal
-is_valid = validate_path("agents/scout_files/data.json")  # True
+is_valid = validate_path("scout_outputs/data.json")  # True
 is_valid = validate_path("../../etc/passwd")  # False - traversal
 ```
 
@@ -391,7 +391,7 @@ def test_path_traversal_blocked():
     assert result.error == "PATH_TRAVERSAL"
 
 def test_allowed_path_accepted():
-    result = PathValidator.validate("agents/scout_files/data.json")
+    result = PathValidator.validate("scout_outputs/data.json")
     assert result.valid == True
 
 def test_dangerous_command_blocked():

@@ -144,7 +144,7 @@ def parallel_scout(task: str, specialized_agents: List[str]) -> Dict:
     from pathlib import Path
 
     # Create output directory
-    scout_dir = Path("agents/scout_files")
+    scout_dir = Path("scout_outputs")
     scout_dir.mkdir(parents=True, exist_ok=True)
 
     # Launch parallel scouts (just like Test/Review/Document!)

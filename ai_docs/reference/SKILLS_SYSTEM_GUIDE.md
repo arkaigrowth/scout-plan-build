@@ -503,11 +503,11 @@ python agents/scout.py "$TASK" "$DEPTH"
 
 # Persist to memory (if mem0 available)
 if command -v mem0 &> /dev/null; then
-  mem0 write "scout_$TASK" < agents/scout_files/relevant_files.json
+  mem0 write "scout_$TASK" < scout_outputs/relevant_files.json
 fi
 
 # Generate reference doc
-echo "Scout complete: agents/scout_files/relevant_files.json"
+echo "Scout complete: scout_outputs/relevant_files.json"
 ```
 
 ### Pattern 2: Plan with Documentation
@@ -969,7 +969,7 @@ description: "Generate implementation plan from scout results"
 mcp-servers: [context7]
 argument-hint: "<task> [docs-url]"
 ---
-! python adw/workflow_ops.py plan "$1" "${2:-}" agents/scout_files/relevant_files.json
+! python adw/workflow_ops.py plan "$1" "${2:-}" scout_outputs/relevant_files.json
 ```
 
 **3. Build Skill**

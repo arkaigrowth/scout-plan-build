@@ -430,8 +430,8 @@ validated_files.sort(
 /adw-scout "add authentication" 3
 
 # Compare outputs (should be identical except timestamps)
-diff -u <(jq -S . agents/scout_files/relevant_files.json.1) \
-        <(jq -S . agents/scout_files/relevant_files.json.2)
+diff -u <(jq -S . scout_outputs/relevant_files.json.1) \
+        <(jq -S . scout_outputs/relevant_files.json.2)
 
 # Should produce zero differences!
 ```
@@ -672,7 +672,7 @@ Finds relevant files for a task using deterministic methods.
 - Reuse patterns for similar tasks
 
 ## Output:
-- agents/scout_files/relevant_files.json
+- scout_outputs/relevant_files.json
   - task
   - timestamp  
   - files (sorted by confidence)

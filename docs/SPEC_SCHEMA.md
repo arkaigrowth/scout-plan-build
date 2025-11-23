@@ -1157,7 +1157,7 @@ def quick_version_check(spec_path: Path) -> Optional[str]:
 
 ## Inputs
 ### Scout Results
-- **agents/scout_files/relevant_files.json**: [Description of findings]
+- **scout_outputs/relevant_files.json**: [Description of findings]
 
 ### Documentation References
 - **[URL]**: [What information this provides]

@@ -114,7 +114,7 @@ export CLAUDE_CODE_MAX_OUTPUT_TOKENS=32768
 
 **Solution**: These external tools don't exist. Use direct file paths:
 ```bash
-/plan_w_docs "task" "docs" "agents/scout_files/relevant_files.json"
+/plan_w_docs "task" "docs" "scout_outputs/relevant_files.json"
 ```
 
 #### 3. Git Operations on Main
@@ -142,8 +142,7 @@ scout_plan_build_mvp/
 ├── adws/                    # Core workflow modules
 │   ├── adw_*.py            # Workflow scripts
 │   └── adw_modules/        # Shared modules
-├── agents/
-│   └── scout_files/        # Scout output location
+├── scout_outputs/          # Scout output location
 ├── specs/                   # Generated specifications
 ├── ai_docs/                # AI-generated documentation
 ├── tests/                   # Test suite
@@ -189,7 +188,7 @@ Structured exception hierarchy:
 
 Scout results are cached in:
 ```
-agents/scout_files/
+scout_outputs/
 └── relevant_files.json  # Reused across runs
 ```
 

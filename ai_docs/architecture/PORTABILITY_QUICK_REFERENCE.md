@@ -191,7 +191,7 @@ project:
   monorepo_root: "../.."
 
 paths:
-  agents: "../../.adw/agents/auth/"  # Shared state
+  workflows: "../../.adw/workflows/auth/"  # Shared state
 ```
 
 ---

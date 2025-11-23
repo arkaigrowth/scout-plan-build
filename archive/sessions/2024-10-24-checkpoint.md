@@ -17,7 +17,7 @@ scripts/validate_pipeline.sh
 ### Option A: Use It For Real Work
 ```bash
 /scout "your actual task from backlog" "3"
-/plan_w_docs "task" "" "agents/scout_files/relevant_files.json"
+/plan_w_docs "task" "" "scout_outputs/relevant_files.json"
 /build_adw "specs/created-spec.md"
 ```
 

@@ -833,7 +833,7 @@ Task(subagent_type="explore", prompt="Find auth files")
 
 # Generate plan
 /plan_w_docs "Implement OAuth" "https://docs.oauth.net" \
-    "agents/scout_files/relevant_files.json"
+    "scout_outputs/relevant_files.json"
 
 # Checkpoint the plan
 /worktree_checkpoint "plan generated: specs/issue-123.md"
@@ -885,7 +885,7 @@ Task(subagent_type="explore", prompt="Find OAuth-related files")
 
 # 4. Plan phase
 /plan_w_docs "Implement OAuth2" "https://oauth.net/2/" \
-    "agents/scout_files/relevant_files.json"
+    "scout_outputs/relevant_files.json"
 /worktree_checkpoint "plan complete"
 
 # 5. Build phase (parallel if possible)

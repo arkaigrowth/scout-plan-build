@@ -44,8 +44,8 @@ research/
 
 <!-- INDEX:articles:start -->
 | Source | Topic | File | Date Added |
-| ------ | ----- | ---- | ---------- |
-| *Coming soon* | | | |
+|-------- | ------- | ------ | ------------|
+| Openai Quick Start | Developer quickstart | [Analysis](articles/openai_quick_start.md) | Unknown |
 <!-- INDEX:articles:end -->
 
 ### Implementations

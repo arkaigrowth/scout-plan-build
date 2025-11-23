@@ -41,7 +41,7 @@ SCOUT COMMAND
   │     └─ Return: <path> (offset: N, limit: M) lines
   ├─ Aggregate + validate format
   ├─ Git safety: git diff --stat && git reset --hard
-  └─ Write agents/scout_files/relevant_files.json
+  └─ Write scout_outputs/relevant_files.json
      ├─ files[].path, reason, offset, limit
      └─ key_findings { summary, gaps, recommendations }
 ```
@@ -145,7 +145,7 @@ SLASH_COMMAND_MODEL_MAP = {
 ### Phase 1: Scout
 ```
 INPUT:  USER_PROMPT ("Add feature X"), SCALE (4)
-OUTPUT: agents/scout_files/relevant_files.json
+OUTPUT: scout_outputs/relevant_files.json
   {
     "task": "...",
     "timestamp": "ISO-8601",

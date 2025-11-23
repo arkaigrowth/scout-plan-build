@@ -146,7 +146,7 @@ subprocess.run(['git', 'commit', '-m', message])
   ├─ Task → Bash → opencode
   ├─ Task → Bash → claude-g
   └─ Task → Bash → codex
-     └─ Aggregate → agents/scout_files/relevant_files.json
+     └─ Aggregate → scout_outputs/relevant_files.json
 ```
 
 ## 🚨 Engineering Gaps Identified
@@ -208,7 +208,7 @@ def slugify(text):
 ```python
 # Use /scout command
 relevant_files = "/scout 'task description' '4'"
-# Returns: agents/scout_files/relevant_files.json
+# Returns: scout_outputs/relevant_files.json
 ```
 
 ### To Generate Plan

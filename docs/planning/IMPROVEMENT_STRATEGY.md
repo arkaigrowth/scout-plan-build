@@ -135,7 +135,7 @@ python adws/adw_scout_parallel.py "implement Agents SDK" 6
 # Generate implementation plan from scout results
 /plan_w_docs "implement Agents SDK" \
     "https://docs.anthropic.com/agents" \
-    "agents/scout_files/relevant_files.json"
+    "scout_outputs/relevant_files.json"
 
 # 4. BUILD
 # Implement the plan

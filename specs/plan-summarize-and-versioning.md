@@ -6,7 +6,7 @@ Add a new `plan-summarize` command to generate concise summaries of implementati
 ## Inputs
 
 ### Scout Results
-- **agents/scout_files/relevant_files.json**: Identified 10 key files for modification
+- **scout_outputs/relevant_files.json**: Identified 10 key files for modification
 - **Key findings**:
   - No existing plan-summarize command in `.claude/commands/`
   - specs/ directory needs creation (done)

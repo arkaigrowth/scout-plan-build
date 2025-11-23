@@ -28,7 +28,7 @@ Grep "authentication" --type py
 /plan_w_docs_improved "Add OAuth2 login" "" "scout_outputs/relevant_files.json"
 
 # Build from the spec
-/build_adw "specs/issue-001-oauth2.md"
+/workflow:build_adw "specs/issue-001-oauth2.md"
 ```
 
 That's the core loop: **Scout → Plan → Build**.
@@ -44,13 +44,13 @@ What's your task?
 │   └─ Just do it. No framework needed.
 │
 ├─ Standard (3-5 files, clear requirements)
-│   └─ /plan_w_docs_improved → /build_adw
+│   └─ /plan_w_docs_improved → /workflow:build_adw
 │
 ├─ Complex (6+ files, new feature)
-│   └─ Scout first → /plan_w_docs_improved → /build_adw
+│   └─ Scout first → /plan_w_docs_improved → /workflow:build_adw
 │
 ├─ Uncertain (multiple valid approaches)
-│   └─ /init-parallel-worktrees → try each → /merge-worktree best one
+│   └─ /git:init-parallel-worktrees → try each → /git:merge-worktree best one
 │
 └─ Research (exploring unknown codebase)
     └─ Task(Explore) or Grep/Glob directly
@@ -99,7 +99,7 @@ your-repo/
 ### Building
 | Command | Purpose |
 |---------|---------|
-| `/build_adw` | Execute a spec |
+| `/workflow:build_adw` | Execute a spec |
 | `/workflow:implement` | Quick implementation |
 
 ### Git Operations
@@ -107,8 +107,8 @@ your-repo/
 |---------|---------|
 | `/git:commit` | Smart commit with message |
 | `/git:pull_request` | Create PR from branch |
-| `/init-parallel-worktrees` | Create parallel branches |
-| `/merge-worktree` | Merge best approach |
+| `/git:init-parallel-worktrees` | Create parallel branches |
+| `/git:merge-worktree` | Merge best approach |
 
 ### Session Management
 | Command | Purpose |
@@ -153,7 +153,7 @@ Grep "user_auth" --type py
 # Creates: specs/issue-001-2fa-support.md
 
 # 3. Build from spec
-/build_adw "specs/issue-001-2fa-support.md"
+/workflow:build_adw "specs/issue-001-2fa-support.md"
 # Implements, tests, documents
 ```
 
@@ -161,7 +161,7 @@ Grep "user_auth" --type py
 
 ```bash
 # 1. Create parallel worktrees
-/init-parallel-worktrees cache-strategy 3
+/git:init-parallel-worktrees cache-strategy 3
 
 # 2. Each worktree tries a different approach
 # tree-1: Redis caching
@@ -169,10 +169,10 @@ Grep "user_auth" --type py
 # tree-3: SQLite cache
 
 # 3. Compare results
-/compare-worktrees cache-strategy
+/git:compare-worktrees cache-strategy
 
 # 4. Merge the winner
-/merge-worktree trees/cache-strategy-2
+/git:merge-worktree trees/cache-strategy-2
 ```
 
 ### Resuming After a Break

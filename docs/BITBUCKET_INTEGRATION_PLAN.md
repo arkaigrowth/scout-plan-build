@@ -1,6 +1,31 @@
 # Bitbucket Integration Plan
 *Making the Framework Work with Your Team's Workflow*
 
+---
+
+## Implementation Timeline
+
+```mermaid
+gantt
+    title Bitbucket Integration Roadmap
+    dateFormat  YYYY-MM-DD
+    section Phase 1: Basic
+    Build BitbucketOps class     :a1, 2025-01-01, 2d
+    Test PR creation             :a2, after a1, 1d
+    Add reviewer management      :a3, after a2, 1d
+    Deploy to team               :a4, after a3, 1d
+    section Phase 2: Enhanced
+    Add Jira linking             :b1, after a4, 1d
+    Smart commits                :b2, after b1, 1d
+    Pipeline triggers            :b3, after b2, 1d
+    Status reporting             :b4, after b3, 1d
+    Team training                :b5, after b4, 1d
+    section Phase 3: Production
+    Monitor & iterate            :c1, after b5, 5d
+```
+
+---
+
 ## 🚨 Current Reality: 0% Bitbucket Support
 
 The framework is **completely GitHub-centric**. Every script has hardcoded GitHub APIs, `gh` CLI commands, and GitHub-specific URL parsing.

@@ -1,5 +1,39 @@
 # 🎯 Practical Execution Guide - What Actually Works
 
+## Workaround Decision Flow
+
+```mermaid
+graph TD
+    A[Need to Scout Files] --> B{Scout Command Available?}
+    B -->|Yes| C[Try /scout command]
+    B -->|No| D[Use Workaround]
+
+    C --> E{Scout Succeeded?}
+    E -->|Yes| F[Continue to Plan]
+    E -->|No| D
+
+    D --> G{Which Workaround?}
+    G -->|Option 1| H[Task Tool with explore agent]
+    G -->|Option 2| I[Native Glob + Grep]
+    G -->|Option 3| J[Manual file discovery]
+
+    H --> K[Save to scout_outputs/]
+    I --> K
+    J --> K
+
+    K --> F
+    F --> L[/plan_w_docs]
+    L --> M[/build_adw]
+    M --> N[Manual git operations]
+
+    style D fill:#fff9c4
+    style F fill:#c8e6c9
+    style M fill:#c8e6c9
+    style N fill:#e1f5fe
+```
+
+---
+
 ## The Truth About the Current System
 
 After deep analysis, here's the **reality** of what works and what doesn't:

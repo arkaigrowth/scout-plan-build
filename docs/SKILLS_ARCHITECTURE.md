@@ -12,6 +12,50 @@ This document defines the complete skills architecture for the Scout Plan Build 
 
 ---
 
+## Skills Architecture Overview
+
+```mermaid
+graph TB
+    subgraph Application["Application Layer"]
+        skill004[skill-004: ADW Orchestrating]
+    end
+
+    subgraph Orchestration["Orchestration Layer"]
+        skill001[skill-001: Workflow Orchestrator]
+    end
+
+    subgraph Infrastructure["Infrastructure Layer"]
+        skill000[skill-000: Scout Determinism]
+        skill003[skill-003: State Management]
+    end
+
+    subgraph CrossCutting["Cross-Cutting Layer"]
+        skill002[skill-002: Input Validation]
+        skill005[skill-005: Error Handling]
+    end
+
+    skill004 --> skill001
+    skill001 --> skill000
+    skill001 --> skill003
+    skill000 --> skill002
+    skill000 --> skill005
+    skill003 --> skill002
+    skill003 --> skill005
+    skill001 --> skill002
+    skill001 --> skill005
+    skill004 --> skill002
+    skill004 --> skill005
+
+    style skill004 fill:#fff9c4
+    style skill001 fill:#f3e5f5
+    style skill000 fill:#e1f5ff
+    style skill003 fill:#e8f5e9
+    style skill002 fill:#fff3e0
+    style skill005 fill:#fce4ec
+```
+
+---
+
 ## Table of Contents
 
 1. [Directory Structure](#1-directory-structure)

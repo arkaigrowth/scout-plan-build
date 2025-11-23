@@ -3,6 +3,37 @@
 
 ---
 
+## Learning Path Overview
+
+```mermaid
+graph LR
+    subgraph Week1[Week 1: Basics]
+        A[Environment Setup] --> B[First Scout]
+        B --> C[First Plan]
+        C --> D[First Build]
+    end
+
+    subgraph Week2[Week 2: Efficiency]
+        E[Parallel Execution] --> F[State Persistence]
+        F --> G[Git Worktrees]
+    end
+
+    subgraph Week4[Week 4: Mastery]
+        H[Custom Strategies] --> I[Team Mentoring]
+        I --> J[Framework Evolution]
+    end
+
+    Week1 --> Week2
+    Week2 --> Week4
+
+    style A fill:#e3f2fd
+    style D fill:#e8f5e9
+    style G fill:#fff9c4
+    style J fill:#f3e5f5
+```
+
+---
+
 ## 📍 Where We Are Today
 
 ### The Problems We're Solving

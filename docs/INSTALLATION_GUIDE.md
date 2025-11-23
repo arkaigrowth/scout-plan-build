@@ -6,6 +6,39 @@ This guide shows you how to install the Scout-Plan-Build framework in any new or
 
 ---
 
+## Installation Flow Overview
+
+```mermaid
+graph TD
+    A[Start Installation] --> B{Prerequisites Met?}
+    B -->|No| C[Install Python 3.10+]
+    C --> D[Initialize Git Repo]
+    D --> B
+    B -->|Yes| E[Run Declarative Installer]
+
+    E --> F[Validate Environment]
+    F --> G[Create Directory Structure]
+    G --> H[Copy Core Files]
+    H --> I[Generate Config Files]
+    I --> J[Run Validation Tests]
+
+    J --> K{Tests Pass?}
+    K -->|No| L[Troubleshoot Issues]
+    L --> J
+    K -->|Yes| M[Installation Complete]
+
+    M --> N[Set Environment Variables]
+    N --> O[Test Scout Command]
+    O --> P[Ready to Use!]
+
+    style A fill:#e1f5fe
+    style M fill:#c8e6c9
+    style P fill:#a5d6a7
+    style L fill:#ffcdd2
+```
+
+---
+
 ## 🎯 What You'll Get
 
 After installation, your target repo will have:

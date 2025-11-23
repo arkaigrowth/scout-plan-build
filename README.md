@@ -2,8 +2,7 @@
 
 **Structured AI development workflows that actually ship.**
 
-<!-- Hero banner placeholder: Add your image here -->
-<!-- ![Scout-Plan-Build](assets/hero-banner.png) -->
+![Scout-Plan-Build](assets/hero-banner.png)
 
 ---
 

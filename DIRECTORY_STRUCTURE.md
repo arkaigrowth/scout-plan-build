@@ -40,6 +40,7 @@ scout_plan_build_mvp/                    ← Project root
 │
 ├── scout_outputs/                        ← ✅ Scout results (CANONICAL)
 │   │
+│   ├── README.md                         ← Structure documentation
 │   ├── relevant_files.json               ← 📌 PRIMARY OUTPUT (plan phase reads this)
 │   │                                     Example content:
 │   │                                     {
@@ -48,6 +49,12 @@ scout_plan_build_mvp/                    ← Project root
 │   │                                       "count": 2,
 │   │                                       "method": "parallel_squadron"
 │   │                                     }
+│   │
+│   ├── reports/                          ← ✅ Analysis & execution reports (NEW)
+│   │   ├── architecture_report.json
+│   │   ├── configuration_report.json
+│   │   ├── implementation_report.json
+│   │   └── tests_report.json
 │   │
 │   ├── temp/                             ← Temporary scout working files
 │   │   └── (empty - reserved for future use)

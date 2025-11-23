@@ -1,18 +1,286 @@
-# Skills Composition Architecture
+# Skills Architecture
 
-**Version**: 1.0.0
+**Version**: 2.0.0
 **Date**: 2025-01-23
-**Status**: Design Specification
+**Status**: Consolidated Design Specification
 
 ## Executive Summary
 
-This document defines how the 6 foundational skills (000-005) compose and interact to create a robust, deterministic, and self-healing workflow system. Rather than operating independently, these skills form a layered architecture where each skill enhances and protects the others.
+This document defines the complete skills architecture for the Scout Plan Build MVP, including the 6 foundational skills (000-005), their composition patterns, memory integration, and practical implementation guidance. Skills form a layered architecture where each skill enhances and protects the others, creating emergent capabilities beyond individual skill functions.
 
-**Key Insight**: Skills composition creates emergent capabilities beyond individual skill functions.
+**Key Insight**: Skills composition + memory integration creates self-improving, deterministic workflows.
 
-## 1. Dependency Graph
+---
 
-### 1.1 Foundation Layer (skill-000)
+## Table of Contents
+
+1. [Directory Structure](#1-directory-structure)
+2. [Skill Anatomy](#2-skill-anatomy)
+3. [Memory Architecture](#3-memory-architecture)
+4. [Dependency Graph](#4-dependency-graph)
+5. [Layered Architecture](#5-layered-architecture)
+6. [Data Flow Architecture](#6-data-flow-architecture)
+7. [Validation Chain Architecture](#7-validation-chain-architecture)
+8. [Error Handling Integration](#8-error-handling-integration)
+9. [Orchestration Layers](#9-orchestration-layers)
+10. [Interface Contracts](#10-interface-contracts)
+11. [Composition Patterns](#11-composition-patterns)
+12. [Failure Propagation](#12-failure-propagation)
+13. [Performance Implications](#13-performance-implications)
+14. [Implementation Guide](#14-implementation-guide)
+15. [Testing Strategy](#15-testing-strategy)
+16. [Migration and Adoption](#16-migration-and-adoption)
+
+---
+
+## 1. Directory Structure
+
+```
+Project Directory Structure:
+
+scout_plan_build_mvp/
+├── .claude/                    # Project-specific Claude config
+│   ├── commands/               # Slash commands (current system)
+│   │   ├── scout.md           # Individual command definitions
+│   │   ├── plan_w_docs.md
+│   │   └── build_adw.md
+│   │
+│   ├── skills/                 # Enhanced skills (stateful)
+│   │   ├── adw-scout.md       # Smart scout with memory
+│   │   ├── adw-complete.md    # Full workflow skill
+│   │   └── memory-recall.md   # Memory operations
+│   │
+│   └── memory/                 # Local memory storage
+│       ├── mem0.db            # SQLite database for mem0
+│       ├── scout_patterns.json # Pattern storage (grows over time)
+│       ├── embeddings/        # Vector embeddings cache
+│       └── sessions.json      # Session history
+
+~/.claude/                      # Global Claude config (user-wide)
+├── commands/                   # Global slash commands
+└── skills/                     # Global skills available everywhere
+```
+
+---
+
+## 2. Skill Anatomy
+
+### 2.1 Skill File Structure
+
+Skills are markdown files with YAML frontmatter that define workflows with memory integration:
+
+```markdown
+---
+# YAML Frontmatter - Skill Configuration
+name: adw-scout                           # Unique identifier
+description: Smart scout with memory      # One-line description
+version: 1.0.0                            # Semantic versioning
+author: system                            # Who created it
+category: workflow                        # Category for organization
+model: claude-sonnet-4-5-20250929        # Which model to use
+max_thinking_tokens: 10000               # Allow deep thinking
+temperature: 0.3                          # Lower = more deterministic
+tools:                                    # Available tools
+  - Read
+  - Write
+  - Grep
+  - Glob
+  - Task
+mcp_servers:                             # MCP servers to activate
+  - sequential-thinking                  # For analysis
+  - mem0                                 # For memory
+memory:                                   # Memory configuration
+  enabled: true
+  retention: 30d                         # Keep memories for 30 days
+  confidence_threshold: 0.7              # Only use high-confidence memories
+hooks:                                   # Event hooks
+  pre_execute: check_memory
+  post_execute: save_memory
+  on_error: log_failure_pattern
+---
+
+# Skill Implementation (Markdown + Code)
+
+## Memory Recall Phase
+Check if we've done similar tasks before:
+```python
+similar_tasks = mem0.search(USER_PROMPT, limit=5)
+if similar_tasks and similar_tasks[0].confidence > 0.7:
+    previous_patterns = similar_tasks[0].data
+    # Use these patterns as starting point
+```
+
+## Execution Phase
+[Actual implementation logic here]
+
+## Learning Phase
+Save what we learned:
+```python
+mem0.add({
+    "task": USER_PROMPT,
+    "files_found": result.files,
+    "patterns": extracted_patterns,
+    "success": True
+})
+```
+```
+
+### 2.2 Skills vs Commands
+
+| Aspect | Current Commands (Stateless) | New Skills (Stateful) |
+|--------|------------------------------|----------------------|
+| Memory | None - forgets everything | Persists between sessions |
+| Learning | Cannot improve | Gets faster over time |
+| Validation | Basic or none | Multi-layer validation |
+| Recovery | Fails permanently | Auto-recovery with fallbacks |
+| Tools | May use broken tools | Uses verified working tools |
+
+---
+
+## 3. Memory Architecture
+
+### 3.1 Memory Storage Layers
+
+```python
+# 1. IMMEDIATE MEMORY (Session)
+# Stored in: .claude/memory/sessions.json
+{
+  "session_id": "abc123",
+  "timestamp": "2024-01-20T10:00:00Z",
+  "context": {
+    "last_task": "add authentication",
+    "files_found": ["auth.js", "middleware.js"],
+    "patterns_used": ["Express middleware", "JWT"]
+  }
+}
+
+# 2. SHORT-TERM MEMORY (Project)
+# Stored in: .claude/memory/mem0.db (SQLite)
+CREATE TABLE memories (
+  id INTEGER PRIMARY KEY,
+  task TEXT,
+  patterns TEXT,
+  files TEXT,
+  confidence REAL,
+  timestamp DATETIME,
+  usage_count INTEGER
+);
+
+# 3. LONG-TERM MEMORY (Semantic)
+# Stored in: .claude/memory/embeddings/
+{
+  "embedding_id": "emb_789",
+  "vector": [0.23, -0.45, 0.67, ...],  # 1536 dimensions
+  "metadata": {
+    "task": "JWT implementation",
+    "success_rate": 0.95,
+    "pattern": "middleware-based auth"
+  }
+}
+
+# 4. COLLECTIVE MEMORY (Cross-Project)
+# Stored in: ~/.claude/global_memory/
+# Shared across all projects for common patterns
+```
+
+### 3.2 Memory Lifecycle
+
+```mermaid
+graph TD
+    Start[Skill Executes] --> Check[Check Memory]
+    Check --> Found{Memory Found?}
+
+    Found -->|Yes| Recall[Recall Context]
+    Found -->|No| Fresh[Start Fresh]
+
+    Recall --> Execute[Execute with Context]
+    Fresh --> Execute
+
+    Execute --> Learn[Learn from Results]
+    Learn --> Store[Store in Memory]
+    Store --> Grow[Memory Grows]
+
+    Grow --> Next[Next Execution]
+    Next --> Check
+
+    style Grow fill:#90EE90
+    style Store fill:#87CEEB
+```
+
+### 3.3 Memory Growth Over Time
+
+**First Execution (No Memory)**
+```python
+Task: "add user authentication"
+Memory Before: {}
+Execution:
+  - Searches entire codebase
+  - Takes 5 minutes
+  - Finds 20 relevant files
+Memory After: {
+  "task": "add user authentication",
+  "pattern": "auth files in src/auth/",
+  "common_files": ["app.js", "routes/api.js"],
+  "time_taken": 300
+}
+```
+
+**Second Execution (With Memory)**
+```python
+Task: "add role-based authentication"
+Memory Before: {
+  "similar_task": "add user authentication",
+  "confidence": 0.85,
+  "learned_patterns": ["src/auth/", "middleware pattern"]
+}
+Execution:
+  - Starts with src/auth/ directory
+  - Takes 2 minutes (60% faster!)
+  - Finds 25 relevant files (more comprehensive)
+Memory After: {
+  "task": "add role-based authentication",
+  "refined_pattern": "auth + roles in src/auth/rbac/",
+  "common_files": ["app.js", "routes/api.js", "models/user.js"],
+  "relationship": "extends: add user authentication"
+}
+```
+
+**Tenth Execution (Expert Level)**
+```python
+Task: "add OAuth authentication"
+Memory Before: {
+  "authentication_patterns": {
+    "basic": {"files": [...], "confidence": 0.95},
+    "jwt": {"files": [...], "confidence": 0.92},
+    "role_based": {"files": [...], "confidence": 0.88}
+  },
+  "common_structure": "always use src/auth/ and middleware/",
+  "test_patterns": "auth tests in tests/auth/"
+}
+Execution:
+  - Instantly knows where to look
+  - Takes 30 seconds
+  - Finds exactly the right files
+  - Suggests patterns from previous implementations
+```
+
+### 3.4 Performance Impact Over Time
+
+```python
+task_times = {
+    "run_1": {"task": "add auth", "time": 5.0, "memory": False},
+    "run_2": {"task": "add OAuth", "time": 3.5, "memory": True},   # 30% faster
+    "run_3": {"task": "add RBAC", "time": 2.8, "memory": True},    # 44% faster
+    "run_4": {"task": "fix auth", "time": 2.1, "memory": True},    # 58% faster
+    "run_10": {"task": "auth API", "time": 1.5, "memory": True},   # 70% faster!
+}
+```
+
+---
+
+## 4. Dependency Graph
+
+### 4.1 Skill Dependencies
 
 ```mermaid
 graph TD
@@ -44,7 +312,7 @@ graph TD
     style skill004 fill:#fff9c4
 ```
 
-### 1.2 Dependency Analysis
+### 4.2 Dependency Analysis
 
 | Skill | Depends On | Provides To | Layer |
 |-------|------------|-------------|-------|
@@ -55,7 +323,9 @@ graph TD
 | **skill-001** (workflow-orchestrator) | skill-000, skill-002, skill-003, skill-005 | skill-004 | Orchestration |
 | **skill-004** (adw-orchestrating) | All skills | End-users | Application |
 
-### 1.3 Layered Architecture
+---
+
+## 5. Layered Architecture
 
 ```
 ┌─────────────────────────────────────────┐
@@ -89,9 +359,11 @@ graph TD
 └─────────────────────────────────────────┘
 ```
 
-## 2. Data Flow Architecture
+---
 
-### 2.1 Complete Workflow Data Flow
+## 6. Data Flow Architecture
+
+### 6.1 Complete Workflow Data Flow
 
 ```mermaid
 sequenceDiagram
@@ -132,7 +404,7 @@ sequenceDiagram
     skill004-->>User: Report + artifacts
 ```
 
-### 2.2 Input Validation Chain
+### 6.2 Input Validation Chain
 
 Every skill input flows through skill-002 before processing:
 
@@ -154,27 +426,9 @@ ValidationResult
 Downstream Skills (000, 001, 003, 004)
 ```
 
-**Example Composition**:
+### 6.3 State Checkpointing Chain
 
-```python
-# skill-004 using skill-002 to validate inputs
-from validating_inputs import PathValidator, CommandValidator
-
-class ADWOrchestrator:
-    def execute(self, workflow_id: str, source_id: str):
-        # Validate workflow_id before using
-        validation = PathValidator.validate(f"workflow-output/{workflow_id}")
-        if not validation.valid:
-            raise ValueError(f"Invalid workflow_id: {validation.error}")
-
-        # Now safe to use in other skills
-        state = StateManager(namespace=workflow_id)  # skill-003
-        scout = DeterministicScout(task=source_id)   # skill-000
-```
-
-### 2.3 State Checkpointing Chain
-
-skill-003 provides checkpointing for critical operations in all other skills:
+skill-003 provides checkpointing for critical operations:
 
 ```
 ┌─────────────────────────────────────────┐
@@ -198,33 +452,11 @@ skill-003 provides checkpointing for critical operations in all other skills:
 └─────────────────────────────────────────┘
 ```
 
-**Example Composition**:
+---
 
-```python
-# skill-001 using skill-003 for checkpointing
-class WorkflowOrchestrator:
-    def __init__(self, spec: WorkflowSpec):
-        self.state = StateManager(backend="sqlite", namespace=spec.workflow_id)
+## 7. Validation Chain Architecture
 
-    def execute_phase(self, phase: Phase):
-        # Checkpoint before execution
-        self.state.checkpoint(f"pre_{phase.name}")
-
-        try:
-            result = self._execute(phase)
-            self.state.save(f"phase_{phase.name}_result", result)
-            self.state.checkpoint(f"post_{phase.name}")
-            return result
-        except Exception as e:
-            # Handled by skill-005
-            raise
-```
-
-## 3. Validation Chain Architecture
-
-### 3.1 Multi-Layer Validation
-
-skill-002 validates inputs/outputs at multiple checkpoints:
+### 7.1 Multi-Layer Validation
 
 ```mermaid
 graph LR
@@ -245,7 +477,7 @@ graph LR
     style E fill:#e3f2fd
 ```
 
-### 3.2 Validation Intercept Points
+### 7.2 Validation Intercept Points
 
 | Skill | Validation Points | What Gets Validated |
 |-------|-------------------|---------------------|
@@ -254,10 +486,9 @@ graph LR
 | **skill-003** | - State keys<br>- State values<br>- Backend configuration | - Key naming rules<br>- JSON serializable<br>- Backend availability |
 | **skill-004** | - Issue IDs<br>- Spec file paths<br>- Git commits | - Numeric validation<br>- File existence<br>- Commit message sanitization |
 
-### 3.3 Validation Composition Pattern
+### 7.3 Validation Composition Pattern
 
 ```python
-# Pattern: Validation Wrapper
 class ValidatedOperation:
     """Wraps any operation with automatic validation."""
 
@@ -291,9 +522,11 @@ def discover_files(task: str) -> List[str]:
     return files
 ```
 
-## 4. Error Handling Integration
+---
 
-### 4.1 Error Propagation Strategy
+## 8. Error Handling Integration
+
+### 8.1 Error Propagation Strategy
 
 skill-005 wraps all other skills with error handling:
 
@@ -315,7 +548,7 @@ skill-005 wraps all other skills with error handling:
     Error Handler catches and recovers
 ```
 
-### 4.2 Error Recovery Matrix
+### 8.2 Error Recovery Matrix
 
 | Error Source | Detected By | Handled By | Recovery Strategy |
 |--------------|-------------|------------|-------------------|
@@ -325,10 +558,9 @@ skill-005 wraps all other skills with error handling:
 | Phase timeout | skill-001 | skill-005 | Extend timeout + retry |
 | Network failure | skill-004 | skill-005 | Exponential backoff |
 
-### 4.3 Error Handling Composition
+### 8.3 Error Handling Composition
 
 ```python
-# skill-005 wraps skill-000 for resilience
 from handling_errors import with_recovery, ErrorHandler
 
 class ResilientScout:
@@ -341,11 +573,9 @@ class ResilientScout:
     @with_recovery(max_attempts=3)
     def discover(self, task: str) -> ScoutResult:
         try:
-            # Try intelligent scout
             result = self.scout.discover_with_fallback()
             return result
         except Exception as e:
-            # Error handler provides recovery
             recovery = self.error_handler.handle(e, {
                 "task": task,
                 "checkpoint_path": ".claude/state/scout/checkpoint.json"
@@ -362,9 +592,11 @@ class ResilientScout:
                 )
 ```
 
-## 5. Orchestration Layers
+---
 
-### 5.1 Two-Level Orchestration
+## 9. Orchestration Layers
+
+### 9.1 Two-Level Orchestration
 
 ```
 ┌────────────────────────────────────────────┐
@@ -388,12 +620,9 @@ class ResilientScout:
 └────────────────────────────────────────────┘
 ```
 
-### 5.2 Orchestration Composition Pattern
-
-**Pattern**: skill-004 configures skill-001 with domain-specific phases:
+### 9.2 Orchestration Composition Pattern
 
 ```python
-# skill-004 composes skill-001 with ADW-specific configuration
 class ADWOrchestrator:
     def __init__(self, workflow_id: str):
         # Configure generic workflow orchestrator
@@ -410,15 +639,13 @@ class ADWOrchestrator:
         )
 
     def execute(self) -> WorkflowResult:
-        # Delegate to generic orchestrator
         return self.workflow.execute()
 
     def _scout_command(self) -> str:
-        # ADW-specific scout configuration
         return f"python -m deterministic_scout discover --task '{self.task}'"
 ```
 
-### 5.3 Orchestration Decision Tree
+### 9.3 Orchestration Decision Tree
 
 ```mermaid
 graph TD
@@ -440,9 +667,11 @@ graph TD
     style C fill:#e1f5ff
 ```
 
-## 6. Interface Contracts
+---
 
-### 6.1 skill-000: Scout Determinism Interface
+## 10. Interface Contracts
+
+### 10.1 skill-000: Scout Determinism Interface
 
 ```python
 from typing import List, Optional
@@ -472,7 +701,7 @@ class IScout:
         pass
 ```
 
-### 6.2 skill-001: Workflow Orchestrator Interface
+### 10.2 skill-001: Workflow Orchestrator Interface
 
 ```python
 @dataclass
@@ -501,7 +730,7 @@ class IWorkflowOrchestrator:
         pass
 ```
 
-### 6.3 skill-002: Validation Interface
+### 10.3 skill-002: Validation Interface
 
 ```python
 @dataclass
@@ -531,7 +760,7 @@ class CommitValidator(IValidator):
     pass
 ```
 
-### 6.4 skill-003: State Management Interface
+### 10.4 skill-003: State Management Interface
 
 ```python
 class IStateBackend:
@@ -569,7 +798,7 @@ class IStateManager:
         pass
 ```
 
-### 6.5 skill-004: ADW Orchestrator Interface
+### 10.5 skill-004: ADW Orchestrator Interface
 
 ```python
 @dataclass
@@ -598,7 +827,7 @@ class IADWOrchestrator:
         pass
 ```
 
-### 6.6 skill-005: Error Handling Interface
+### 10.6 skill-005: Error Handling Interface
 
 ```python
 @dataclass
@@ -627,9 +856,11 @@ def with_recovery(max_attempts: int = 3) -> Callable:
     pass
 ```
 
-## 7. Composition Patterns
+---
 
-### 7.1 Wrapper Pattern
+## 11. Composition Patterns
+
+### 11.1 Wrapper Pattern
 
 **Used for**: skill-005 wrapping other skills with error handling
 
@@ -673,7 +904,7 @@ scout = ErrorProtectedSkill(DeterministicScout(), ErrorHandler())
 result = scout.discover("find auth")  # Automatically protected
 ```
 
-### 7.2 Pipeline Pattern
+### 11.2 Pipeline Pattern
 
 **Used for**: skill-001 chaining phases with state persistence
 
@@ -732,7 +963,7 @@ pipeline = Pipeline([
 final_result = pipeline.execute(initial_task)
 ```
 
-### 7.3 Observer Pattern
+### 11.3 Observer Pattern
 
 **Used for**: skill-003 tracking state changes across skills
 
@@ -785,7 +1016,7 @@ state.attach(CheckpointObserver(state))
 state.save("phase", "scout")  # Observers notified
 ```
 
-### 7.4 Strategy Pattern
+### 11.4 Strategy Pattern
 
 **Used for**: skill-000 selecting fallback strategies
 
@@ -800,21 +1031,18 @@ class IntelligentScoutStrategy(ScoutStrategy):
     """Level 1: Memory-based scout."""
 
     def discover(self, task: str) -> List[str]:
-        # Use memory patterns
         return self._discover_with_memory(task)
 
 class NativeScoutStrategy(ScoutStrategy):
     """Level 2: Glob + Grep scout."""
 
     def discover(self, task: str) -> List[str]:
-        # Use native tools
         return self._discover_with_native_tools(task)
 
 class MinimalScoutStrategy(ScoutStrategy):
     """Level 3: Simple file listing."""
 
     def discover(self, task: str) -> List[str]:
-        # Just list files
         return self._discover_minimal(task)
 
 class ScoutContext:
@@ -839,14 +1067,15 @@ class ScoutContext:
                 )
             except Exception as e:
                 if level == len(self.strategies):
-                    # Last strategy failed, return empty
                     return ScoutResult(level=4, files=[], success=True)
                 continue
 ```
 
-## 8. Failure Propagation
+---
 
-### 8.1 Failure Handling Matrix
+## 12. Failure Propagation
+
+### 12.1 Failure Handling Matrix
 
 | Failure Origin | Immediate Handler | Recovery Action | Fallback | Final Handler |
 |----------------|-------------------|-----------------|----------|---------------|
@@ -856,7 +1085,7 @@ class ScoutContext:
 | skill-001 phase timeout | skill-001 | Extend timeout | Skip phase | skill-005 |
 | skill-004 workflow fails | skill-004 | Resume from checkpoint | Partial result | skill-005 |
 
-### 8.2 Failure Propagation Flow
+### 12.2 Failure Propagation Flow
 
 ```mermaid
 graph TD
@@ -885,7 +1114,7 @@ graph TD
     style M fill:#ffcdd2
 ```
 
-### 8.3 Cascading Recovery Example
+### 12.3 Cascading Recovery Example
 
 ```python
 class CascadingRecovery:
@@ -914,7 +1143,6 @@ class CascadingRecovery:
                     if recovery.succeeded:
                         result = recovery.result
                     else:
-                        # Graceful degradation
                         result = WorkflowResult(
                             success=False,
                             partial_results=recovery.fallback
@@ -923,9 +1151,11 @@ class CascadingRecovery:
         return result
 ```
 
-## 9. Performance Implications
+---
 
-### 9.1 Composition Overhead Analysis
+## 13. Performance Implications
+
+### 13.1 Composition Overhead Analysis
 
 | Composition Type | Overhead | Mitigation | Net Impact |
 |------------------|----------|------------|------------|
@@ -935,10 +1165,9 @@ class CascadingRecovery:
 | Fallback chain | +100-500ms on failure | Fast-fail detection | +10ms avg |
 | Total composition overhead | | | **+33ms avg** |
 
-### 9.2 Performance Optimizations
+### 13.2 Performance Optimizations
 
 **Optimization 1: Lazy Validation**
-
 ```python
 class LazyValidator:
     """Validate only when needed."""
@@ -947,7 +1176,6 @@ class LazyValidator:
         self.cache = {}
 
     def validate(self, value: Any) -> ValidationResult:
-        # Cache validation results
         cache_key = hash(str(value))
 
         if cache_key in self.cache:
@@ -960,7 +1188,6 @@ class LazyValidator:
 ```
 
 **Optimization 2: Async State Persistence**
-
 ```python
 class AsyncStateManager(StateManager):
     """Non-blocking state saves."""
@@ -971,14 +1198,9 @@ class AsyncStateManager(StateManager):
 
         # Persist to backend asynchronously
         await self._async_persist(key, value)
-
-    async def _async_persist(self, key, value):
-        # Background persistence
-        await self.backend.save(key, value)
 ```
 
 **Optimization 3: Parallel Validation**
-
 ```python
 class ParallelValidator:
     """Validate multiple inputs concurrently."""
@@ -988,9 +1210,7 @@ class ParallelValidator:
         return await asyncio.gather(*tasks)
 ```
 
-### 9.3 Performance Benchmarks
-
-Expected performance with composition:
+### 13.3 Performance Benchmarks
 
 | Workflow Phase | Without Composition | With Composition | Overhead |
 |----------------|---------------------|------------------|----------|
@@ -1003,9 +1223,62 @@ Expected performance with composition:
 
 **Net benefit**: +4% overhead, but 70% automatic recovery rate = **-40% total time** (accounting for manual recovery).
 
-## 10. Integration Examples
+---
 
-### 10.1 Complete Workflow Integration
+## 14. Implementation Guide
+
+### 14.1 The Complete Skill Lifecycle
+
+```python
+# 1. SKILL INVOCATION
+User types: /adw-scout "add payment processing"
+    ↓
+Claude reads: .claude/skills/adw-scout.md
+    ↓
+
+# 2. MEMORY CHECK (Before Execution)
+skill_memory = load(".claude/memory/scout_patterns.json")
+similar = find_similar_tasks("add payment processing", skill_memory)
+# Found: "add billing" (70% similar)
+starting_context = similar[0].patterns if similar else None
+    ↓
+
+# 3. EXECUTION WITH CONTEXT
+if starting_context:
+    # Start with known patterns
+    search_dirs = starting_context["directory_patterns"]
+    search_terms = starting_context["search_terms"]
+else:
+    # Cold start - full search
+    search_dirs = ["**"]
+    search_terms = extract_keywords("payment processing")
+    ↓
+
+# 4. ENHANCED EXECUTION
+# Because we have context, we can be smarter:
+- Check billing/ first (from memory)
+- Look for "stripe" patterns (from memory)
+- Skip auth/ directory (not relevant from memory)
+- Find files 40% faster!
+    ↓
+
+# 5. LEARN AND STORE
+new_patterns = {
+    "task": "add payment processing",
+    "discovered": {
+        "new_dirs": ["payments/webhooks/"],
+        "new_patterns": ["stripe_client.py", "payment_handler.js"],
+        "related_to": "add billing"
+    }
+}
+append_to_memory(new_patterns)
+    ↓
+
+# 6. NEXT TIME IS EVEN BETTER
+# Memory now knows about payment AND billing patterns
+```
+
+### 14.2 Complete Integration Example
 
 ```python
 from deterministic_scout import DeterministicScout  # skill-000
@@ -1066,12 +1339,6 @@ class IntegratedWorkflow:
 
         try:
             # Execute ADW workflow (skill-004)
-            # Which uses workflow orchestrator (skill-001)
-            # Which uses scout (skill-000)
-            # All protected by error handler (skill-005)
-            # All validated by validators (skill-002)
-            # All persisted by state manager (skill-003)
-
             result = self.adw.execute()
 
             # Final checkpoint (skill-003)
@@ -1095,127 +1362,54 @@ class IntegratedWorkflow:
                 )
             else:
                 raise
-
-    def _create_phases(self) -> List[Phase]:
-        """Create workflow phases with validation."""
-
-        phases = []
-
-        # Scout phase
-        scout_cmd = "python -m deterministic_scout discover"
-        cmd_validation = self.command_validator.validate(scout_cmd)
-        if cmd_validation.valid:
-            phases.append(Phase(
-                name="scout",
-                command=scout_cmd,
-                checkpoint=True
-            ))
-
-        # Plan, build, test, review phases...
-        # All follow same validation pattern
-
-        return phases
 ```
 
-### 10.2 Skill Interaction Example: Error Recovery Flow
+### 14.3 Troubleshooting
+
+**If Skills Don't Work:**
+
+1. Check file locations:
+   ```bash
+   ls -la .claude/skills/
+   # Should show: adw-scout.md, adw-complete.md
+   ```
+
+2. Check memory directory:
+   ```bash
+   ls -la .claude/memory/
+   # Should show: scout_patterns.json
+   ```
+
+3. Test with simple skill:
+   ```bash
+   /adw-scout "test"
+   # Should create agents/scout_files/relevant_files.json
+   ```
+
+**If Memory Doesn't Grow:**
+
+1. Check write permissions:
+   ```bash
+   touch .claude/memory/test.json
+   ```
+
+2. Check JSON validity:
+   ```bash
+   python -m json.tool .claude/memory/scout_patterns.json
+   ```
+
+3. Initialize if needed:
+   ```bash
+   echo '{"patterns": []}' > .claude/memory/scout_patterns.json
+   ```
+
+---
+
+## 15. Testing Strategy
+
+### 15.1 Unit Tests (Individual Skills)
 
 ```python
-def demonstrate_error_recovery():
-    """Show how skills interact during error recovery."""
-
-    # Setup
-    state = StateManager(backend="json", namespace="demo")
-    error_handler = ErrorHandler()
-    scout = DeterministicScout("find auth code")
-
-    # Create checkpoint before risky operation
-    state.checkpoint("before_scout")  # skill-003
-
-    try:
-        # Attempt scout operation
-        result = scout.discover_with_fallback()  # skill-000
-
-        # Validate results
-        validation = PathValidator.validate(result.files[0])  # skill-002
-
-        if not validation.valid:
-            raise ValidationError(validation.error)
-
-        # Save successful result
-        state.save("scout_result", result)  # skill-003
-
-    except Exception as e:
-        # Error handler categorizes and recovers
-        recovery = error_handler.handle(e, {  # skill-005
-            "checkpoint_path": ".claude/state/demo/checkpoints/before_scout.json",
-            "state_manager": state
-        })
-
-        if recovery.succeeded:
-            # Recovery provided alternative result
-            result = recovery.result
-            state.save("scout_result", result)  # skill-003
-        else:
-            # Restore from checkpoint
-            state.restore_checkpoint("before_scout")  # skill-003
-
-            # Try lower fallback level
-            result = scout.discover(level=3)  # skill-000 fallback
-            state.save("scout_result", result)  # skill-003
-
-    return result
-```
-
-### 10.3 Skill Interaction Example: Validation Chain
-
-```python
-def demonstrate_validation_chain():
-    """Show how validation flows through all skills."""
-
-    # User input (potentially dangerous)
-    user_input = {
-        "task": "find auth; rm -rf /",  # Injection attempt!
-        "output_path": "../../etc/passwd",  # Traversal attempt!
-        "max_files": "not_a_number"  # Type error!
-    }
-
-    # skill-002: Validation layer catches all issues
-
-    # Validate task (command injection check)
-    task_validation = CommandValidator.validate(user_input["task"])
-    if not task_validation.valid:
-        print(f"⚠️  Command injection blocked: {task_validation.error}")
-        user_input["task"] = task_validation.suggestion or "find auth"
-
-    # Validate path (traversal check)
-    path_validation = PathValidator.validate(user_input["output_path"])
-    if not path_validation.valid:
-        print(f"⚠️  Path traversal blocked: {path_validation.error}")
-        user_input["output_path"] = "agents/scout_files/output.json"
-
-    # Validate type (auto-correction)
-    try:
-        max_files = int(user_input["max_files"])
-    except ValueError:
-        print(f"⚠️  Type error corrected: defaulting to 100")
-        max_files = 100
-
-    # Now safe to pass to other skills
-    scout = DeterministicScout(task=user_input["task"])  # skill-000
-    state = StateManager(namespace="safe_workflow")  # skill-003
-
-    result = scout.discover_with_fallback()
-    state.save("validated_result", result)
-
-    print("✅ All validations passed, workflow safe to execute")
-```
-
-## 11. Testing Strategy for Composition
-
-### 11.1 Unit Tests (Individual Skills)
-
-```python
-# Test each skill in isolation
 def test_skill_000_determinism():
     scout = DeterministicScout("test task", seed=12345)
     result1 = scout.discover_with_fallback()
@@ -1236,16 +1430,14 @@ def test_skill_003_checkpoint():
     assert state.load("key") == "value"
 ```
 
-### 11.2 Integration Tests (Skill Pairs)
+### 15.2 Integration Tests (Skill Pairs)
 
 ```python
-# Test skills working together
 def test_scout_with_validation():
     """skill-000 + skill-002"""
     scout = DeterministicScout("test task")
     result = scout.discover_with_fallback()
 
-    # Validate all discovered files
     for file_path in result.files:
         validation = PathValidator.validate(file_path)
         assert validation.valid, f"Invalid path discovered: {file_path}"
@@ -1260,8 +1452,6 @@ def test_workflow_with_state():
     )
 
     result = workflow.execute()
-
-    # Verify state was saved
     assert state.load("phase_p1_result") is not None
 
 def test_error_recovery_with_state():
@@ -1285,20 +1475,16 @@ def test_error_recovery_with_state():
     assert state.load("test_key") == "initial"
 ```
 
-### 11.3 End-to-End Tests (Complete Composition)
+### 15.3 End-to-End Tests (Complete Composition)
 
 ```python
 def test_complete_workflow_composition():
     """Test all 6 skills working together."""
 
-    # Setup
     issue_id = "123"
     workflow = IntegratedWorkflow(issue_id)
 
-    # Execute
     result = workflow.execute()
-
-    # Verify each skill contributed:
 
     # skill-000: Scout ran and found files
     scout_result = workflow.state.load("phase_scout_result")
@@ -1327,36 +1513,37 @@ def test_complete_workflow_composition():
     assert result.recovery_used == False or result.success == True
 ```
 
-## 12. Migration and Adoption Strategy
+---
 
-### 12.1 Incremental Adoption Path
+## 16. Migration and Adoption
 
-**Phase 1**: Foundation Skills (Week 1)
+### 16.1 Incremental Adoption Path
+
+**Phase 1: Foundation Skills (Week 1)**
 - Implement skill-000 (scout-determinism)
 - Implement skill-002 (validating-inputs)
 - Implement skill-005 (handling-errors)
 - Test in isolation
 
-**Phase 2**: Infrastructure Skills (Week 2)
+**Phase 2: Infrastructure Skills (Week 2)**
 - Implement skill-003 (managing-state)
 - Integrate with Phase 1 skills
 - Test skill pairs
 
-**Phase 3**: Orchestration Skills (Week 3)
+**Phase 3: Orchestration Skills (Week 3)**
 - Implement skill-001 (workflow-orchestrator)
 - Implement skill-004 (adw-orchestrating)
 - Integrate all skills
 - End-to-end testing
 
-**Phase 4**: Production Deployment (Week 4)
+**Phase 4: Production Deployment (Week 4)**
 - Replace existing ADW scripts
 - Monitor performance and errors
 - Iterate based on feedback
 
-### 12.2 Backward Compatibility
+### 16.2 Backward Compatibility
 
 ```python
-# Provide compatibility layer for existing code
 class LegacyScoutAdapter:
     """Adapter for old scout code to use new skill-000."""
 
@@ -1367,17 +1554,15 @@ class LegacyScoutAdapter:
         """Legacy interface."""
         result = self.new_scout.discover_with_fallback()
 
-        # Convert new format to old format
         return {
             "files": result.files,
             "success": result.success
         }
 ```
 
-### 12.3 Gradual Feature Enablement
+### 16.3 Gradual Feature Enablement
 
 ```python
-# Feature flags for gradual rollout
 class SkillFeatureFlags:
     ENABLE_DETERMINISTIC_SCOUT = True
     ENABLE_INPUT_VALIDATION = True
@@ -1399,19 +1584,21 @@ def execute_with_feature_flags(workflow_id: str):
     # Gradual migration
 ```
 
-## 13. Summary and Recommendations
+---
 
-### 13.1 Skill Composition Benefits
+## Summary
+
+### Skill Composition Benefits
 
 | Benefit | Impact | Measurement |
 |---------|--------|-------------|
 | **Determinism** | 100% reproducible workflows | Same input = same output |
 | **Security** | 100% injection prevention | 155+ attack vectors blocked |
 | **Reliability** | 70% automatic recovery | Recovered/total failures |
-| **Maintainability** | -80% code duplication | 2400 lines → 400 lines |
+| **Maintainability** | -80% code duplication | 2400 lines -> 400 lines |
 | **Performance** | -40% total time (with recovery) | End-to-end timing |
 
-### 13.2 Critical Success Factors
+### Critical Success Factors
 
 1. **Foundation First**: Implement skill-000, skill-002, skill-005 before others
 2. **Interface Stability**: Lock interfaces early, allow implementation changes
@@ -1419,34 +1606,29 @@ def execute_with_feature_flags(workflow_id: str):
 4. **Backward Compatibility**: Provide adapters during migration
 5. **Feature Flags**: Enable gradual rollout to production
 
-### 13.3 Recommended Implementation Order
+### Recommended Implementation Order
 
 ```
-Week 1: skill-002 (validation) → skill-005 (errors) → skill-000 (scout)
-Week 2: skill-003 (state) → Integration testing
-Week 3: skill-001 (workflow) → skill-004 (ADW) → E2E testing
-Week 4: Production deployment → Monitoring → Iteration
+Week 1: skill-002 (validation) -> skill-005 (errors) -> skill-000 (scout)
+Week 2: skill-003 (state) -> Integration testing
+Week 3: skill-001 (workflow) -> skill-004 (ADW) -> E2E testing
+Week 4: Production deployment -> Monitoring -> Iteration
 ```
 
-### 13.4 Architecture Principles
+### Architecture Principles
 
 1. **Separation of Concerns**: Each skill has single, clear responsibility
-2. **Layered Composition**: Cross-cutting → Infrastructure → Orchestration → Application
+2. **Layered Composition**: Cross-cutting -> Infrastructure -> Orchestration -> Application
 3. **Fail-Safe Defaults**: All skills degrade gracefully, never crash
 4. **Observable Behavior**: All skill interactions logged and traceable
 5. **Interface Contracts**: Strong typing and clear contracts between skills
 
-### 13.5 Next Steps
-
-1. **Review this architecture** with team
-2. **Validate interface contracts** match actual implementation needs
-3. **Create detailed task breakdown** for each skill
-4. **Set up testing infrastructure** for integration tests
-5. **Begin implementation** with skill-000 (foundation)
-
 ---
 
-**Document Status**: Design Specification
-**Next Review**: After skill-000 implementation
+**Document Status**: Consolidated Design Specification
+**Consolidated From**:
+- SKILLS_AND_MEMORY_ARCHITECTURE.md
+- SKILLS_COMPOSITION_ARCHITECTURE.md
+- SKILLS_MEMORY_IMPLEMENTATION_GUIDE.md
 **Owner**: Architecture Team
-**Last Updated**: 2025-01-23
+**Last Updated**: 2025-11-23

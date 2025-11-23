@@ -27,6 +27,13 @@ __pycache__/
 # Session tracking (auto-updated by Claude hooks)
 .current_session
 
+# Hook logs (session-specific, not needed in repo)
+/logs/
+
+# Agent runs (transient state)
+/agent_runs/*/
+!/agent_runs/.template/
+
 # IDE
 .vscode/
 .idea/

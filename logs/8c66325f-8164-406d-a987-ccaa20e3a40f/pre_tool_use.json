@@ -5,34 +5,10 @@
     "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
     "permission_mode": "bypassPermissions",
     "hook_event_name": "PreToolUse",
-    "tool_name": "Glob",
+    "tool_name": "Bash",
     "tool_input": {
-      "pattern": "**/*worktree*",
-      "path": "/Users/alexkamysz/AI/scout_plan_build_mvp"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Grep",
-    "tool_input": {
-      "pattern": "worktree|isolation|sandbox",
-      "path": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws",
-      "output_mode": "files_with_matches"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Read",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/analyses/GIT_WORKTREE_PARALLELIZATION_SCOUT_REPORT.md"
+      "command": "mkdir -p /Users/alexkamysz/AI/scout_plan_build_mvp/.claude/commands/{workflow,git,testing,planning,analysis,session,utilities}",
+      "description": "Create subdirectories for command organization"
     }
   },
   {
@@ -43,20 +19,8 @@
     "hook_event_name": "PreToolUse",
     "tool_name": "Bash",
     "tool_input": {
-      "command": "mkdir -p /Users/alexkamysz/AI/scout_plan_build_mvp/agent_outputs/2025-11-22",
-      "description": "Create agent_outputs directory"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Write",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/agent_outputs/2025-11-22/sandboxing-analysis.md",
-      "content": "# AI Code Execution Sandboxing Analysis\n\n**Date**: 2025-11-22\n**Repository**: scout_plan_build_mvp\n**Focus**: Agent isolation, security gaps, and minimum viable sandboxing\n\n---\n\n## Executive Summary\n\nThe scout_plan_build framework has evolved a pragmatic multi-layer approach to agent isolation:\n\n| Layer | Current State | Security Level |\n|-------|--------------|----------------|\n| Input Validation | Pydantic validators | Strong |\n| Process Isolation | Subprocess with filtered env | Medium |\n| Filesystem Isolation | Git worktrees | Medium |\n| Container Isolation | E2B sandbox PoC | Experimental |\n| Resource Limits | None | Weak |\n\n**Key Finding**: The framework uses git worktrees as a \"poor man's sandbox\" - not true process isolation, but effective for preventing agent state pollution and enabling parallel execution.\n\n---\n\n## 1. Current State Analysis\n\n### 1.1 What Exists Today\n\n**Pydantic Input Validation** (`/adws/adw_modules/validators.py`)\n\nComprehensive input validation covering:\n- Command injection prevention (shell metacharacters blocked)\n- Path traversal prevention (`..` blocked, prefix whitelist enforced)\n- SQL injection pattern blocking\n- Length limits (DoS prevention)\n- Format validation (branch names, commit messages, ADW IDs)\n\n```python\n# Key validators in use:\nSafeUserInput      # Prompts/content (100KB limit)\nSafeFilePath       # Path traversal prevention\nSafeGitBranch      # Branch name validation\nSafeCommitMessage  # Commit injection prevention\nSafeCommandArgs    # Subprocess argument sanitization\n```\n\n**Subprocess Environment Filtering** (`/adws/adw_modules/utils.py`)\n\n```python\ndef get_safe_subprocess_env():\n    \"\"\"Filter environment variables for subprocesses\"\"\"\n    return {\n        \"PATH\": os.getenv(\"PATH\"),\n        \"HOME\": os.getenv(\"HOME\"),\n        \"ANTHROPIC_API_KEY\": os.getenv(\"ANTHROPIC_API_KEY\"),  # Required\n        \"GITHUB_PAT\": os.getenv(\"GITHUB_PAT\"),\n        # Intentionally excludes: AWS keys, DB creds, etc.\n    }\n```\n\n**Git Worktree Isolation** (`/scripts/worktree_manager.sh`)\n\nGit worktrees provide:\n- Isolated working directory per agent/task\n- Independent branch for changes\n- Checkpoint/undo capability via git commits\n- Merge gating before changes reach main\n\n```bash\n# Isolation model\nworktree_create \"agent-task-123\" main\n# Creates: worktrees/agent-task-123/\n# Branch: feature/agent-task-123\n# Agent works here -> changes isolated from main repo\n```\n\n### 1.2 What's Missing\n\n| Gap | Risk Level | Current Mitigation |\n|-----|------------|-------------------|\n| Process isolation | HIGH | None - agents run in same process space |\n| Resource limits | HIGH | None - no CPU/memory/disk limits |\n| Network access | MEDIUM | None - agents can make network calls |\n| Self-poisoning | MEDIUM | Partial - worktrees help but not complete |\n| Timeout enforcement | MEDIUM | Optional timeout in subprocess calls |\n| File descriptor limits | LOW | System defaults only |\n\n---\n\n## 2. Agent Box Supervisor Approach\n\n### 2.1 The Concept\n\nFrom `/ai_docs/research/implementations/agent-box-supervisor-chad.md`:\n\n> \"Agents are fallible/untrusted ... the wrapper enforces order.\"\n\nThe Agent Box model adds a **supervisor layer** between user commands and Claude Code:\n\n```\nUser -> Supervisor -> Claude Code -> Worktree\n           |\n           +-- Enforces tool allowlist\n           +-- Captures session_id for resume\n           +-- Manages run artifacts\n           +-- Implements human gates\n```\n\n### 2.2 Worktree Airlock (Tier 3 Fix Operations)\n\nThe key innovation is the **worktree airlock** for mutation operations:\n\n```yaml\n# From Agent Box spec\nrun_type: fix\nworktree_path: \"agent_box/trees/2025-11-22_1430__fix-auth__a1b2\"\ntools_allowlist: [\"ReadFile\", \"Grep\", \"Ls\", \"EditFile\", \"GitDiff\"]\n# Note: EditFile only works in worktree, not main repo\n```\n\n**Isolation Benefits**:\n1. Agent edits are confined to worktree directory\n2. Changes exported as `.patch` file\n3. Human reviews patch before applying to main\n4. Failed/aborted runs don't pollute main repo\n\n**Self-Poisoning Prevention**:\n```bash\n# Launch Claude with ignore patterns\nclaude --ignore-patterns .agents/ \\\n       --ignore-patterns .claude/commands/run_*/\n```\n\nThis prevents agents from:\n- Reading their own output artifacts\n- Modifying supervisor state files\n- Discovering other run contexts\n\n### 2.3 Permission Matrix\n\n| Tier | Run Type | Allowed Tools | Can Mutate? |\n|------|----------|--------------|-------------|\n| 1 | scout | Grep, Ls, ReadFile, cat | NO |\n| 2 | plan | Tier 1 only | NO |\n| 3 | fix | Tier 1 + EditFile (worktree only) | LOCAL ONLY |\n\nHuman-only commands (`merge_*`, `apply_*`) require:\n```yaml\ndisable-model-invocation: true\n```\n\n---\n\n## 3. Security Gap Analysis\n\n### 3.1 Critical Gaps (Fix Before Production)\n\n**Gap 1: No Process Isolation**\n\n- **Current**: Agents run as subprocess of main process\n- **Risk**: Memory corruption, file descriptor leaks, signal handling issues\n- **Recommended**: Container-based isolation (Docker, E2B)\n\n**Gap 2: API Key Exposure**\n\n- **Current**: `ANTHROPIC_API_KEY` passed to subprocess env\n- **Risk**: Malicious agent code could exfiltrate key\n- **Recommended**: Use secure credential storage, rotate keys\n\n**Gap 3: Webhook Without Authentication**\n\n- **Current**: GitHub webhook endpoint has no signature verification\n- **Risk**: Anyone can trigger ADW workflows\n- **Recommended**: Implement HMAC-SHA256 verification\n\n### 3.2 Medium Gaps (Address for Robustness)\n\n**Gap 4: No Resource Limits**\n\n```python\n# Current subprocess call - no limits\nsubprocess.run(cmd, capture_output=True, timeout=120)\n\n# Recommended: Add resource limits\nimport resource\nresource.setrlimit(resource.RLIMIT_CPU, (60, 60))  # 60 seconds CPU\nresource.setrlimit(resource.RLIMIT_AS, (1024*1024*1024, 1024*1024*1024))  # 1GB memory\n```\n\n**Gap 5: Self-Poisoning (Partial)**\n\nGit worktrees help but don't fully prevent:\n- Agent reading `scout_outputs/` from previous runs\n- Agent accessing `ai_docs/build_reports/` from other agents\n- Log files leaking context between runs\n\n**Gap 6: Timeout Inconsistency**\n\nSome subprocess calls have timeout, others don't:\n```python\n# With timeout\nsubprocess.run(cmd, timeout=5)\n\n# Without timeout (can hang forever)\nsubprocess.run(cmd)  # Missing timeout!\n```\n\n### 3.3 Security Audit Score\n\nFrom `/ai_docs/assessments/SECURITY_AUDIT_REPORT.md`:\n\n> **Overall Security Score**: 6/10\n> **Status**: NOT READY for public release\n\n| Positive | Status |\n|----------|--------|\n| Pydantic validation | Implemented |\n| No shell=True | Followed |\n| Environment filtering | Implemented |\n| Command whitelisting | Implemented |\n\n| Negative | Status |\n|----------|--------|\n| Command injection (scout_simple.py) | VULNERABLE |\n| Webhook authentication | MISSING |\n| Path traversal (partial) | VULNERABLE |\n| API key exposure | RISK |\n\n---\n\n## 4. Minimum Viable Sandboxing (MVP)\n\n### 4.1 Pragmatic Short-Term (1-2 weeks)\n\n**Level 1: Strengthen Current Model**\n\n1. Fix webhook authentication (1 day)\n2. Add consistent timeout to all subprocess calls (1 day)\n3. Sanitize scout_simple.py keyword input (1 hour)\n4. Strengthen path traversal checks with `Path.resolve()` (2 hours)\n\n**Level 2: Implement Agent Box Supervisor**\n\n```python\n# supervisor.py - Minimal implementation\nclass AgentSupervisor:\n    def __init__(self, run_type: str):\n        self.run_dir = self._create_run_dir()\n        self.worktree = None\n        if run_type == \"fix\":\n            self.worktree = self._create_worktree()\n\n    def launch_agent(self, prompt: str):\n        cmd = [\n            \"claude\", \"-p\", prompt,\n            \"--output-format\", \"stream-json\",\n            \"--ignore-patterns\", \".agents/\",\n        ]\n        if self.worktree:\n            cmd.extend([\"--cwd\", self.worktree.path])\n\n        return subprocess.Popen(\n            cmd,\n            stdin=subprocess.DEVNULL,  # Critical for non-TTY\n            stdout=subprocess.PIPE,\n            env=self._get_filtered_env(),\n            timeout=300\n        )\n```\n\n**Level 3: Add Resource Limits**\n\n```python\n# Add to subprocess calls\ndef limited_subprocess(cmd, timeout=120, max_memory_mb=1024):\n    def set_limits():\n        import resource\n        resource.setrlimit(resource.RLIMIT_AS,\n            (max_memory_mb * 1024 * 1024, max_memory_mb * 1024 * 1024))\n\n    return subprocess.run(\n        cmd,\n        preexec_fn=set_limits,\n        timeout=timeout,\n        capture_output=True\n    )\n```\n\n### 4.2 Medium-Term (1-2 months)\n\n**Container-Based Isolation**\n\nThe E2B sandbox PoC (`/adws/adw_tests/sandbox_poc.py`) shows this is viable:\n\n```python\n# Key discovery from PoC\n# Claude Code works in E2B when:\n# 1. stdin=subprocess.DEVNULL or < /dev/null\n# 2. -p flag for non-interactive mode\n# 3. --dangerously-skip-permissions to avoid prompts\n\nwith Sandbox(envs={\"ANTHROPIC_API_KEY\": api_key}) as sandbox:\n    result = sandbox.commands.run(\n        \"~/.npm-global/bin/claude -p 'task' --output-format json \"\n        \"--dangerously-skip-permissions < /dev/null\"\n    )\n```\n\n**Docker Alternative**\n\n```dockerfile\n# Dockerfile.agent\nFROM python:3.11-slim\nRUN npm install -g @anthropic-ai/claude-code\nUSER nobody  # Non-root\nWORKDIR /workspace\n# No network by default\n```\n\n```python\n# Launch agent in container\ndocker run --rm \\\n    --network none \\\n    --memory 1g \\\n    --cpus 1 \\\n    --read-only \\\n    -v /workspace:/workspace \\\n    agent-sandbox claude -p \"task\"\n```\n\n### 4.3 Long-Term (3-6 months)\n\n**Full Agent Box Implementation**\n\n- Supervisor wrapper with lifecycle management\n- Session persistence and resume\n- Run-scoped slash commands\n- Watchdog for zombie reaping\n- Artifact management and garbage collection\n- Human gates for risky operations\n\n---\n\n## 5. Decision Matrix: Isolation Approaches\n\n| Approach | Security | Complexity | Performance | Recommendation |\n|----------|----------|------------|-------------|----------------|\n| Git Worktrees | Medium | Low | High | Use now (MVP) |\n| Subprocess + Limits | Medium | Medium | High | Add to MVP |\n| Docker Containers | High | Medium | Medium | Post-MVP |\n| E2B Sandbox | High | Low | Medium | Evaluate for cloud |\n| Firecracker/gVisor | Very High | High | Medium | Future if needed |\n\n### 5.1 Recommended Path\n\n**Phase 1 (Now)**: Git Worktrees + Subprocess Limits\n- Already have worktree infrastructure\n- Add resource limits (memory, CPU, timeout)\n- Add Agent Box supervisor pattern\n\n**Phase 2 (Month 2)**: Docker Containers\n- Full process isolation\n- Network isolation (--network none)\n- Read-only filesystem where possible\n\n**Phase 3 (Month 3+)**: Production Hardening\n- Secret management (Vault, AWS Secrets Manager)\n- Audit logging\n- Runtime security monitoring\n\n---\n\n## 6. Self-Poisoning Prevention\n\n### 6.1 The Problem\n\nAgents can read their own output, creating feedback loops:\n\n```\nAgent A writes: scout_outputs/relevant_files.json\nAgent B reads: scout_outputs/relevant_files.json (Agent A's output!)\nAgent B now has polluted context\n```\n\n### 6.2 Solutions\n\n**Solution 1: Run-Scoped Output Directories**\n\n```\n.agents/runs/2025-11-22_1430__task__a1b2/\n    output/           # Agent writes here\n    input/            # Agent reads from here (pre-populated)\n```\n\n**Solution 2: Ignore Patterns**\n\n```bash\nclaude --ignore-patterns .agents/ \\\n       --ignore-patterns scout_outputs/ \\\n       --ignore-patterns ai_docs/build_reports/\n```\n\n**Solution 3: Worktree + Symlinks**\n\nEach worktree gets its own output directory:\n```\nworktrees/agent-task-123/\n    scout_outputs/ -> /tmp/isolated-outputs/agent-task-123/\n```\n\n### 6.3 Recommended Approach\n\nCombine worktrees with run-scoped output:\n\n```python\ndef setup_agent_isolation(run_id: str):\n    # Create isolated worktree\n    worktree_path = f\"worktrees/{run_id}\"\n    subprocess.run([\"git\", \"worktree\", \"add\", worktree_path, \"main\"])\n\n    # Create isolated output directory\n    output_dir = f\".agents/runs/{run_id}/output\"\n    os.makedirs(output_dir, exist_ok=True)\n\n    # Symlink output directory into worktree\n    os.symlink(output_dir, f\"{worktree_path}/scout_outputs\")\n\n    return worktree_path, output_dir\n```\n\n---\n\n## 7. State Management and Recovery\n\n### 7.1 Current State Management\n\n**Git-Based Checkpoints** (from worktree_manager.sh):\n\n```bash\n# Create checkpoint\nworktree_checkpoint \"after implementing auth\"\n# Creates: wip-1729418400: after implementing auth\n\n# Undo changes\nworktree_undo 3  # Undo last 3 checkpoints\n\n# Redo if needed\nworktree_redo\n```\n\n**State Files**:\n```\n.git/REDO_STACK           # Stack of undone commits\n.worktree-meta.json       # Worktree configuration\n.checkpoint-history       # Human-readable history\n```\n\n### 7.2 Recommended State Schema\n\nFrom Agent Box spec (`state.json`):\n\n```json\n{\n  \"status\": \"ACTIVE|REVIEW|CRASHED|STALLED|DONE\",\n  \"pid\": 12345,\n  \"session_id\": \"abc123\",\n  \"worktree_path\": \"agent_box/trees/run_a1b2\",\n  \"started_at\": \"2025-11-22T14:30:00Z\",\n  \"last_heartbeat\": \"2025-11-22T14:35:00Z\",\n  \"config_hash\": \"a1b2c3d4\",\n  \"failure\": null\n}\n```\n\n### 7.3 Recovery Scenarios\n\n| Scenario | Detection | Recovery |\n|----------|-----------|----------|\n| Agent OOM | Exit code 137 | Resume from last checkpoint |\n| Agent timeout | No heartbeat >5m | Mark STALLED, allow resume |\n| Agent crash | Non-zero exit | Mark CRASHED, preserve artifacts |\n| Human abort | SIGINT | Mark ABORTED, cleanup gracefully |\n\n```python\n# Recovery implementation\ndef recover_agent(run_id: str):\n    state = load_state(run_id)\n\n    if state[\"status\"] == \"CRASHED\":\n        # Find last safe artifact\n        last_checkpoint = find_last_checkpoint(run_id)\n        print(f\"Resuming from: {last_checkpoint}\")\n\n        # Resume session\n        subprocess.run([\n            \"claude\", \"--resume\", state[\"session_id\"],\n            \"--output-format\", \"stream-json\"\n        ])\n```\n\n---\n\n## 8. Summary and Recommendations\n\n### 8.1 Immediate Actions (This Week)\n\n1. **Fix Critical Vulnerabilities**\n   - Webhook authentication\n   - scout_simple.py command injection\n   - Consistent timeout on all subprocess calls\n\n2. **Implement Basic Supervisor**\n   - Run-scoped output directories\n   - State tracking (state.json)\n   - Ignore patterns for self-poisoning\n\n3. **Add Resource Limits**\n   - Memory limit (1GB default)\n   - CPU timeout (5 minutes default)\n   - Disk quota (optional)\n\n### 8.2 Short-Term (Month 1)\n\n1. **Full Agent Box Implementation**\n   - Tiered permission model\n   - Human gates for risky operations\n   - Session resume capability\n\n2. **Improve Observability**\n   - Structured logging for agent runs\n   - Heartbeat monitoring\n   - Performance metrics\n\n### 8.3 Long-Term (Month 2-3)\n\n1. **Container Isolation**\n   - Docker or E2B for production\n   - Network isolation\n   - Read-only filesystem\n\n2. **Production Hardening**\n   - Secret management\n   - Audit logging\n   - Runtime security monitoring\n\n---\n\n## References\n\n- `/ai_docs/research/implementations/agent-box-supervisor-chad.md` - Agent Box spec\n- `/adws/adw_modules/validators.py` - Current validation implementation\n- `/adws/adw_tests/sandbox_poc.py` - E2B sandbox proof of concept\n- `/ai_docs/assessments/SECURITY_AUDIT_REPORT.md` - Security audit (6/10)\n- `/ai_docs/architecture/GIT_WORKTREE_UNDO_SYSTEM.md` - Worktree architecture\n- `/scripts/worktree_manager.sh` - Worktree implementation\n\n---\n\n*Analysis generated: 2025-11-22*\n*Framework version: scout_plan_build_mvp*\n*Branch: feature/bitbucket-integration*\n"
+      "command": "cd /Users/alexkamysz/AI/scout_plan_build_mvp/.claude/commands && mv scout.md scout_fixed.md scout_improved.md scout_parallel.md scout_plan_build.md scout_plan_build_improved.md build.md build_adw.md implement.md workflow/",
+      "description": "Move workflow commands (scout, build)"
     }
   },
   {
@@ -67,8 +31,92 @@
     "hook_event_name": "PreToolUse",
     "tool_name": "Bash",
     "tool_input": {
-      "command": "echo \"=== Date comparison ===\" && \\\nls -la ai_docs/scout/relevant_files.json && \\\nls -la scout_outputs/relevant_files.json && \\\necho -e \"\\n=== Content check ===\" && \\\nwc -l ai_docs/scout/relevant_files.json scout_outputs/relevant_files.json",
-      "description": "Compare the duplicate scout files"
+      "command": "cd /Users/alexkamysz/AI/scout_plan_build_mvp/.claude/commands && mv commit.md pull_request.md generate_branch_name.md worktree_checkpoint.md worktree_create.md worktree_redo.md worktree_undo.md init-parallel-worktrees.md run-parallel-agents.md compare-worktrees.md merge-worktree.md git/",
+      "description": "Move git commands"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /Users/alexkamysz/AI/scout_plan_build_mvp/.claude/commands && mv test.md test_e2e.md resolve_failed_test.md resolve_failed_e2e_test.md testing/",
+      "description": "Move testing commands"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /Users/alexkamysz/AI/scout_plan_build_mvp/.claude/commands && mv bug.md chore.md feature.md patch.md plan_w_docs.md plan_w_docs_improved.md planning/",
+      "description": "Move planning commands"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /Users/alexkamysz/AI/scout_plan_build_mvp/.claude/commands && mv review.md classify_adw.md classify_issue.md document.md analysis/",
+      "description": "Move analysis commands"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /Users/alexkamysz/AI/scout_plan_build_mvp/.claude/commands && mv prepare-compaction.md start.md prime.md session/",
+      "description": "Move session management commands"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "cd /Users/alexkamysz/AI/scout_plan_build_mvp/.claude/commands && mv tools.md conditional_docs.md install.md init-framework.md prepare_app.md research-add.md utilities/",
+      "description": "Move utility commands"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "find /Users/alexkamysz/AI/scout_plan_build_mvp/.claude/commands -type f -name \"*.md\" | sort",
+      "description": "List all command files in new structure"
+    }
+  },
+  {
+    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
+    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
+    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
+    "permission_mode": "bypassPermissions",
+    "hook_event_name": "PreToolUse",
+    "tool_name": "Bash",
+    "tool_input": {
+      "command": "ls -la /Users/alexkamysz/AI/scout_plan_build_mvp/.claude/commands/",
+      "description": "Check what remains in root commands dir"
     }
   },
   {
@@ -81,448 +129,24 @@
     "tool_input": {
       "todos": [
         {
-          "content": "Analyze Agent Box compatibility with framework",
+          "content": "Update .gitignore for logs",
           "status": "completed",
-          "activeForm": "Analyzed compatibility"
+          "activeForm": "Updated .gitignore"
         },
         {
-          "content": "Create architectural decision document",
-          "status": "in_progress",
-          "activeForm": "Creating decision document"
-        },
-        {
-          "content": "Design hybrid integration approach",
-          "status": "pending",
-          "activeForm": "Designing integration"
-        },
-        {
-          "content": "Consolidate duplicate directories",
-          "status": "pending",
-          "activeForm": "Consolidating directories"
-        },
-        {
-          "content": "Implement state management",
-          "status": "pending",
-          "activeForm": "Implementing state tracking"
-        }
-      ]
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Write",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/architecture/AGENT_BOX_INTEGRATION_DECISION.md",
-      "content": "# Agent Box Integration Decision Document\n\n**Date**: 2025-11-22\n**Decision**: Progressive Enhancement Strategy\n**Priority**: State Management > Organization > Sandboxing\n\n## Executive Summary\n\nAdopt Agent Box patterns progressively without breaking current framework. Start with state management and run isolation, evolve toward full sandboxing over time.\n\n## The Problems (Prioritized)\n\n### 1. \ud83d\udd34 No State Management (CRITICAL)\n- Can't tell if agents are running\n- Can't resume crashed sessions\n- No run tracking or history\n- No resource monitoring\n\n### 2. \ud83d\udfe1 Organizational Chaos (HIGH)\n- Duplicate directories (ai_docs/scout vs scout_outputs)\n- Outputs scattered across 5+ locations\n- No unified run artifacts\n- Hard to clean up old runs\n\n### 3. \ud83d\udfe1 Limited Sandboxing (HIGH)\n- Git worktrees provide minimal isolation\n- No resource limits\n- No network restrictions\n- Agents can read their own output (self-poisoning)\n\n## Recommended Solution: 3-Phase Progressive Enhancement\n\n### Phase 1: State Management Layer (Week 1)\n**Goal**: Track and manage agent runs without breaking changes\n\n```python\n# Create agents/supervisor.py (150 lines)\nclass RunManager:\n    def track_run(self, command, args):\n        run_id = f\"{timestamp}_{slugify(command)}_{short_hash()}\"\n        run_dir = f\"agent_runs/{run_id}/\"\n\n        # Create meta.yaml\n        meta = {\n            \"run_id\": run_id,\n            \"command\": command,\n            \"started_at\": now(),\n            \"status\": \"ACTIVE\"\n        }\n\n        # Track in state.json\n        state = {\n            \"pid\": os.getpid(),\n            \"session_id\": None,  # Capture from Claude\n            \"last_heartbeat\": now()\n        }\n\n        # Keep existing commands working\n        if command == \"scout\":\n            # Call existing scout, track outputs\n            pass\n```\n\n**Changes Required**:\n- Add `agent_runs/` directory\n- Create lightweight Python wrapper\n- No breaking changes to existing commands\n\n### Phase 2: Unified Run Directories (Week 2)\n**Goal**: Consolidate outputs without breaking canonical paths\n\n```\nagent_runs/\n\u251c\u2500\u2500 2025-11-22_1430_scout_auth_abc/\n\u2502   \u251c\u2500\u2500 meta.yaml           # Request info\n\u2502   \u251c\u2500\u2500 state.json          # Mutable status\n\u2502   \u251c\u2500\u2500 spec.md            # Symlink to specs/\n\u2502   \u251c\u2500\u2500 report.md          # Symlink to ai_docs/reports/\n\u2502   \u2514\u2500\u2500 artifacts/\n\u2502       \u251c\u2500\u2500 scout.json     # Actual scout output\n\u2502       \u2514\u2500\u2500 raw/           # Stream logs\n\u2514\u2500\u2500 latest -> 2025-11-22_1430_scout_auth_abc/\n```\n\n**Strategy**: Use symlinks to maintain backward compatibility while organizing by run\n\n### Phase 3: Sandboxing Enhancement (Month 2)\n**Goal**: Add true isolation without disrupting workflow\n\n```python\n# Progressive sandboxing levels\nclass SandboxLevel(Enum):\n    NONE = 0          # Current state\n    WORKTREE = 1      # Git isolation (current)\n    PROCESS = 2       # Agent Box model\n    CONTAINER = 3     # Docker isolation\n    CLOUD = 4         # E2B or similar\n\n# Start with PROCESS level\ndef run_sandboxed(command, level=SandboxLevel.PROCESS):\n    if level >= SandboxLevel.PROCESS:\n        # Implement Agent Box airlock\n        worktree = create_worktree(run_id)\n        ignore_patterns = [\".agents/\", \"agent_runs/\"]\n```\n\n## Implementation Priority\n\n### Immediate (This Session)\n1. **Fix duplicate directories**:\n   ```bash\n   # Consolidate to canonical location\n   mv ai_docs/scout/* scout_outputs/archive/\n   rmdir ai_docs/scout\n   # Update any hardcoded references\n   ```\n\n2. **Create state tracking structure**:\n   ```bash\n   mkdir -p agent_runs/.template\n   # Create template meta.yaml and state.json\n   ```\n\n3. **Add run ID generation**:\n   ```python\n   # In adw_common.py\n   def generate_run_id(task_type: str) -> str:\n       timestamp = datetime.now().strftime(\"%m%d-%H%M\")\n       slug = slugify(task_type)[:20]\n       hash = secrets.token_hex(2)\n       return f\"{timestamp}-{slug}-{hash}\"\n   ```\n\n### Next Week\n1. Implement RunManager class\n2. Add watchdog for zombie processes\n3. Create unified run directories\n4. Add session resumability\n\n### Month 2\n1. Docker container integration\n2. Resource limits (memory, CPU, timeout)\n3. Network isolation options\n4. Full Agent Box supervisor\n\n## Migration Path\n\n### From Current to Agent Box Structure\n\n**Current** (Distributed):\n```\nspecs/issue-001-adw-XXX.md\nai_docs/reports/auth-report.md\nscout_outputs/relevant_files.json\n```\n\n**Transitional** (Symlinks):\n```\nagent_runs/1122-1430-auth-abc/\n\u251c\u2500\u2500 spec.md -> ../../specs/issue-001-adw-XXX.md\n\u251c\u2500\u2500 report.md -> ../../ai_docs/reports/auth-report.md\n\u2514\u2500\u2500 artifacts/scout.json\n```\n\n**Future** (Unified):\n```\nagent_runs/1122-1430-auth-abc/\n\u251c\u2500\u2500 meta.yaml\n\u251c\u2500\u2500 state.json\n\u251c\u2500\u2500 spec.md         # Direct file\n\u251c\u2500\u2500 report.md       # Direct file\n\u2514\u2500\u2500 artifacts/      # All outputs\n```\n\n## Risk Assessment\n\n| Risk | Likelihood | Impact | Mitigation |\n|------|------------|--------|------------|\n| Breaking existing workflows | Low | High | Use symlinks, maintain compatibility |\n| Complexity overhead | Medium | Medium | Start simple, enhance progressively |\n| User confusion | Medium | Low | Clear documentation, gradual rollout |\n| Performance impact | Low | Low | Minimal overhead, optional features |\n\n## Success Metrics\n\n### Phase 1 (State Management)\n- \u2713 Can track running agents\n- \u2713 Can detect crashed agents\n- \u2713 Can see run history\n\n### Phase 2 (Organization)\n- \u2713 Single directory per run\n- \u2713 Easy cleanup of old runs\n- \u2713 No duplicate directories\n\n### Phase 3 (Sandboxing)\n- \u2713 Process isolation implemented\n- \u2713 Resource limits enforced\n- \u2713 Self-poisoning prevented\n\n## Decision\n\n**Proceed with Phase 1 immediately**. The state management layer adds immediate value without disruption. Phase 2 and 3 can follow based on actual needs.\n\n## Alternative Considered\n\n**Full Agent Box Implementation**: Rejected due to:\n- Major breaking changes\n- Requires complete rewrite\n- Loses Claude Code integration\n- 2-3 day implementation\n\n**Do Nothing**: Rejected due to:\n- Growing organizational chaos\n- No ability to track/resume agents\n- Security debt accumulating\n\n---\n\n**Recommendation**: Start Phase 1 today. Low risk, high value, builds toward long-term sandboxing goal."
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "TodoWrite",
-    "tool_input": {
-      "todos": [
-        {
-          "content": "Scout for state management implementation points",
-          "status": "in_progress",
-          "activeForm": "Scouting for implementation points"
-        },
-        {
-          "content": "Create interactive framework init spec",
-          "status": "pending",
-          "activeForm": "Creating init spec"
-        },
-        {
-          "content": "Plan Phase 1 implementation",
-          "status": "pending",
-          "activeForm": "Planning implementation"
-        },
-        {
-          "content": "Build with ADW",
-          "status": "pending",
-          "activeForm": "Building with ADW"
-        },
-        {
-          "content": "Test framework portability",
-          "status": "pending",
-          "activeForm": "Testing portability"
-        }
-      ]
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Grep",
-    "tool_input": {
-      "pattern": "generate.*run.*id|run.*id|RunManager|supervisor",
-      "output_mode": "files_with_matches",
-      "-i": true
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Glob",
-    "tool_input": {
-      "pattern": "adws/adw*.py"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Write",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/scout_outputs/phase1-state-management.json",
-      "content": "{\n  \"relevant_files\": [\n    {\n      \"file\": \"adws/adw_common.py\",\n      \"reason\": \"Add generate_run_id() function for unique run identification\"\n    },\n    {\n      \"file\": \"adws/adw_modules/constants.py\",\n      \"reason\": \"Add AGENT_RUNS_DIR constant for new run directory structure\"\n    },\n    {\n      \"file\": \"ai_docs/scout/\",\n      \"reason\": \"Duplicate directory to consolidate into scout_outputs/\"\n    },\n    {\n      \"file\": \"adws/adw_build.py\",\n      \"reason\": \"Update to use run directories for outputs\"\n    },\n    {\n      \"file\": \"adws/adw_plan.py\",\n      \"reason\": \"Update to track run state\"\n    },\n    {\n      \"file\": \".claude/commands/init-framework.md\",\n      \"reason\": \"New interactive framework initialization command\"\n    },\n    {\n      \"file\": \"agents/supervisor.py\",\n      \"reason\": \"New RunManager class for state tracking\"\n    },\n    {\n      \"file\": \"agent_runs/.template/meta.yaml\",\n      \"reason\": \"Template for run metadata\"\n    },\n    {\n      \"file\": \"agent_runs/.template/state.json\",\n      \"reason\": \"Template for run state tracking\"\n    }\n  ],\n  \"summary\": \"Phase 1 implementation requires updating core ADW modules to add run ID generation, creating a new supervisor module for state management, consolidating duplicate directories, and adding an interactive framework initialization command.\",\n  \"timestamp\": \"2025-11-22T22:30:00Z\"\n}"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "TodoWrite",
-    "tool_input": {
-      "todos": [
-        {
-          "content": "Scout for state management implementation points",
+          "content": "Reorganize commands folder (subagent)",
           "status": "completed",
-          "activeForm": "Scouted implementation points"
+          "activeForm": "Reorganized into 7 categories"
         },
         {
-          "content": "Create implementation plan with ADW",
+          "content": "Commit and push to GitHub",
           "status": "in_progress",
-          "activeForm": "Creating implementation plan"
+          "activeForm": "Committing and pushing"
         },
         {
-          "content": "Build Phase 1 with ADW",
+          "content": "Run /prepare-compaction",
           "status": "pending",
-          "activeForm": "Building with ADW"
-        },
-        {
-          "content": "Create init-framework command",
-          "status": "pending",
-          "activeForm": "Creating init command"
-        },
-        {
-          "content": "Test framework portability",
-          "status": "pending",
-          "activeForm": "Testing portability"
-        }
-      ]
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "SlashCommand",
-    "tool_input": {
-      "command": "/plan_w_docs_improved \"Implement Phase 1 Agent Box state management and framework portability\" \"file:///Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/research/implementations/agent-box-supervisor-chad.md\" \"scout_outputs/phase1-state-management.json\""
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Read",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/scout_outputs/phase1-state-management.json"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Read",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_common.py"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Read",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/constants.py"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Write",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/specs/phase1-agent-box-state-management.md",
-      "content": "# Plan: Phase 1 Agent Box State Management & Framework Portability\n\n## Summary\nImplement Agent Box Phase 1: Add run ID generation, state tracking, directory consolidation, and interactive framework initialization. Make the framework portable to any repo.\n\n## Problem Statement\n1. **No state management**: Can't track running agents, detect crashes, or resume sessions\n2. **Duplicate directories**: `ai_docs/scout/` vs `scout_outputs/` causes confusion\n3. **No portability**: Framework requires manual setup in new repos\n4. **No interactivity**: Can't gather user preferences during setup\n\n## Inputs\n- **Scout Results**: `scout_outputs/phase1-state-management.json`\n- **Reference Doc**: `ai_docs/research/implementations/agent-box-supervisor-chad.md`\n- **Existing Infrastructure**:\n  - `adws/adw_common.py` - Has `slugify()` function\n  - `adws/adw_modules/constants.py` - Has canonical path definitions\n  - `LEGACY_SCOUT_DIR` already marked deprecated\n\n## Architecture/Approach\n\n### Run ID Format (User-Friendly)\n```\n{MMDD}-{slug}-{hash}\n\nExamples:\n- 1122-auth-fix-a1b2\n- 1122-scout-api-c3d4\n- 1123-init-db-e5f6\n```\n\n**Rationale**:\n- MMDD gives date context without year clutter\n- Slug is human-readable\n- 4-char hash prevents collisions\n- Sorts chronologically by date\n\n### Directory Structure\n```\nagent_runs/                    # NEW: Centralized run tracking\n\u251c\u2500\u2500 .template/\n\u2502   \u251c\u2500\u2500 meta.yaml             # Template for run metadata\n\u2502   \u2514\u2500\u2500 state.json            # Template for run state\n\u251c\u2500\u2500 1122-scout-auth-a1b2/     # Example run\n\u2502   \u251c\u2500\u2500 meta.yaml             # Immutable request info\n\u2502   \u251c\u2500\u2500 state.json            # Mutable status tracking\n\u2502   \u251c\u2500\u2500 output.md             # Primary output\n\u2502   \u2514\u2500\u2500 artifacts/            # Supporting files\n\u2514\u2500\u2500 latest -> 1122-scout-auth-a1b2/  # Symlink to most recent\n\nscout_outputs/                 # EXISTING: Keep for compatibility\n\u251c\u2500\u2500 relevant_files.json       # Canonical scout output\n\u251c\u2500\u2500 workflows/{adw_id}/       # Workflow state\n\u2514\u2500\u2500 archive/                  # NEW: Archived old outputs\n```\n\n### State Machine\n```\nACTIVE \u2192 DONE     (normal completion)\nACTIVE \u2192 CRASHED  (process died)\nACTIVE \u2192 STALLED  (heartbeat timeout)\nSTALLED \u2192 ACTIVE  (resume)\nCRASHED \u2192 ACTIVE  (resume)\n```\n\n## Implementation Steps\n\n### Step 1: Add Run ID Generation (adws/adw_common.py)\n**Files**: `adws/adw_common.py`\n**Lines to add**: ~15\n\n```python\nimport secrets\nfrom datetime import datetime\n\ndef generate_run_id(task_type: str, task_name: str = \"\") -> str:\n    \"\"\"Generate unique run ID in format MMDD-slug-hash.\"\"\"\n    date_part = datetime.now().strftime(\"%m%d\")\n    slug_part = slugify(task_type)[:20]\n    if task_name:\n        slug_part = f\"{slug_part}-{slugify(task_name)[:10]}\"\n    hash_part = secrets.token_hex(2)  # 4 chars\n    return f\"{date_part}-{slug_part}-{hash_part}\"\n```\n\n### Step 2: Add Constants (adws/adw_modules/constants.py)\n**Files**: `adws/adw_modules/constants.py`\n**Lines to add**: ~20\n\n```python\n# Agent Runs (NEW - Phase 1)\nAGENT_RUNS_DIR = Path(\"agent_runs\")\n\"\"\"Centralized directory for all agent run tracking.\"\"\"\n\nAGENT_RUNS_TEMPLATE_DIR = AGENT_RUNS_DIR / \".template\"\n\"\"\"Templates for run metadata and state.\"\"\"\n\ndef get_run_dir(run_id: str) -> Path:\n    \"\"\"Get the directory for a specific run.\"\"\"\n    run_dir = AGENT_RUNS_DIR / run_id\n    run_dir.mkdir(parents=True, exist_ok=True)\n    return run_dir\n\ndef get_latest_run() -> Optional[Path]:\n    \"\"\"Get the most recent run directory.\"\"\"\n    latest = AGENT_RUNS_DIR / \"latest\"\n    if latest.is_symlink():\n        return latest.resolve()\n    return None\n```\n\n### Step 3: Create RunManager (agents/supervisor.py)\n**Files**: `agents/supervisor.py` (NEW)\n**Lines**: ~100\n\n```python\n#!/usr/bin/env python3\n\"\"\"\nAgent Run Supervisor - State Management Layer\n\nTracks agent runs, monitors health, enables resumability.\nBased on Agent Box v6.2 spec (Chad/Gemini).\n\"\"\"\nimport json\nimport os\nfrom pathlib import Path\nfrom datetime import datetime\nfrom dataclasses import dataclass, asdict\nfrom typing import Optional, Literal\nfrom enum import Enum\n\nclass RunStatus(str, Enum):\n    ACTIVE = \"ACTIVE\"\n    DONE = \"DONE\"\n    CRASHED = \"CRASHED\"\n    STALLED = \"STALLED\"\n\n@dataclass\nclass RunMeta:\n    \"\"\"Immutable run metadata (meta.yaml)\"\"\"\n    run_id: str\n    task_type: str  # scout, plan, build, review\n    task_description: str\n    started_at: str\n    model: str = \"claude-sonnet-4\"\n\n@dataclass\nclass RunState:\n    \"\"\"Mutable run state (state.json)\"\"\"\n    status: RunStatus\n    pid: Optional[int] = None\n    session_id: Optional[str] = None\n    last_heartbeat: Optional[str] = None\n    error: Optional[str] = None\n\nclass RunManager:\n    def __init__(self, runs_dir: Path = Path(\"agent_runs\")):\n        self.runs_dir = runs_dir\n        self.runs_dir.mkdir(parents=True, exist_ok=True)\n\n    def create_run(self, task_type: str, task_desc: str) -> str:\n        \"\"\"Create a new run and return its ID.\"\"\"\n        from adws.adw_common import generate_run_id\n\n        run_id = generate_run_id(task_type, task_desc)\n        run_dir = self.runs_dir / run_id\n        run_dir.mkdir(parents=True, exist_ok=True)\n\n        # Write meta.yaml\n        meta = RunMeta(\n            run_id=run_id,\n            task_type=task_type,\n            task_description=task_desc,\n            started_at=datetime.now().isoformat()\n        )\n        (run_dir / \"meta.yaml\").write_text(\n            yaml.dump(asdict(meta), default_flow_style=False)\n        )\n\n        # Write initial state.json\n        state = RunState(status=RunStatus.ACTIVE, pid=os.getpid())\n        (run_dir / \"state.json\").write_text(\n            json.dumps(asdict(state), indent=2)\n        )\n\n        # Update latest symlink\n        latest = self.runs_dir / \"latest\"\n        if latest.is_symlink():\n            latest.unlink()\n        latest.symlink_to(run_id)\n\n        return run_id\n\n    def complete_run(self, run_id: str) -> None:\n        \"\"\"Mark run as completed.\"\"\"\n        self._update_status(run_id, RunStatus.DONE)\n\n    def crash_run(self, run_id: str, error: str) -> None:\n        \"\"\"Mark run as crashed.\"\"\"\n        self._update_status(run_id, RunStatus.CRASHED, error=error)\n\n    def heartbeat(self, run_id: str) -> None:\n        \"\"\"Update heartbeat timestamp.\"\"\"\n        run_dir = self.runs_dir / run_id\n        state_file = run_dir / \"state.json\"\n        if state_file.exists():\n            state = json.loads(state_file.read_text())\n            state[\"last_heartbeat\"] = datetime.now().isoformat()\n            state_file.write_text(json.dumps(state, indent=2))\n\n    def _update_status(self, run_id: str, status: RunStatus, error: str = None):\n        run_dir = self.runs_dir / run_id\n        state_file = run_dir / \"state.json\"\n        if state_file.exists():\n            state = json.loads(state_file.read_text())\n            state[\"status\"] = status.value\n            if error:\n                state[\"error\"] = error\n            state_file.write_text(json.dumps(state, indent=2))\n```\n\n### Step 4: Create Init-Framework Command (.claude/commands/init-framework.md)\n**Files**: `.claude/commands/init-framework.md` (NEW)\n**Purpose**: Interactive framework setup using AskUserQuestion\n\n```markdown\n# Initialize Scout-Plan-Build Framework\n\nSet up the framework in a new repository with interactive configuration.\n\n## Workflow\n\n1. **Gather Preferences** using AskUserQuestion tool:\n   - Directory structure preference\n   - Run ID format preference\n   - Sandboxing level\n   - Git workflow preference\n\n2. **Create Directory Structure**:\n   - agent_runs/ with templates\n   - scout_outputs/ (if not exists)\n   - specs/ (if not exists)\n   - ai_docs/ subdirectories\n\n3. **Copy Configuration Files**:\n   - CLAUDE.md (framework instructions)\n   - .gitignore additions\n   - adws/ modules (if needed)\n\n4. **Report Success**\n\n## Questions to Ask\n\nUse AskUserQuestion with these:\n\n1. \"What sandboxing level do you want?\"\n   - Git worktrees only\n   - Process isolation (recommended)\n   - Docker containers\n\n2. \"How should run IDs be formatted?\"\n   - MMDD-slug-hash (default)\n   - timestamp-slug\n   - Custom pattern\n\n3. \"Include parallel worktree support?\"\n   - Yes (recommended for complex features)\n   - No (simpler setup)\n```\n\n### Step 5: Consolidate Duplicate Directories\n**Files**: `ai_docs/scout/` \u2192 `scout_outputs/archive/`\n**Actions**:\n1. Move all files from `ai_docs/scout/` to `scout_outputs/archive/`\n2. Remove empty `ai_docs/scout/` directory\n3. Update any hardcoded references\n\n```bash\nmkdir -p scout_outputs/archive\nmv ai_docs/scout/* scout_outputs/archive/\nrmdir ai_docs/scout\n```\n\n### Step 6: Create Templates (agent_runs/.template/)\n**Files**:\n- `agent_runs/.template/meta.yaml`\n- `agent_runs/.template/state.json`\n\n**meta.yaml**:\n```yaml\n# Run Metadata Template\n# Copy this for new runs, fill in values\n\nrun_id: \"{MMDD}-{slug}-{hash}\"\ntask_type: scout|plan|build|review\ntask_description: \"Description of what this run does\"\nstarted_at: \"ISO8601 timestamp\"\nmodel: \"claude-sonnet-4\"\nconfig_hash: null  # Optional: for safety verification\n```\n\n**state.json**:\n```json\n{\n  \"status\": \"ACTIVE\",\n  \"pid\": null,\n  \"session_id\": null,\n  \"last_heartbeat\": null,\n  \"error\": null\n}\n```\n\n## Testing Strategy\n\n### Unit Tests\n- Test `generate_run_id()` returns valid format\n- Test `RunManager.create_run()` creates correct files\n- Test state transitions work correctly\n\n### Integration Tests\n- Create a run, verify files exist\n- Update heartbeat, verify timestamp changes\n- Complete run, verify status changes\n- Test latest symlink updates correctly\n\n### Validation Criteria\n- [ ] `agent_runs/` directory created with templates\n- [ ] `ai_docs/scout/` removed, contents in archive\n- [ ] New runs create proper directory structure\n- [ ] State tracking works across run lifecycle\n- [ ] `/init-framework` command works interactively\n\n## Risks and Mitigation\n\n| Risk | Mitigation |\n|------|------------|\n| Breaking existing workflows | Use symlinks for backward compat |\n| YAML parsing issues | Use standard library PyYAML |\n| Symlink issues on Windows | Fall back to regular file |\n| Import cycles | Keep RunManager standalone |\n\n## Success Criteria\n\n1. **State Tracking Works**: Can create, track, and complete runs\n2. **No Duplicates**: Single source of truth for each output type\n3. **Portable**: `/init-framework` sets up any repo\n4. **Interactive**: Uses AskUserQuestion for preferences\n5. **Non-Breaking**: Existing commands continue working\n\n## Estimated Effort\n\n| Step | Time | Risk |\n|------|------|------|\n| Run ID generation | 10 min | Low |\n| Constants update | 10 min | Low |\n| RunManager class | 30 min | Medium |\n| Init-framework command | 20 min | Low |\n| Directory consolidation | 5 min | Low |\n| Templates | 5 min | Low |\n| Testing | 20 min | Low |\n| **Total** | **~100 min** | **Low-Medium** |\n\n---\n\n**Next Step**: Run `/build_adw \"specs/phase1-agent-box-state-management.md\"` to implement"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "TodoWrite",
-    "tool_input": {
-      "todos": [
-        {
-          "content": "Scout for state management implementation points",
-          "status": "completed",
-          "activeForm": "Scouted implementation points"
-        },
-        {
-          "content": "Create implementation plan with ADW",
-          "status": "completed",
-          "activeForm": "Created implementation plan"
-        },
-        {
-          "content": "Build Phase 1 with ADW",
-          "status": "pending",
-          "activeForm": "Building with ADW"
-        },
-        {
-          "content": "Create init-framework command",
-          "status": "pending",
-          "activeForm": "Creating init command"
-        },
-        {
-          "content": "Test framework portability",
-          "status": "pending",
-          "activeForm": "Testing portability"
-        }
-      ]
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "TodoWrite",
-    "tool_input": {
-      "todos": [
-        {
-          "content": "Build Phase 1 with ADW",
-          "status": "in_progress",
-          "activeForm": "Building Phase 1 implementation"
-        },
-        {
-          "content": "Test framework portability",
-          "status": "pending",
-          "activeForm": "Testing portability"
-        }
-      ]
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "SlashCommand",
-    "tool_input": {
-      "command": "/build_adw \"specs/phase1-agent-box-state-management.md\""
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "uv run adws/adw_build.py \"specs/phase1-agent-box-state-management.md\"",
-      "timeout": 60000,
-      "description": "Run ADW build for Phase 1 implementation"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "head -30 adws/adw_build.py",
-      "description": "Check adw_build.py usage"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "ln -sf phase1-agent-box-state-management.md specs/issue-999-adw-PHASE1-state-management.md && echo \"Created symlink for ADW build\"",
-      "description": "Create symlink with ADW naming convention"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "uv run adws/adw_build.py 999 PHASE1",
-      "timeout": 120000,
-      "description": "Run ADW build with synthetic issue/ADW ID"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "TodoWrite",
-    "tool_input": {
-      "todos": [
-        {
-          "content": "Build Phase 1 implementation",
-          "status": "in_progress",
-          "activeForm": "Implementing Phase 1 changes"
-        },
-        {
-          "content": "Add generate_run_id to adw_common.py",
-          "status": "pending",
-          "activeForm": "Adding run ID generation"
-        },
-        {
-          "content": "Update constants.py with AGENT_RUNS_DIR",
-          "status": "pending",
-          "activeForm": "Updating constants"
-        },
-        {
-          "content": "Create RunManager supervisor",
-          "status": "pending",
-          "activeForm": "Creating RunManager"
-        },
-        {
-          "content": "Create init-framework command",
-          "status": "pending",
-          "activeForm": "Creating init command"
-        }
-      ]
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Edit",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_common.py",
-      "old_string": "def slugify(text: str) -> str:\n    text = text.lower().strip()\n    text = re.sub(r\"[^a-z0-9]+\", \"-\", text)\n    return re.sub(r\"-+\", \"-\", text).strip(\"-\")",
-      "new_string": "def slugify(text: str) -> str:\n    text = text.lower().strip()\n    text = re.sub(r\"[^a-z0-9]+\", \"-\", text)\n    return re.sub(r\"-+\", \"-\", text).strip(\"-\")\n\ndef generate_run_id(task_type: str, task_name: str = \"\") -> str:\n    \"\"\"Generate unique run ID in format MMDD-slug-hash.\"\"\"\n    import secrets\n    from datetime import datetime\n\n    date_part = datetime.now().strftime(\"%m%d\")\n    slug_part = slugify(task_type)[:20]\n    if task_name:\n        slug_part = f\"{slug_part}-{slugify(task_name)[:10]}\"\n    hash_part = secrets.token_hex(2)  # 4 chars\n    return f\"{date_part}-{slug_part}-{hash_part}\""
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Edit",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/constants.py",
-      "old_string": "# =============================================================================\n# Validation Constants\n# =============================================================================",
-      "new_string": "# =============================================================================\n# Agent Runs (NEW - Phase 1)\n# =============================================================================\n\nAGENT_RUNS_DIR = Path(\"agent_runs\")\n\"\"\"Centralized directory for all agent run tracking.\"\"\"\n\nAGENT_RUNS_TEMPLATE_DIR = AGENT_RUNS_DIR / \".template\"\n\"\"\"Templates for run metadata and state.\"\"\"\n\ndef get_run_dir(run_id: str) -> Path:\n    \"\"\"Get the directory for a specific run.\"\"\"\n    run_dir = AGENT_RUNS_DIR / run_id\n    run_dir.mkdir(parents=True, exist_ok=True)\n    return run_dir\n\ndef get_latest_run() -> Optional[Path]:\n    \"\"\"Get the most recent run directory.\"\"\"\n    from typing import Optional\n    latest = AGENT_RUNS_DIR / \"latest\"\n    if latest.is_symlink():\n        return latest.resolve()\n    return None\n\n# =============================================================================\n# Validation Constants\n# ============================================================================="
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "mkdir -p agent_runs/.template scout_outputs/archive && \\\nmv ai_docs/scout/* scout_outputs/archive/ 2>/dev/null || true && \\\nrmdir ai_docs/scout 2>/dev/null || true && \\\necho \"Directories created and duplicates consolidated\"",
-      "description": "Create agent_runs structure and consolidate scout dirs"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Write",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/agent_runs/.template/meta.yaml",
-      "content": "# Run Metadata Template\n# Copy this for new runs, fill in values\n\nrun_id: \"{MMDD}-{slug}-{hash}\"\ntask_type: scout|plan|build|review\ntask_description: \"Description of what this run does\"\nstarted_at: \"ISO8601 timestamp\"\nmodel: \"claude-sonnet-4\"\nconfig_hash: null  # Optional: for safety verification"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Write",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/agent_runs/.template/state.json",
-      "content": "{\n  \"status\": \"ACTIVE\",\n  \"pid\": null,\n  \"session_id\": null,\n  \"last_heartbeat\": null,\n  \"error\": null\n}"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "TodoWrite",
-    "tool_input": {
-      "todos": [
-        {
-          "content": "Build Phase 1 implementation",
-          "status": "completed",
-          "activeForm": "Built Phase 1"
-        },
-        {
-          "content": "Test run ID generation",
-          "status": "pending",
-          "activeForm": "Testing run ID generation"
+          "activeForm": "Preparing compaction"
         }
       ]
     }
@@ -535,215 +159,8 @@
     "hook_event_name": "PreToolUse",
     "tool_name": "Bash",
     "tool_input": {
-      "command": "python3 -c \"from adws.adw_common import generate_run_id; print('Test run ID:', generate_run_id('scout', 'auth-fix'))\"",
-      "description": "Test run ID generation"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "git add -A && git status --short | head -10",
-      "description": "Stage all changes for commit"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "git commit -m \"feat: Phase 1 Agent Box state management foundation\n\nImplemented core state management infrastructure from Agent Box spec:\n\nState Management:\n- Added generate_run_id() with MMDD-slug-hash format\n- Created agent_runs/ directory structure with templates\n- Added AGENT_RUNS_DIR constant and helper functions\n\nOrganization:\n- Consolidated ai_docs/scout/ into scout_outputs/archive/\n- Removed duplicate directory confusion\n- Created decision document for integration approach\n\nTesting:\n- Parallel command audit identified working/broken commands\n- Risk classification for all framework commands\n- Run ID generation tested and working\n\nNext: RunManager class and /init-framework command\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\"",
-      "description": "Commit Phase 1 implementation"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "python scripts/update-research-index.py && git add ai_docs/research/README.md",
-      "description": "Update research index and stage"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "git commit -m \"feat: Phase 1 Agent Box state management foundation\n\nImplemented core state management infrastructure from Agent Box spec:\n\nState Management:\n- Added generate_run_id() with MMDD-slug-hash format\n- Created agent_runs/ directory structure with templates\n- Added AGENT_RUNS_DIR constant and helper functions\n\nOrganization:\n- Consolidated ai_docs/scout/ into scout_outputs/archive/\n- Removed duplicate directory confusion\n- Created decision document for integration approach\n\nTesting:\n- Parallel command audit identified working/broken commands\n- Risk classification for all framework commands\n- Run ID generation tested and working\n\nNext: RunManager class and /init-framework command\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\"",
-      "description": "Commit Phase 1 implementation"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "SlashCommand",
-    "tool_input": {
-      "command": "/prepare-compaction"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "git log --oneline -5 && echo -e \"\\n---\\nBranch: $(git branch --show-current)\\nStatus: $(git status --short | wc -l) uncommitted changes\"",
-      "description": "Check recent commits and branch status"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Write",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/sessions/handoffs/handoff-2025-11-23.md",
-      "content": "# Session Handoff - 2025-11-23\n\n**Branch:** feature/bitbucket-integration\n**Last Commit:** 35c29af - feat: Phase 1 Agent Box state management foundation\n**Context at Handoff:** ~16% remaining\n\n## Accomplished This Session\n\n### 1. Framework v4 Implementation \u2705\n- Updated CLAUDE.md with deterministic routing tree\n- Risk classification for all commands (\ud83d\udfe2\ud83d\udfe1\ud83d\udd34)\n- Created hybrid menu structure (tree + risk + tasks)\n- Parallel command audit tested 32 commands\n- Fixed duplicate scout directories\n\n### 2. Agent Box Phase 1 State Management \u2705\n- Added `generate_run_id()` with MMDD-slug-hash format (e.g., `1123-scout-auth-fc71`)\n- Created `agent_runs/` directory structure with templates\n- Added `AGENT_RUNS_DIR` constant to constants.py\n- Consolidated `ai_docs/scout/` \u2192 `scout_outputs/archive/`\n\n### 3. Research Infrastructure \u2705\n- Created `ai_docs/research/` for external learning resources\n- Added Chad's Agent Box supervisor spec\n- Added slash command chaining security doc\n\n### 4. Command Testing Results \u2705\n- Native tools (Grep/Glob/Read): \u2705 Working perfectly\n- Scout commands: \u274c Broken (missing Task tool)\n- SuperClaude commands: \u2705 Safe with proper gating\n- Plan/Build ADW: \u2705 Working but needs state files\n\n## Pending Items\n\n| Priority | Item | Route | Effort |\n|----------|------|-------|--------|\n| 1 | Create RunManager class | Quick (direct implementation) | 30 min |\n| 2 | Create /init-framework command | ADW or direct | 20 min |\n| 3 | Fix scout commands (Task tool) | Investigation + fixes | 1 hr |\n| 4 | Add risk headers to slash commands | Quick edits | 20 min |\n| 5 | Test full framework portability | Manual testing | 30 min |\n\n## Key Files Modified\n\n- `CLAUDE.md` - Updated to v4 with routing\n- `adws/adw_common.py` - Added generate_run_id()\n- `adws/adw_modules/constants.py` - Added AGENT_RUNS_DIR\n- `agent_runs/.template/` - Created templates\n- `.gitignore` - Enhanced patterns\n- `ai_docs/scout/` - Moved to archive\n\n## Key Discoveries\n\n1. **Scout commands broken**: They reference a `Task` tool that doesn't exist in standard Claude Code\n2. **Duplicate directories**: Had both `ai_docs/scout/` and `scout_outputs/` - now consolidated\n3. **ADW needs state**: The build command expects state files from plan phase\n4. **Run ID format matters**: Went with `MMDD-slug-hash` for user-friendliness\n\n## Next Steps\n\n1. **Read these first**:\n   - `ai_docs/architecture/AGENT_BOX_INTEGRATION_DECISION.md` - Our Phase 2/3 plan\n   - `specs/phase1-agent-box-state-management.md` - What we just implemented\n\n2. **Continue Phase 1**:\n   ```bash\n   # Create RunManager class\n   vim agents/supervisor.py\n   # Implement from spec Step 3\n   ```\n\n3. **Test what we built**:\n   ```python\n   from adws.adw_common import generate_run_id\n   from adws.adw_modules.constants import AGENT_RUNS_DIR\n\n   # Test run ID generation\n   run_id = generate_run_id(\"scout\", \"test\")\n   print(f\"Generated: {run_id}\")\n   ```\n\n## Framework Status\n\n- **Routing**: \u2705 Deterministic with risk levels\n- **State Management**: \ud83d\udfe1 Foundation built, RunManager pending\n- **Portability**: \ud83d\udfe1 Structure ready, /init-framework pending\n- **Safety**: \u2705 Risk classification complete\n- **Organization**: \u2705 Directories consolidated\n\n---\n\n**Ready for compaction.** The foundation is solid, continue building on top."
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Read",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/sessions/COMPACTION_PROMPT.md"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Edit",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/sessions/COMPACTION_PROMPT.md",
-      "old_string": "# Compaction Resume Prompt\n\n**Use this after `/compact` to restore session context.**\n\nCopy everything below the line and paste as your first message:\n\n---\n\n## SESSION RESUME - Scout-Plan-Build Framework\n\n**Branch:** `feature/bitbucket-integration`\n**Last Commit:** `0559753` - Git worktree parallelization + research + feedback\n**Date:** 2024-11-22",
-      "new_string": "# Compaction Resume Prompt\n\n**Use this after `/compact` to restore session context.**\n\nCopy everything below the line and paste as your first message:\n\n---\n\n## SESSION RESUME - Scout-Plan-Build Framework\n\n**Branch:** `feature/bitbucket-integration`\n**Last Commit:** `35c29af` - Phase 1 Agent Box state management foundation\n**Date:** 2025-11-23"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Edit",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/sessions/COMPACTION_PROMPT.md",
-      "old_string": "### CRITICAL FILES TO READ FIRST\n\n```text\n1. ai_docs/sessions/handoffs/handoff-2024-11-22-final.md  \u2190 Full session summary\n2. ai_docs/reviews/agentic-primitives-v2-review.md        \u2190 V2 adoption roadmap\n3. specs/git-worktree-parallel-agents.md                  \u2190 Worktree spec\n```\n\n### WHAT WAS ACCOMPLISHED\n\n\u2705 **Research Infrastructure** - `ai_docs/research/` created with videos/, articles/, etc.\n\u2705 **Git Worktree Parallelization** - 4 new slash commands: `/init-parallel-worktrees`, `/run-parallel-agents`, `/compare-worktrees`, `/merge-worktree`\n\u2705 **V2 Primitives Review** - Full architectural review with adoption recommendations\n\u2705 **Feedback Structure** - `ai_docs/feedback/{predictions,outcomes,corrections}/` created\n\u2705 **All committed** to `feature/bitbucket-integration` branch\n\n### PENDING ACTION ITEMS (Prioritized)\n\n| Priority | Item | Route | Effort |\n|----------|------|-------|--------|\n| 1 | Add CLAUDE.md routing decision tree | Quick | 30 min |\n| 2 | Langfuse observability integration | ADW-Full | 2-3 hrs |\n| 3 | Multi-model router spec | ADW-Plan | 1 hr |\n| 4 | Test worktree commands | Quick | 15 min |",
-      "new_string": "### CRITICAL FILES TO READ FIRST\n\n```text\n1. ai_docs/sessions/handoffs/handoff-2025-11-23.md        \u2190 Today's full session\n2. ai_docs/architecture/AGENT_BOX_INTEGRATION_DECISION.md \u2190 Phase 2/3 plan\n3. specs/phase1-agent-box-state-management.md             \u2190 What we implemented\n4. CLAUDE.md                                              \u2190 Framework v4 routing\n```\n\n### WHAT WAS ACCOMPLISHED\n\n\u2705 **Framework v4** - Deterministic routing, risk classification (\ud83d\udfe2\ud83d\udfe1\ud83d\udd34), command audit\n\u2705 **Phase 1 State Management** - Run IDs (`MMDD-slug-hash`), agent_runs/ directory, templates\n\u2705 **Duplicate Directories Fixed** - Consolidated ai_docs/scout/ \u2192 scout_outputs/archive/\n\u2705 **Agent Box Research** - Integration decision doc, implementation spec\n\u2705 **All committed** - 2 major commits to `feature/bitbucket-integration`\n\n### PENDING ACTION ITEMS (Prioritized)\n\n| Priority | Item | Route | Effort |\n|----------|------|-------|--------|\n| 1 | Create RunManager class | Direct implementation | 30 min |\n| 2 | Create /init-framework command | Direct or ADW | 20 min |\n| 3 | Fix scout commands (Task tool) | Investigation + fixes | 1 hr |\n| 4 | Add risk headers to commands | Quick edits | 20 min |"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Edit",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/sessions/COMPACTION_PROMPT.md",
-      "old_string": "### KEY INSIGHT FROM SESSION\n\nThe framework needs a **deterministic router** in CLAUDE.md showing which workflow to use based on task complexity. This makes the framework portable and reduces token waste.\n\n### QUICK START COMMANDS\n\n```bash\n# Test worktree commands\n/init-parallel-worktrees test-feature 2\n\n# Or enhance CLAUDE.md with routing\n# Add decision tree section showing task\u2192workflow mapping\n\n# Or start Langfuse ADW\n/scout \"Langfuse observability integration for adws modules\"\n```",
-      "new_string": "### KEY INSIGHTS FROM SESSION\n\n1. **Scout commands broken** - They reference a Task tool that doesn't exist in standard Claude Code\n2. **ADW needs state** - Build command expects state files from plan phase\n3. **Run ID format matters** - We chose `MMDD-slug-hash` for user-friendliness vs Agent Box's long format\n4. **Framework v4 working** - Deterministic routing reduces token waste and ambiguity\n\n### QUICK START COMMANDS\n\n```bash\n# Test the run ID generation we built\npython3 -c \"from adws.adw_common import generate_run_id; print(generate_run_id('test', 'resume'))\"\n\n# Continue with RunManager implementation\nvim agents/supervisor.py  # Create from spec Step 3\n\n# Or test parallel worktrees\n/init-parallel-worktrees test-feature 2\n```"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "git add -A && git commit -m \"chore: Prepare session for compaction - Framework v4 + Phase 1 state mgmt\n\nSession accomplishments:\n- Framework v4 with deterministic routing\n- Phase 1 Agent Box state management\n- Parallel command audit and risk classification\n- Directory consolidation and cleanup\n\nReady for compaction with comprehensive handoff.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\"",
-      "description": "Commit session artifacts"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "git rev-parse --short HEAD",
-      "description": "Get short commit hash for session ID"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "mv ai_docs/sessions/handoffs/handoff-2025-11-23.md ai_docs/sessions/handoffs/1123-handoff-565e274.md && echo \"Handoff renamed with slug pattern\"",
-      "description": "Rename handoff with MMDD-slug-hash pattern"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Edit",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/sessions/COMPACTION_PROMPT.md",
-      "old_string": "### CRITICAL FILES TO READ FIRST\n\n```text\n1. ai_docs/sessions/handoffs/handoff-2025-11-23.md        \u2190 Today's full session",
-      "new_string": "### CRITICAL FILES TO READ FIRST\n\n```text\n1. ai_docs/sessions/handoffs/1123-handoff-565e274.md      \u2190 Today's full session"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Edit",
-    "tool_input": {
-      "file_path": "/Users/alexkamysz/AI/scout_plan_build_mvp/ai_docs/sessions/COMPACTION_PROMPT.md",
-      "old_string": "### PENDING ACTION ITEMS (Prioritized)\n\n| Priority | Item | Route | Effort |\n|----------|------|-------|--------|\n| 1 | Create RunManager class | Direct implementation | 30 min |\n| 2 | Create /init-framework command | Direct or ADW | 20 min |\n| 3 | Fix scout commands (Task tool) | Investigation + fixes | 1 hr |\n| 4 | Add risk headers to commands | Quick edits | 20 min |",
-      "new_string": "### PENDING ACTION ITEMS (Prioritized)\n\n| Priority | Item | Route | Effort |\n|----------|------|-------|--------|\n| 1 | Create RunManager class | Direct implementation | 30 min |\n| 2 | Create /init-framework command | Direct or ADW | 20 min |\n| 3 | Integrate handoffs with RunManager | Quick enhancement | 15 min |\n| 4 | Fix scout commands (Task tool) | Investigation + fixes | 1 hr |\n| 5 | Add risk headers to commands | Quick edits | 20 min |\n\n**Future**: Wrap handoff process in state management (track sessions with RunManager)"
-    }
-  },
-  {
-    "session_id": "8c66325f-8164-406d-a987-ccaa20e3a40f",
-    "transcript_path": "/Users/alexkamysz/.claude/projects/-Users-alexkamysz-AI-scout-plan-build-mvp/8c66325f-8164-406d-a987-ccaa20e3a40f.jsonl",
-    "cwd": "/Users/alexkamysz/AI/scout_plan_build_mvp",
-    "permission_mode": "bypassPermissions",
-    "hook_event_name": "PreToolUse",
-    "tool_name": "Bash",
-    "tool_input": {
-      "command": "git add -A && git commit -m \"refactor: Use MMDD-slug-hash pattern for handoff files\n\n- Renamed handoff to 1123-handoff-565e274.md\n- Uses git commit hash as session ID\n- Added handoff/RunManager integration to pending items\n- Consistent with our run ID pattern\n\nReady for compaction with improved naming.\n\n\ud83e\udd16 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\"",
-      "description": "Commit handoff naming improvements"
+      "command": "git add -A && git status --short | head -20",
+      "description": "Stage all changes"
     }
   }
 ]

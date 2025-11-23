@@ -1,3 +1,6 @@
+<!-- risk: mutate-local -->
+<!-- auto-invoke: gated -->
+
 # /worktree_create - Create Isolated Development Worktree
 
 **Purpose**: Create new git worktree for isolated feature development, experiments, or bug fixes

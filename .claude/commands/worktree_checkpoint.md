@@ -1,3 +1,6 @@
+<!-- risk: mutate-local -->
+<!-- auto-invoke: gated -->
+
 # /worktree_checkpoint - Create Undo Point
 
 **Purpose**: Create checkpoint (undo point) in current worktree

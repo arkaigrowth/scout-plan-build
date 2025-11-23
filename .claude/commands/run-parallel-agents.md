@@ -1,3 +1,6 @@
+<!-- risk: mutate-local -->
+<!-- auto-invoke: gated -->
+
 # Run Parallel Agents
 
 Execute N Claude agents in parallel, each implementing the same spec in their own worktree.

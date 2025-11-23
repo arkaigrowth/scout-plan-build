@@ -1,3 +1,6 @@
+<!-- risk: mutate-local -->
+<!-- auto-invoke: gated -->
+
 # Prepare for Compaction
 
 Prepare the session for context compaction by saving state and creating resume artifacts.

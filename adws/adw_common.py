@@ -85,3 +85,97 @@ class BuildReport:
 
 def ensure_dir(p: Path) -> None:
     p.mkdir(parents=True, exist_ok=True)
+
+
+# ============================================================================
+# Session & Provenance Tracking
+# ============================================================================
+
+def get_current_session() -> Dict[str, str]:
+    """
+    Get current Claude session info from .current_session file.
+    Written by user_prompt_submit hook on every user message.
+
+    Returns dict with:
+        - session_id: Full UUID
+        - short_id: First 8 chars of UUID
+        - git_hash: Current git commit (short)
+        - git_branch: Current git branch
+        - timestamp: When session file was last updated
+    """
+    session_file = ROOT / '.current_session'
+    if session_file.exists():
+        try:
+            return json.loads(session_file.read_text())
+        except (json.JSONDecodeError, ValueError):
+            pass
+
+    # Fallback: try to get git info directly
+    git_hash = "unknown"
+    git_branch = "unknown"
+    try:
+        p = sh(["git", "rev-parse", "--short", "HEAD"])
+        if p.returncode == 0:
+            git_hash = p.stdout.strip()
+        p = sh(["git", "rev-parse", "--abbrev-ref", "HEAD"])
+        if p.returncode == 0:
+            git_branch = p.stdout.strip()
+    except Exception:
+        pass
+
+    return {
+        'session_id': 'unknown',
+        'short_id': 'unknown',
+        'git_hash': git_hash,
+        'git_branch': git_branch,
+        'timestamp': 'unknown'
+    }
+
+
+def get_provenance_block(format: str = "yaml") -> str:
+    """
+    Generate a provenance block for inclusion in outputs.
+
+    Args:
+        format: "yaml" for YAML block, "markdown" for MD header
+
+    Returns:
+        Formatted provenance string
+    """
+    from datetime import datetime
+    session = get_current_session()
+
+    if format == "yaml":
+        return f"""# Provenance
+session_id: {session['session_id']}
+session_short: {session['short_id']}
+git_hash: {session['git_hash']}
+git_branch: {session['git_branch']}
+created_at: {datetime.now().isoformat()}
+"""
+    elif format == "markdown":
+        return f"""**Session:** `{session['short_id']}` | **Git:** `{session['git_hash']}` (`{session['git_branch']}`)
+**Full Session ID:** `{session['session_id']}`
+"""
+    else:
+        # JSON format
+        return json.dumps({
+            "session_id": session['session_id'],
+            "session_short": session['short_id'],
+            "git_hash": session['git_hash'],
+            "git_branch": session['git_branch'],
+            "created_at": datetime.now().isoformat()
+        }, indent=2)
+
+
+def generate_handoff_filename(prefix: str = "handoff") -> str:
+    """
+    Generate handoff filename using session short ID.
+    Format: MMDD-{prefix}-{session_short}.md
+
+    Example: 1123-handoff-f67ada19.md
+    """
+    from datetime import datetime
+    session = get_current_session()
+    date_part = datetime.now().strftime("%m%d")
+    return f"{date_part}-{slugify(prefix)}-{session['short_id']}.md"

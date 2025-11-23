@@ -9,6 +9,7 @@ All modules MUST import from here rather than hardcoding paths.
 """
 
 from pathlib import Path
+from typing import Optional
 
 # =============================================================================
 # Scout Output Locations (CANONICAL)
@@ -89,7 +90,6 @@ def get_run_dir(run_id: str) -> Path:
 
 def get_latest_run() -> Optional[Path]:
     """Get the most recent run directory."""
-    from typing import Optional
     latest = AGENT_RUNS_DIR / "latest"
     if latest.is_symlink():
         return latest.resolve()

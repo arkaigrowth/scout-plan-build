@@ -1,3 +1,6 @@
+<!-- risk: read-only -->
+<!-- auto-invoke: safe -->
+
 # Compare Parallel Worktree Results
 
 Display comparison of all parallel agent implementations for a feature.

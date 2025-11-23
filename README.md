@@ -1,167 +1,217 @@
-# Scout-Plan-Build Development System
+# Scout-Plan-Build
 
-**Portable AI-assisted development workflow for any repository. Scout for files, plan features, build implementations - all with AI assistance.**
+**Structured AI development workflows that actually ship.**
 
-## 🚀 Quick Install to Your Repo
-
-```bash
-# Install to any repository (e.g., your tax-prep project)
-./scripts/install_to_new_repo.sh /path/to/your/repo
-
-# Follow the prompts, then:
-cd /path/to/your/repo
-cp .env.template .env
-# Add your ANTHROPIC_API_KEY to .env
-
-# You're ready!
-```
-
-**That's it!** The system is now installed in your repo.
+<!-- Hero banner placeholder: Add your image here -->
+<!-- ![Scout-Plan-Build](assets/hero-banner.png) -->
 
 ---
 
-## 📖 Documentation
+## The Problem
 
-| Document | When to Use |
-|----------|-------------|
-| **[PORTABLE_DEPLOYMENT_GUIDE.md](PORTABLE_DEPLOYMENT_GUIDE.md)** | Installing to new repos (detailed walkthrough) |
-| **[CLAUDE.md](CLAUDE.md)** | Quick reference for using the system |
-| **[TECHNICAL_REFERENCE.md](TECHNICAL_REFERENCE.md)** | Architecture, troubleshooting, advanced usage |
-| **[UNINSTALL_GUIDE.md](UNINSTALL_GUIDE.md)** | Removing from a repo |
-| **[AI_DOCS_ORGANIZATION.md](AI_DOCS_ORGANIZATION.md)** | Understanding the folder structure |
+AI coding assistants are powerful but chaotic. Without structure, you get:
+- Sprawling conversations that lose context
+- No clear separation between planning and building
+- Files dumped in random locations
+- No way to resume after a break
+
+**Scout-Plan-Build** enforces a workflow: discover relevant files, create a spec, then build from that spec. Every step is traceable, every output has a canonical location.
 
 ---
 
-## 🎯 Quick Workflow (After Installation)
+## Quick Start
 
 ```bash
-# 1. Find relevant files for your task
-Task(subagent_type="explore", prompt="Find all authentication code")
+# Find files relevant to your task
+Grep "authentication" --type py
 
-# 2. Create a specification
-/plan_w_docs "Add OAuth2 support" "" "scout_outputs/relevant_files.json"
+# Create a specification
+/plan_w_docs_improved "Add OAuth2 login" "" "scout_outputs/relevant_files.json"
 
-# 3. Build from the spec
+# Build from the spec
 /build_adw "specs/issue-001-oauth2.md"
 ```
 
-### 🚄 Parallel Execution (40-50% Faster!)
+That's the core loop: **Scout → Plan → Build**.
 
-```bash
-# Run complete SDLC workflow with parallel execution
-uv run adws/adw_sdlc.py <issue-number> <adw-id> --parallel
+---
 
-# What happens:
-# 1. Plan phase runs (sequential)
-# 2. Build phase runs (sequential)
-# 3. Test + Review + Document run IN PARALLEL (40-50% speedup!)
-# 4. Single aggregated commit at the end
+## When to Use What
 
-# Example timing:
-# Sequential: 12-17 minutes total
-# Parallel:   8-11 minutes total (40-50% faster!)
+```
+What's your task?
+│
+├─ Simple (1-2 files, obvious fix)
+│   └─ Just do it. No framework needed.
+│
+├─ Standard (3-5 files, clear requirements)
+│   └─ /plan_w_docs_improved → /build_adw
+│
+├─ Complex (6+ files, new feature)
+│   └─ Scout first → /plan_w_docs_improved → /build_adw
+│
+├─ Uncertain (multiple valid approaches)
+│   └─ /init-parallel-worktrees → try each → /merge-worktree best one
+│
+└─ Research (exploring unknown codebase)
+    └─ Task(Explore) or Grep/Glob directly
 ```
 
 ---
 
-## 🏗️ What Gets Installed
+## Installation
+
+```bash
+./scripts/install_to_new_repo.sh /path/to/your/repo
+cd /path/to/your/repo
+cp .env.template .env  # Add your ANTHROPIC_API_KEY
+```
+
+Your existing code is untouched. The framework installs alongside it.
+
+<details>
+<summary>What gets installed</summary>
 
 ```
 your-repo/
 ├── adws/                # Core workflow modules
-├── scout_outputs/       # Scout phase outputs (canonical)
-├── ai_docs/
+├── specs/               # Generated specifications
+├── scout_outputs/       # Scout phase outputs
+├── ai_docs/             # AI-generated documentation
 │   ├── build_reports/   # Build execution reports
 │   ├── reviews/         # Code reviews
-│   └── research/        # External learning resources
-├── specs/               # Generated specifications
-├── .claude/commands/    # Workflow commands
-└── scripts/             # Validation tools
+│   └── sessions/        # Handoffs for session continuity
+└── .claude/commands/    # Slash commands
 ```
 
-**Your existing code is untouched** - this system works alongside it.
+</details>
 
 ---
 
-## ✨ Features
+## Core Commands
 
-- **Portable**: Install to any repo in 15 minutes
-- **Safe**: Input validation, path security, git safety
-- **Organized**: AI-generated content in `ai_docs/`, specs in `specs/`
-- **Working**: No broken external tools - uses Task agents that actually exist
+### Planning
+| Command | Purpose |
+|---------|---------|
+| `/plan_w_docs_improved` | Create a spec from requirements |
+| `/planning:feature` | Plan a new feature |
+| `/planning:bug` | Plan a bug fix |
+
+### Building
+| Command | Purpose |
+|---------|---------|
+| `/build_adw` | Execute a spec |
+| `/workflow:implement` | Quick implementation |
+
+### Git Operations
+| Command | Purpose |
+|---------|---------|
+| `/git:commit` | Smart commit with message |
+| `/git:pull_request` | Create PR from branch |
+| `/init-parallel-worktrees` | Create parallel branches |
+| `/merge-worktree` | Merge best approach |
+
+### Session Management
+| Command | Purpose |
+|---------|---------|
+| `/session:resume` | Restore context after compaction |
+| `/session:prepare-compaction` | Create handoff before compacting |
+
+<details>
+<summary>All 48 commands</summary>
+
+See [SLASH_COMMANDS_REFERENCE.md](docs/SLASH_COMMANDS_REFERENCE.md) for the complete list.
+
+</details>
 
 ---
 
-## 🧹 Maintenance Scripts
+## Why This Works
+
+**Parallel Execution**: Test, review, and document phases run simultaneously.
+- Sequential: 12-17 minutes
+- Parallel: 8-11 minutes (40-50% faster)
+
+**Session Continuity**: Handoff documents capture context. Resume with `/session:resume` after any break.
+
+**Canonical Locations**: Every output has a home. Specs go in `specs/`, reports in `ai_docs/build_reports/`, scout results in `scout_outputs/`.
+
+**Validated Through Use**: This framework was built using itself. Every feature was spec'd, built, and refined through the ADW workflow.
+
+---
+
+## Example Workflows
+
+### Adding a Feature
 
 ```bash
-# Validate everything works
-./scripts/validate_pipeline.sh
+# 1. Scout for relevant code
+Grep "user_auth" --type py
+# Found: auth.py, middleware.py, routes.py
 
-# Clean up redundant agents (optional)
-./scripts/cleanup_agents.sh
+# 2. Create specification
+/plan_w_docs_improved "Add 2FA support to login flow" "" "scout_outputs/relevant_files.json"
+# Creates: specs/issue-001-2fa-support.md
 
-# Uninstall from a repo
-./scripts/uninstall_from_repo.sh /path/to/repo
+# 3. Build from spec
+/build_adw "specs/issue-001-2fa-support.md"
+# Implements, tests, documents
+```
+
+### Trying Multiple Approaches
+
+```bash
+# 1. Create parallel worktrees
+/init-parallel-worktrees cache-strategy 3
+
+# 2. Each worktree tries a different approach
+# tree-1: Redis caching
+# tree-2: In-memory LRU
+# tree-3: SQLite cache
+
+# 3. Compare results
+/compare-worktrees cache-strategy
+
+# 4. Merge the winner
+/merge-worktree trees/cache-strategy-2
+```
+
+### Resuming After a Break
+
+```bash
+# Before leaving
+/session:prepare-compaction
+
+# After returning (even in new session)
+/session:resume
+# Reads handoff, restores context, asks what's next
 ```
 
 ---
 
-## 📊 System Status
+## Status
 
-| Component | Status | Documentation |
-|-----------|--------|---------------|
-| Scout | ✅ Working | Uses Task agents (no external tools) |
-| Plan | ✅ Working | Spec schema v1.1.0 with validation |
-| Build | ✅ Working | Pydantic validation, error handling |
-| **Parallel Execution** | ✅ Working | Test+Review+Document run in parallel (40-50% speedup) |
-| GitHub Integration | ✅ Working | Requires `gh` CLI |
-| Portability | ✅ 85% | See PORTABLE_DEPLOYMENT_GUIDE.md |
-
----
-
-## 🆘 Support
-
-- **Installation issues**: See [PORTABLE_DEPLOYMENT_GUIDE.md](PORTABLE_DEPLOYMENT_GUIDE.md)
-- **Uninstalling**: See [UNINSTALL_GUIDE.md](UNINSTALL_GUIDE.md)
-- **Agent confusion**: See [ai_docs/AGENT_CLEANUP_ANALYSIS.md](ai_docs/AGENT_CLEANUP_ANALYSIS.md)
-- **Technical details**: See [TECHNICAL_REFERENCE.md](TECHNICAL_REFERENCE.md)
+| Component | Status |
+|-----------|--------|
+| Scout (file discovery) | Working |
+| Plan (spec generation) | Working |
+| Build (implementation) | Working |
+| Parallel execution | Working (40-50% speedup) |
+| Session continuity | Working |
+| Portability | 85% (some paths hardcoded) |
 
 ---
 
-## 🎓 Learning Resources
+## Documentation
 
-**New to the system?** Read in this order:
-1. This README (you are here!)
-2. [PORTABLE_DEPLOYMENT_GUIDE.md](PORTABLE_DEPLOYMENT_GUIDE.md) - Install it
-3. [CLAUDE.md](CLAUDE.md) - Use it
-4. [TECHNICAL_REFERENCE.md](TECHNICAL_REFERENCE.md) - Understand it
-
-**Installing to a specific repo type?**
-- Tax preparation: Examples in PORTABLE_DEPLOYMENT_GUIDE.md
-- Different languages: System is language-agnostic
-- Monorepos: Configure with `.adw_config.json`
+| Doc | Purpose |
+|-----|---------|
+| [CLAUDE.md](CLAUDE.md) | Command router and quick reference |
+| [PORTABLE_DEPLOYMENT_GUIDE.md](PORTABLE_DEPLOYMENT_GUIDE.md) | Detailed installation |
+| [TECHNICAL_REFERENCE.md](TECHNICAL_REFERENCE.md) | Architecture deep-dive |
+| [SLASH_COMMANDS_REFERENCE.md](docs/SLASH_COMMANDS_REFERENCE.md) | All commands |
 
 ---
 
-## 🔧 Configuration
-
-After installation, customize via `.adw_config.json`:
-
-```json
-{
-  "paths": {
-    "specs": "specs/",
-    "ai_docs": "ai_docs/",
-    "allowed": ["specs", "ai_docs", "src", "lib"]
-  }
-}
-```
-
-See [PORTABLE_DEPLOYMENT_GUIDE.md](PORTABLE_DEPLOYMENT_GUIDE.md) for examples.
-
----
-
-**Version**: MVP (Portable Edition)
-**Last Updated**: October 2024
-**License**: Internal/Private Use
+**Version**: MVP
+**Last Updated**: November 2024

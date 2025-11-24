@@ -55,7 +55,7 @@ review_image_dir: `<absolute path to codebase>/agents/<adw_id>/<agent_name>/revi
 
 ## Setup
 
-IMPORTANT: Read and **Execute** `.claude/commands/prepare_app.md` now to prepare the application for the review.
+IMPORTANT: Read and **Execute** `.claude/commands/utilities/prepare_app.md` now to prepare the application for the review.
 
 ## Report
 

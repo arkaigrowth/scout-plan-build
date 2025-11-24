@@ -37,7 +37,7 @@ application_url: $4 if provided, otherwise use http://localhost:5173
 
 ## Setup
 
-Read and Execute `.claude/commands/prepare_app.md` now to prepare the application for the test.
+Read and Execute `.claude/commands/utilities/prepare_app.md` now to prepare the application for the test.
 
 ## Screenshot Directory
 

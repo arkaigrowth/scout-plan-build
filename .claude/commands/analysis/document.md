@@ -51,7 +51,7 @@ documentation_screenshots_dir: $3 if provided, otherwise leave it blank
   - Any configuration or setup required
 
 ### 5. Update Conditional Documentation
-- After creating the documentation file, read `.claude/commands/conditional_docs.md`
+- After creating the documentation file, read `.claude/commands/utilities/conditional_docs.md`
 - Add an entry for the new documentation file with appropriate conditions
 - The entry should help future developers know when to read this documentation
 - Format the entry following the existing pattern in the file
@@ -122,7 +122,7 @@ documentation_screenshots_dir: $3 if provided, otherwise leave it blank
 
 ## Conditional Docs Entry Format
 
-After creating the documentation, add this entry to `.claude/commands/conditional_docs.md`:
+After creating the documentation, add this entry to `.claude/commands/utilities/conditional_docs.md`:
 
 ```md
 - app_docs/<your_documentation_file>.md

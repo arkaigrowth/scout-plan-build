@@ -21,13 +21,13 @@ Fix a specific failing E2E test using the provided failure details.
    - Understand what the test is trying to validate from a user interaction perspective
 
 2. **Understand Test Execution**
-   - Read `.claude/commands/test_e2e.md` to understand how E2E tests are executed
+   - Read `.claude/commands/testing/test_e2e.md` to understand how E2E tests are executed
    - Read the test file specified in the `test_path` field from the JSON
    - Note the test steps, user story, and success criteria
 
 3. **Reproduce the Failure**
    - IMPORTANT: Use the `test_path` from the JSON to re-execute the specific E2E test
-   - Follow the execution pattern from `.claude/commands/test_e2e.md`
+   - Follow the execution pattern from `.claude/commands/testing/test_e2e.md`
    - Observe the browser behavior and confirm you can reproduce the exact failure
    - Compare the error you see with the error reported in the JSON
 

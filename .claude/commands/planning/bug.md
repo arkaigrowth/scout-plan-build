@@ -33,7 +33,7 @@ issue_json: $3
 - IMPORTANT: If the bug affects the UI or user interactions:
   - Add a task in the `Step by Step Tasks` section to create a separate E2E test file in `.claude/commands/e2e/test_<descriptive_name>.md` based on examples in that directory
   - Add E2E test validation to your Validation Commands section
-  - IMPORTANT: When you fill out the `Plan Format: Relevant Files` section, add an instruction to read `.claude/commands/test_e2e.md`, and `.claude/commands/e2e/test_basic_query.md` to understand how to create an E2E test file. List your new E2E test file to the `Plan Format: New Files` section.
+  - IMPORTANT: When you fill out the `Plan Format: Relevant Files` section, add an instruction to read `.claude/commands/testing/test_e2e.md`, and `.claude/commands/e2e/test_basic_query.md` to understand how to create an E2E test file. List your new E2E test file to the `Plan Format: New Files` section.
   - To be clear, we're not creating a new E2E test file, we're creating a task to create a new E2E test file in the `Plan Format` below
 - Respect requested files in the `Relevant Files` section.
 - Start your research by reading the `README.md` file.
@@ -47,7 +47,7 @@ Focus on the following files:
 - `scripts/**` - Contains the scripts to start and stop the server + client.
 - `adws/**` - Contains the AI Developer Workflow (ADW) scripts.
 
-- Read `.claude/commands/conditional_docs.md` to check if your task requires additional documentation
+- Read `.claude/commands/utilities/conditional_docs.md` to check if your task requires additional documentation
 - If your task matches any of the conditions listed, include those documentation files in the `Plan Format: Relevant Files` section of your plan
 
 Ignore all other files in the codebase.
@@ -96,7 +96,7 @@ Execute every command to validate the bug is fixed with zero regressions.
 
 <list commands you'll use to validate with 100% confidence the bug is fixed with zero regressions. every command must execute without errors so be specific about what you want to run to validate the bug is fixed with zero regressions. Include commands to reproduce the bug before and after the fix.>
 
-<If you created an E2E test, include the following validation step: "Read .claude/commands/test_e2e.md`, then read and execute your new E2E `.claude/commands/e2e/test_<descriptive_name>.md` test file to validate this functionality works.">
+<If you created an E2E test, include the following validation step: "Read .claude/commands/testing/test_e2e.md`, then read and execute your new E2E `.claude/commands/e2e/test_<descriptive_name>.md` test file to validate this functionality works.">
 
 - `cd app/server && uv run pytest` - Run server tests to validate the bug is fixed with zero regressions
 - `cd app/client && bun tsc --noEmit` - Run frontend tests to validate the bug is fixed with zero regressions

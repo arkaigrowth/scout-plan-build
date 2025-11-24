@@ -40,7 +40,7 @@ Focus on the following files:
 - `scripts/**` - Contains the scripts to start and stop the server + client.
 - `adws/**` - Contains the AI Developer Workflow (ADW) scripts.
 
-- Read `.claude/commands/conditional_docs.md` to check if your task requires additional documentation
+- Read `.claude/commands/utilities/conditional_docs.md` to check if your task requires additional documentation
 - If your task matches any of the conditions listed, include those documentation files in the `Plan Format: Relevant Files` section of your plan
 
 Ignore all other files in the codebase.

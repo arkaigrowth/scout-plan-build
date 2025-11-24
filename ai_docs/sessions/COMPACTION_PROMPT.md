@@ -14,34 +14,35 @@ Paste the section below into your next message.
 
 ---
 
-## QUICK RESUME - 2025-11-23 (Evening)
+## QUICK RESUME - 2025-11-24
 
-**Branch:** main | **Commit:** 1725fea | **Handoff:** `ai_docs/sessions/handoffs/handoff-2025-11-23.md`
+**Branch:** main | **Commit:** dea8c4e | **Handoff:** `ai_docs/sessions/handoffs/handoff-2025-11-24.md`
 
 ### Built This Session
 
-1. **Coach Mode** - Transparent AI workflow guidance
-   - 3 output styles: `/coach`, `/coach minimal`, `/coach full`
-   - Docs: `docs/COACH_MODE.md`
+1. **SessionStart Hook** - Auto-detects handoff files on session start
+   - `.claude/hooks/session_start.py`
+   - Fires on startup + compaction
 
-2. **Research Auto-Index** - Auto-updating research library
-   - Script: `scripts/update-research-index.py`
-   - Git hooks installed via `scripts/install-hooks.sh`
-   - Smart import: `/research-add <filepath-or-content>`
+2. **3 README Styles** - Parallel worktrees ready to merge
+   - Geometric, Developer, Marketing styles
+   - Pick one: `/git:merge-worktree ../scout_plan_build_mvp-readme-{geo|dev|mkt}`
 
-3. **Command Frontmatter** - 44 commands enhanced
-   - All have `description:` and `argument-hint:`
+3. **SDK Research Feature** - Spec complete, ready to build
+   - Spec: `specs/sdk-deep-research-feature.md`
+   - Research: `ai_docs/research/implementations/claude-agent-sdk-analysis.md`
 
-4. **Bug Documented** - AskUserQuestion bypass bug
-   - Workaround: Plain text fallback
+4. **Dependency Tracing** - Command refs and Python imports analyzed
+   - 30 broken command refs fixed
+   - ADW imports reduced from 12→8 broken
 
 ### Pending
 
-| Priority | Item |
-|----------|------|
-| 1 | Test `/coach` command |
-| 2 | Test `/research-add` with filepath |
-| 3 | Complete Agentic Primitives V2 doc |
+| Priority | Item | Command |
+|----------|------|---------|
+| **1** | Build SDK research feature | `/workflow:build_adw "specs/sdk-deep-research-feature.md"` |
+| 2 | Merge README style | `/git:merge-worktree ../scout_plan_build_mvp-readme-geo` |
+| 3 | Test SessionStart hook | Start new session |
 
 ### Framework Routing
 
@@ -54,4 +55,7 @@ RESEARCH → Task(Explore)
 
 ### First Action
 
-Run `/coach` to verify output styles installed correctly.
+Build the SDK research feature:
+```
+/workflow:build_adw "specs/sdk-deep-research-feature.md"
+```

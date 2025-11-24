@@ -1,0 +1,48 @@
+{
+  "task": "Implement Claude Agent SDK deep research feature",
+  "scout_date": "2025-11-24",
+  "relevant_files": [
+    {
+      "path": "ai_docs/research/implementations/claude-agent-sdk-analysis.md",
+      "reason": "SDK installation, authentication, minimal examples, custom agents",
+      "priority": "high"
+    },
+    {
+      "path": "ai_docs/analyses/sdk-integration-assessment.md",
+      "reason": "Integration complexity, effort estimates, gotchas, architecture",
+      "priority": "high"
+    },
+    {
+      "path": "adws/adw_modules/constants.py",
+      "reason": "Canonical output paths, ALLOWED_OUTPUT_PREFIXES",
+      "priority": "medium"
+    },
+    {
+      "path": "adws/adw_modules/agent.py",
+      "reason": "Existing agent execution pattern to follow",
+      "priority": "medium"
+    },
+    {
+      "path": ".claude/commands/utilities/research-add.md",
+      "reason": "Similar command pattern for /research",
+      "priority": "low"
+    },
+    {
+      "path": "scripts/update-research-index.py",
+      "reason": "Index update pattern for auto-indexing research outputs",
+      "priority": "low"
+    }
+  ],
+  "external_docs_reviewed": [
+    "https://github.com/anthropics/claude-agent-sdk-python",
+    "https://www.anthropic.com/engineering/multi-agent-research-system"
+  ],
+  "key_requirements": [
+    "Create scripts/sdk_research_agent.py - standalone SDK research script",
+    "Create .claude/commands/utilities/research.md - slash command",
+    "Support depth levels: quick, standard, deep",
+    "Auto-write to ai_docs/research/ canonical path",
+    "Include OODA loop research pattern from Anthropic",
+    "Budget and turn limits for safety"
+  ]
+}

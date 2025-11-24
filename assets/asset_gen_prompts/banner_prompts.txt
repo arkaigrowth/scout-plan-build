@@ -1,0 +1,18 @@
+# Banner Prompts - Geometric/Technical Style
+# Generated: 2025-11-23
+# Use with: Midjourney, DALL-E, Stable Diffusion
+
+## Prompt 1: Blueprint Architecture
+A technical blueprint-style illustration showing three connected hexagonal nodes labeled "Scout", "Plan", "Build" with data flow lines between them. Dark navy background, cyan and white line art, circuit board aesthetic. No text. 16:9 aspect ratio, clean vector style.
+
+## Prompt 2: Isometric Workflow
+Isometric 3D illustration of three geometric platforms connected by glowing pathways. First platform has a magnifying glass icon, second has a document icon, third has a gear icon. Minimalist, purple and blue color scheme, subtle grid background. No text. 16:9 aspect ratio.
+
+## Prompt 3: Circuit Flow
+Abstract circuit board design forming a left-to-right flow pattern with three distinct stages. Geometric shapes, PCB trace aesthetics, dark background with glowing cyan highlights. Technical, precise, engineering aesthetic. No text. 16:9 aspect ratio.
+
+## Prompt 4: Modular System
+Three interlocking geometric modules (cube, hexagon, octagon) representing Scout, Plan, Build. Clean edges, subtle shadows, monochromatic with purple accent lighting. Architectural rendering style. No text. 16:9 aspect ratio.
+
+## Prompt 5: Data Constellation
+Star constellation-style diagram connecting three main nodes with smaller supporting nodes. Deep space background, white and gold lines, astronomical chart aesthetic. Technical yet elegant. No text. 16:9 aspect ratio.

@@ -1,0 +1,18 @@
+# Banner Prompts - Clean Developer Style
+# Generated: 2025-11-23
+# Use with: Midjourney, DALL-E, Stable Diffusion
+
+## Prompt 1: Terminal Flow
+A stylized terminal window showing three commands with colorful syntax highlighting. Commands flow into each other with subtle arrow connections. Dark editor theme, modern monospace font aesthetic, soft glow effects. No actual text visible. 16:9 aspect ratio.
+
+## Prompt 2: Code to Ship
+Abstract illustration of code blocks on the left transforming into a rocket ship on the right through a pipeline. Gradient from blue (code) to purple (process) to orange (ship). Clean, modern, tech startup aesthetic. No text. 16:9 aspect ratio.
+
+## Prompt 3: Git Branch Flow
+Artistic representation of git branches merging, with three main branches combining into a single golden main branch. Dark background, colorful branch lines (green, blue, purple), particle effects at merge points. No text. 16:9 aspect ratio.
+
+## Prompt 4: Developer Workspace
+Bird's eye view of an abstract developer workspace with three distinct zones: search/discovery area, planning/documentation area, building/coding area. Soft lighting, organized aesthetic, productivity vibes. No text. 16:9 aspect ratio.
+
+## Prompt 5: Workflow Pipeline
+Horizontal pipeline visualization with three glowing stages connected by flowing particles. Modern tech aesthetic, dark theme with vibrant accent colors. Clean, professional, DevOps inspired. No text. 16:9 aspect ratio.

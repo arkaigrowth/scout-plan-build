@@ -1,0 +1,44 @@
+{
+  "name": "scout_plan_build_mvp",
+  "version": "2024.11.23",
+  "description": "Scout-Plan-Build AI Developer Workflow Framework",
+  "framework": {
+    "version": "4.0",
+    "type": "command-router"
+  },
+  "paths": {
+    "adws": "adws/",
+    "specs": "specs/",
+    "scout_outputs": "scout_outputs/",
+    "ai_docs": "ai_docs/",
+    "commands": ".claude/commands/",
+    "skills": ".claude/skills/",
+    "hooks": ".claude/hooks/"
+  },
+  "dependencies": {
+    "python": ">=3.9",
+    "required_packages": [
+      "python-dotenv",
+      "pydantic",
+      "pytest",
+      "schedule",
+      "boto3",
+      "fastapi",
+      "pyyaml",
+      "psutil"
+    ]
+  },
+  "git": {
+    "main_branch": "main",
+    "feature_branch_prefix": "feature/",
+    "commit_message_format": "{{type}}: {{description}}"
+  },
+  "environment": {
+    "required_vars": [
+      "ANTHROPIC_API_KEY",
+      "GITHUB_PAT",
+      "GITHUB_REPO_URL",
+      "CLAUDE_CODE_MAX_OUTPUT_TOKENS"
+    ]
+  }
+}

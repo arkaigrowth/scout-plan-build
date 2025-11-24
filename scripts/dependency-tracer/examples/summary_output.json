@@ -1,0 +1,50 @@
+{
+  "stats": {
+    "total": 128,
+    "valid": 123,
+    "broken": 5,
+    "local": 45,
+    "installed": 78
+  },
+  "broken_imports": [
+    {
+      "file": "adws/workflow.py",
+      "line": 10,
+      "module": "nonexistent_package",
+      "type": "import"
+    },
+    {
+      "file": "adws/utils/helper.py",
+      "line": 5,
+      "module": "deprecated_lib",
+      "type": "from_import"
+    },
+    {
+      "file": "adws/main.py",
+      "line": 3,
+      "module": "missing_module",
+      "type": "import"
+    },
+    {
+      "file": "adws/config.py",
+      "line": 8,
+      "module": "old_package",
+      "type": "from_import"
+    },
+    {
+      "file": "adws/tasks.py",
+      "line": 15,
+      "module": "utils.nonexistent",
+      "type": "from_import"
+    }
+  ],
+  "broken_modules": [
+    "nonexistent_package",
+    "deprecated_lib",
+    "missing_module",
+    "old_package",
+    "utils.nonexistent"
+  ],
+  "output_file": "scout_outputs/traces/2024-11-23_183045/python_imports.json",
+  "summary_file": "scout_outputs/traces/2024-11-23_183045/summary.md"
+}

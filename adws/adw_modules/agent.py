@@ -8,14 +8,14 @@ import re
 import logging
 from typing import Optional, List, Dict, Any, Tuple, Final
 from dotenv import load_dotenv
-from .data_types import (
+from adw_modules.data_types import (
     AgentPromptRequest,
     AgentPromptResponse,
     AgentTemplateRequest,
     ClaudeCodeResultMessage,
     SlashCommand,
 )
-from .exceptions import (
+from adw_modules.exceptions import (
     AgentError,
     EnvironmentError,
     TokenLimitError,
@@ -179,7 +179,7 @@ def get_claude_env() -> Dict[str, str]:
     based on .env.sample configuration.
     """
     # Import here to avoid circular imports
-    from .utils import get_safe_subprocess_env
+    from adw_modules.utils import get_safe_subprocess_env
 
     # Use the shared function
     return get_safe_subprocess_env()

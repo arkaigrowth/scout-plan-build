@@ -18,8 +18,8 @@ import sys
 import os
 import json
 from typing import Dict, List, Optional
-from .data_types import GitHubIssue, GitHubIssueListItem, GitHubComment
-from .exceptions import GitHubAPIError, EnvironmentError
+from adw_modules.data_types import GitHubIssue, GitHubIssueListItem, GitHubComment
+from adw_modules.exceptions import GitHubAPIError, EnvironmentError
 
 # Bot identifier to prevent webhook loops and filter bot comments
 ADW_BOT_IDENTIFIER = "[ADW-BOT]"

@@ -1,3 +1,8 @@
+---
+description: Generate and checkout a Git branch with standardized naming format from issue details.
+argument-hint: <issue_class> <adw_id> <issue_json>
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

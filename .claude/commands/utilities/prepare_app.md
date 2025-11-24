@@ -1,3 +1,8 @@
+---
+description: Setup the application for review or testing - resets database and ensures server/client are running.
+argument-hint: (no arguments)
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

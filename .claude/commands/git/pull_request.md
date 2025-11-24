@@ -1,3 +1,8 @@
+---
+description: Create a GitHub pull request with formatted title and body from branch, issue, and plan details.
+argument-hint: <branch_name> <issue_json> <plan_file> <adw_id>
+---
+
 <!-- risk: mutate-external -->
 <!-- auto-invoke: never -->
 

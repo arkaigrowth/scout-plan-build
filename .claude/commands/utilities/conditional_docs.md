@@ -1,3 +1,8 @@
+---
+description: Guide for determining which documentation to read based on the task. Match conditions to find relevant docs.
+argument-hint: (no arguments - reference guide)
+---
+
 <!-- risk: read-only -->
 <!-- auto-invoke: safe -->
 

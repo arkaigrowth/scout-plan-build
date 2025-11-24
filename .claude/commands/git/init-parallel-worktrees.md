@@ -1,3 +1,8 @@
+---
+description: Create N parallel git worktrees for concurrent agent development. Use with /run-parallel-agents.
+argument-hint: <feature_name> [num_agents]
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

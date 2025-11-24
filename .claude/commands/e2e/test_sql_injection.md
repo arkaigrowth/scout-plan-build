@@ -1,3 +1,8 @@
+---
+description: E2E test for SQL injection protection and security validation. Run via /test_e2e.
+argument-hint: (no arguments - test file read by /test_e2e)
+---
+
 # E2E Test: SQL Injection Protection
 
 Test the application's protection against SQL injection attacks.

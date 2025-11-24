@@ -1,3 +1,8 @@
+---
+description: Execute comprehensive validation tests for frontend and backend. Returns JSON test results.
+argument-hint: (no arguments)
+---
+
 <!-- risk: read-only -->
 <!-- auto-invoke: safe -->
 

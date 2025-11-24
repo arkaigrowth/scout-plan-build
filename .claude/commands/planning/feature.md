@@ -1,3 +1,8 @@
+---
+description: Create a detailed plan for implementing a new feature. Saves to specs/. Called by /classify_issue routing.
+argument-hint: <issue_number> <adw_id> <issue_json>
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

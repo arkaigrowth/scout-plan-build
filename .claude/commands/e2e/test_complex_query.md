@@ -1,3 +1,8 @@
+---
+description: E2E test for complex queries with filtering conditions. Run via /test_e2e.
+argument-hint: (no arguments - test file read by /test_e2e)
+---
+
 # E2E Test: Complex Query with Filtering
 
 Test complex query capabilities with filtering conditions.

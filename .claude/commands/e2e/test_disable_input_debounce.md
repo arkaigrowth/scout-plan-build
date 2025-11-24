@@ -1,3 +1,8 @@
+---
+description: E2E test for input disabling during query execution and debouncing functionality. Run via /test_e2e.
+argument-hint: (no arguments - test file read by /test_e2e)
+---
+
 # E2E Test: Input Disabling and Debouncing
 
 Test input disabling during query execution and debouncing functionality in the Natural Language SQL Interface application.

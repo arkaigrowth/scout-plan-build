@@ -1,3 +1,8 @@
+---
+description: Review work against a specification file to verify implementation matches requirements. Takes screenshots of critical paths.
+argument-hint: <adw_id> <spec_file> [agent_name]
+---
+
 <!-- risk: read-only -->
 <!-- auto-invoke: safe -->
 

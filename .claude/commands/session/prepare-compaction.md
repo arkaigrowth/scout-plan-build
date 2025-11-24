@@ -1,3 +1,8 @@
+---
+description: Prepare session for context compaction by saving state, creating handoff artifacts, and committing changes.
+argument-hint: (no arguments)
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

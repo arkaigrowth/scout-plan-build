@@ -1,3 +1,8 @@
+---
+description: Merge a parallel worktree implementation back to main and optionally clean up all worktrees.
+argument-hint: <worktree_path> [cleanup]
+---
+
 <!-- risk: mutate-external -->
 <!-- auto-invoke: never -->
 

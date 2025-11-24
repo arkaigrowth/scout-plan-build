@@ -1,3 +1,8 @@
+---
+description: Create a focused patch plan for a specific review issue. Minimal targeted changes. Saves to specs/patch/.
+argument-hint: <adw_id> <review_change_request> [spec_path] [agent_name] [issue_screenshots]
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

@@ -1,3 +1,8 @@
+---
+description: Implement changes from a plan file with atomic commits. Returns build report with diff stats.
+argument-hint: <plan_file_path>
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

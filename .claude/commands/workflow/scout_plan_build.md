@@ -1,3 +1,8 @@
+---
+description: Three-step workflow (scout -> plan -> build) to deliver a feature. Use /scout_plan_build_improved instead.
+argument-hint: "<user_prompt>" [documentation_urls]
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

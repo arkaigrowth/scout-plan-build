@@ -1,3 +1,8 @@
+---
+description: Interactive setup wizard for configuring the Scout-Plan-Build framework in a new or existing project.
+argument-hint: (no arguments - interactive)
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

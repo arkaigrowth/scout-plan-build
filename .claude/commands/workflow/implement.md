@@ -1,3 +1,8 @@
+---
+description: Implement a plan passed inline as arguments. For one-off implementations. Use /build_adw for spec files.
+argument-hint: <plan_content>
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

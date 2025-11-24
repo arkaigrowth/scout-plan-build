@@ -1,3 +1,8 @@
+---
+description: Undo n checkpoints in a worktree, reverting to a previous state. Supports redo via /worktree_redo.
+argument-hint: [n]
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

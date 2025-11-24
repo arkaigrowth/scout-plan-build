@@ -1,3 +1,8 @@
+---
+description: Fix a specific failing E2E test using provided failure details, screenshots, and test path.
+argument-hint: <e2e_test_failure_json>
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

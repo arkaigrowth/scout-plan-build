@@ -1,3 +1,8 @@
+---
+description: Fix a specific failing test using provided failure details. Analyzes root cause and applies minimal fix.
+argument-hint: <test_failure_json>
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

@@ -1,3 +1,8 @@
+---
+description: Create a git commit with a properly formatted message based on agent name, issue class, and context.
+argument-hint: <agent_name> <issue_class> <issue_json>
+---
+
 <!-- risk: mutate-external -->
 <!-- auto-invoke: never -->
 

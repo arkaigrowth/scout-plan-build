@@ -1,3 +1,8 @@
+---
+description: Initialize project by installing dependencies, setting up database, and starting servers. For new project setup.
+argument-hint: (no arguments)
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

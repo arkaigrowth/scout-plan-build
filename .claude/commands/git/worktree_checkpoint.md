@@ -1,3 +1,8 @@
+---
+description: Create a checkpoint (undo point) in current worktree. Used with /worktree_undo and /worktree_redo.
+argument-hint: [message]
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

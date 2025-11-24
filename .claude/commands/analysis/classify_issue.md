@@ -1,3 +1,8 @@
+---
+description: Classify a GitHub issue and route to appropriate planning command (chore/bug/feature/patch).
+argument-hint: <github-issue-json>
+---
+
 <!-- risk: read-only -->
 <!-- auto-invoke: safe -->
 

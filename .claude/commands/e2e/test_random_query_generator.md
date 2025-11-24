@@ -1,3 +1,8 @@
+---
+description: E2E test for random query generation functionality. Run via /test_e2e.
+argument-hint: (no arguments - test file read by /test_e2e)
+---
+
 # E2E Test: Random Query Generator
 
 Test the random query generation functionality in the Natural Language SQL Interface application.

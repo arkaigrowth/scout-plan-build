@@ -1,3 +1,8 @@
+---
+description: E2E test for basic natural language query functionality. Run via /test_e2e.
+argument-hint: (no arguments - test file read by /test_e2e)
+---
+
 # E2E Test: Basic Query Execution
 
 Test basic query functionality in the Natural Language SQL Interface application.

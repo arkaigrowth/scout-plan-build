@@ -1,3 +1,8 @@
+---
+description: Create an implementation plan with documentation scraping. Saves to specs/. Use /plan_w_docs_improved instead.
+argument-hint: "<user_prompt>" [documentation_urls] [relevant_files.json]
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

@@ -1,3 +1,8 @@
+---
+description: Run an E2E test file using Playwright browser automation. Captures screenshots and returns JSON results.
+argument-hint: [adw_id] [agent_name] <e2e_test_file> [application_url]
+---
+
 <!-- risk: read-only -->
 <!-- auto-invoke: safe -->
 

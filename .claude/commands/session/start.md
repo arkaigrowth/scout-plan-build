@@ -1,3 +1,8 @@
+---
+description: Start the application server and client, opening the browser to localhost:5173.
+argument-hint: (no arguments)
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

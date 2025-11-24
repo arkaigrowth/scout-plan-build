@@ -1,3 +1,8 @@
+---
+description: Extract ADW workflow commands and IDs from text. Returns JSON with adw_slash_command and adw_id.
+argument-hint: <text-to-analyze>
+---
+
 <!-- risk: read-only -->
 <!-- auto-invoke: safe -->
 

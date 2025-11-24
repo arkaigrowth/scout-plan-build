@@ -1,3 +1,8 @@
+---
+description: Generate markdown documentation for implemented features by analyzing git diff and specs. Saves to app_docs/.
+argument-hint: <adw_id> [spec_path] [screenshots_dir]
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

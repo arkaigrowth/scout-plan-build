@@ -1,3 +1,8 @@
+---
+description: Create a new git worktree for isolated feature development with auto-checkpoint system.
+argument-hint: <name> [base-branch]
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

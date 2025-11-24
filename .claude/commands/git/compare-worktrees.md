@@ -1,3 +1,8 @@
+---
+description: Compare all parallel agent implementations for a feature, showing diff stats and test status.
+argument-hint: <feature_name>
+---
+
 <!-- risk: read-only -->
 <!-- auto-invoke: safe -->
 

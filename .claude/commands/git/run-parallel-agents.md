@@ -1,3 +1,8 @@
+---
+description: Execute N Claude agents in parallel, each implementing the same spec in their own worktree.
+argument-hint: <spec_file> <feature_name>
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

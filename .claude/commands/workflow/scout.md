@@ -1,3 +1,8 @@
+---
+description: Search the codebase for files needed to complete a task using native Glob/Grep tools. Use /scout_improved instead.
+argument-hint: "<task_description>" [scale]
+---
+
 <!-- risk: read-only -->
 <!-- auto-invoke: safe -->
 

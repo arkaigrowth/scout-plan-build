@@ -1,3 +1,8 @@
+---
+description: Resume a compacted session by reading handoff files and restoring context. Use after /compact.
+argument-hint: (no arguments)
+---
+
 # Session Resume
 
 Automatically restore context after `/compact` by reading handoff files.

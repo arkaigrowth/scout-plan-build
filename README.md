@@ -58,6 +58,22 @@ What's your task?
 
 ---
 
+## 🎓 Coach Mode
+
+**Learn as Claude works.** Coach Mode makes AI decision-making transparent:
+
+```bash
+/coach          # Toggle coaching on/off
+/coach minimal  # Symbols only (low overhead)
+/coach full     # Maximum transparency
+```
+
+See journey progress, decision explanations, and tool insights in real-time.
+
+→ **[Full Guide](docs/COACH_MODE.md)**
+
+---
+
 ## Installation
 
 ```bash

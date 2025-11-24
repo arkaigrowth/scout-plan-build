@@ -1,3 +1,8 @@
+---
+description: Redo the last undone checkpoint, restoring state after /worktree_undo.
+argument-hint: (no arguments)
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

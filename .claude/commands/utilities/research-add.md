@@ -1,3 +1,8 @@
+---
+description: Add a research document to ai_docs/research library. Accepts filepath or pasted content with metadata extraction.
+argument-hint: <filepath.md> OR (paste markdown content)
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

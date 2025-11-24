@@ -1,3 +1,8 @@
+---
+description: Execute the ADW Python build script to implement a plan. Preferred build command for spec files in specs/.
+argument-hint: <plan_file_path>
+---
+
 <!-- risk: mutate-local -->
 <!-- auto-invoke: gated -->
 

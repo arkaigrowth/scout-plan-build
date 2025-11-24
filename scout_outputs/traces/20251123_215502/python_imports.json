@@ -1,0 +1,2756 @@
+[
+  {
+    "file": "adws/adw_tests/test_agents.py",
+    "module": "sys",
+    "type": "import",
+    "line": 11,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_agents.py",
+    "module": "os",
+    "type": "import",
+    "line": 12,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_agents.py",
+    "module": "json",
+    "type": "import",
+    "line": 13,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build_test.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 18,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build_test.py",
+    "module": "sys",
+    "type": "import",
+    "line": 19,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build_test.py",
+    "module": "os",
+    "type": "import",
+    "line": 20,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build_test_review.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 19,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build_test_review.py",
+    "module": "sys",
+    "type": "import",
+    "line": 20,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build_test_review.py",
+    "module": "os",
+    "type": "import",
+    "line": 21,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build_review.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 21,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build_review.py",
+    "module": "sys",
+    "type": "import",
+    "line": 22,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build_review.py",
+    "module": "os",
+    "type": "import",
+    "line": 23,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_r2_uploader.py",
+    "module": "os",
+    "type": "import",
+    "line": 18,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_r2_uploader.py",
+    "module": "sys",
+    "type": "import",
+    "line": 19,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_r2_uploader.py",
+    "module": "logging",
+    "type": "import",
+    "line": 20,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_r2_uploader.py",
+    "module": "requests",
+    "type": "import",
+    "line": 22,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_adw_test_e2e.py",
+    "module": "sys",
+    "type": "import",
+    "line": 12,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_adw_test_e2e.py",
+    "module": "os",
+    "type": "import",
+    "line": 13,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_adw_test_e2e.py",
+    "module": "logging",
+    "type": "import",
+    "line": 14,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_adw_test_e2e.py",
+    "module": "json",
+    "type": "import",
+    "line": 15,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_adw_test_e2e.py",
+    "module": "traceback",
+    "type": "import",
+    "line": 107,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/sandbox_poc.py",
+    "module": "os",
+    "type": "import",
+    "line": 29,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/sandbox_poc.py",
+    "module": "json",
+    "type": "import",
+    "line": 67,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_scout_parallel.py",
+    "module": "json",
+    "type": "import",
+    "line": 8,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_scout_parallel.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 9,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_scout_parallel.py",
+    "module": "time",
+    "type": "import",
+    "line": 10,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_scout_parallel.py",
+    "module": "shutil",
+    "type": "import",
+    "line": 132,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_scout_parallel.py",
+    "module": "argparse",
+    "type": "import",
+    "line": 247,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_scout_parallel.py",
+    "module": "sys",
+    "type": "import",
+    "line": 262,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan.py",
+    "module": "sys",
+    "type": "import",
+    "line": 20,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan.py",
+    "module": "os",
+    "type": "import",
+    "line": 21,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan.py",
+    "module": "logging",
+    "type": "import",
+    "line": 22,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan.py",
+    "module": "json",
+    "type": "import",
+    "line": 23,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/health_check.py",
+    "module": "os",
+    "type": "import",
+    "line": 22,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/health_check.py",
+    "module": "sys",
+    "type": "import",
+    "line": 23,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/health_check.py",
+    "module": "json",
+    "type": "import",
+    "line": 24,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/health_check.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 25,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/health_check.py",
+    "module": "tempfile",
+    "type": "import",
+    "line": 26,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/health_check.py",
+    "module": "argparse",
+    "type": "import",
+    "line": 30,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build_document.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 22,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build_document.py",
+    "module": "sys",
+    "type": "import",
+    "line": 23,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build_document.py",
+    "module": "os",
+    "type": "import",
+    "line": 24,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_document.py",
+    "module": "sys",
+    "type": "import",
+    "line": 19,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_document.py",
+    "module": "os",
+    "type": "import",
+    "line": 20,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_document.py",
+    "module": "logging",
+    "type": "import",
+    "line": 21,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_document.py",
+    "module": "json",
+    "type": "import",
+    "line": 22,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_document.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 23,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/state.py",
+    "module": "json",
+    "type": "import",
+    "line": 6,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/state.py",
+    "module": "os",
+    "type": "import",
+    "line": 7,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/state.py",
+    "module": "sys",
+    "type": "import",
+    "line": 8,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/state.py",
+    "module": "logging",
+    "type": "import",
+    "line": 9,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/vcs_detection.py",
+    "module": "os",
+    "type": "import",
+    "line": 14,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/vcs_detection.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 15,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/vcs_detection.py",
+    "module": "sys",
+    "type": "import",
+    "line": 260,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_sdlc.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 20,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_sdlc.py",
+    "module": "sys",
+    "type": "import",
+    "line": 21,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_sdlc.py",
+    "module": "os",
+    "type": "import",
+    "line": 22,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_cron.py",
+    "module": "os",
+    "type": "import",
+    "line": 20,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_cron.py",
+    "module": "signal",
+    "type": "import",
+    "line": 21,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_cron.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 22,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_cron.py",
+    "module": "sys",
+    "type": "import",
+    "line": 23,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_cron.py",
+    "module": "time",
+    "type": "import",
+    "line": 24,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_cron.py",
+    "module": "schedule",
+    "type": "import",
+    "line": 28,
+    "status": "broken"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_cron.py",
+    "module": "traceback",
+    "type": "import",
+    "line": 187,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_common.py",
+    "module": "json",
+    "type": "import",
+    "line": 6,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_common.py",
+    "module": "secrets",
+    "type": "import",
+    "line": 33,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/memory_manager.py",
+    "module": "os",
+    "type": "import",
+    "line": 21,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/memory_manager.py",
+    "module": "logging",
+    "type": "import",
+    "line": 22,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_test.py",
+    "module": "json",
+    "type": "import",
+    "line": 24,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_test.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 25,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_test.py",
+    "module": "sys",
+    "type": "import",
+    "line": 26,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_test.py",
+    "module": "os",
+    "type": "import",
+    "line": 27,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_test.py",
+    "module": "logging",
+    "type": "import",
+    "line": 28,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_test.py",
+    "module": "glob",
+    "type": "import",
+    "line": 501,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_validators.py",
+    "module": "pytest",
+    "type": "import",
+    "line": 11,
+    "status": "broken"
+  },
+  {
+    "file": "adws/adw_tests/test_validators.py",
+    "module": "sys",
+    "type": "import",
+    "line": 13,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_validators.py",
+    "module": "os",
+    "type": "import",
+    "line": 14,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_review.py",
+    "module": "sys",
+    "type": "import",
+    "line": 23,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_review.py",
+    "module": "os",
+    "type": "import",
+    "line": 24,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_review.py",
+    "module": "logging",
+    "type": "import",
+    "line": 25,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_review.py",
+    "module": "json",
+    "type": "import",
+    "line": 26,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_review.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 27,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 17,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build.py",
+    "module": "sys",
+    "type": "import",
+    "line": 18,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan_build.py",
+    "module": "os",
+    "type": "import",
+    "line": 19,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_fix_dependencies.py",
+    "module": "json",
+    "type": "import",
+    "line": 43,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_fix_dependencies.py",
+    "module": "sys",
+    "type": "import",
+    "line": 44,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_fix_dependencies.py",
+    "module": "logging",
+    "type": "import",
+    "line": 47,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_patch.py",
+    "module": "sys",
+    "type": "import",
+    "line": 24,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_patch.py",
+    "module": "os",
+    "type": "import",
+    "line": 25,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_patch.py",
+    "module": "logging",
+    "type": "import",
+    "line": 26,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_patch.py",
+    "module": "json",
+    "type": "import",
+    "line": 27,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_patch.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 28,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_build.py",
+    "module": "sys",
+    "type": "import",
+    "line": 18,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_build.py",
+    "module": "os",
+    "type": "import",
+    "line": 19,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_build.py",
+    "module": "logging",
+    "type": "import",
+    "line": 20,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_build.py",
+    "module": "json",
+    "type": "import",
+    "line": 21,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_build.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 22,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/agent.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 2,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/agent.py",
+    "module": "sys",
+    "type": "import",
+    "line": 3,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/agent.py",
+    "module": "os",
+    "type": "import",
+    "line": 4,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/agent.py",
+    "module": "json",
+    "type": "import",
+    "line": 5,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/agent.py",
+    "module": "re",
+    "type": "import",
+    "line": 6,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/agent.py",
+    "module": "logging",
+    "type": "import",
+    "line": 7,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/scout_simple.py",
+    "module": "json",
+    "type": "import",
+    "line": 6,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/scout_simple.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 7,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/scout_simple.py",
+    "module": "re",
+    "type": "import",
+    "line": 52,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/scout_simple.py",
+    "module": "sys",
+    "type": "import",
+    "line": 93,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/memory_hooks.py",
+    "module": "logging",
+    "type": "import",
+    "line": 22,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/memory_hooks.py",
+    "module": "re",
+    "type": "import",
+    "line": 23,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/exceptions.py",
+    "module": "logging",
+    "type": "import",
+    "line": 9,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_webhook.py",
+    "module": "os",
+    "type": "import",
+    "line": 19,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_webhook.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 20,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_webhook.py",
+    "module": "sys",
+    "type": "import",
+    "line": 21,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_webhook.py",
+    "module": "hmac",
+    "type": "import",
+    "line": 22,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_webhook.py",
+    "module": "hashlib",
+    "type": "import",
+    "line": 23,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_webhook.py",
+    "module": "uvicorn",
+    "type": "import",
+    "line": 27,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_webhook.py",
+    "module": "json",
+    "type": "import",
+    "line": 108,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/r2_uploader.py",
+    "module": "os",
+    "type": "import",
+    "line": 2,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/r2_uploader.py",
+    "module": "logging",
+    "type": "import",
+    "line": 3,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/r2_uploader.py",
+    "module": "boto3",
+    "type": "import",
+    "line": 6,
+    "status": "broken"
+  },
+  {
+    "file": "adws/adw_modules/utils.py",
+    "module": "json",
+    "type": "import",
+    "line": 2,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/utils.py",
+    "module": "logging",
+    "type": "import",
+    "line": 3,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/utils.py",
+    "module": "os",
+    "type": "import",
+    "line": 4,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/utils.py",
+    "module": "re",
+    "type": "import",
+    "line": 5,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/utils.py",
+    "module": "sys",
+    "type": "import",
+    "line": 6,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/utils.py",
+    "module": "uuid",
+    "type": "import",
+    "line": 7,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/github.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 15,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/github.py",
+    "module": "sys",
+    "type": "import",
+    "line": 16,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/github.py",
+    "module": "os",
+    "type": "import",
+    "line": 17,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/github.py",
+    "module": "json",
+    "type": "import",
+    "line": 18,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/file_organization.py",
+    "module": "os",
+    "type": "import",
+    "line": 11,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/file_organization.py",
+    "module": "json",
+    "type": "import",
+    "line": 12,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/file_organization.py",
+    "module": "shutil",
+    "type": "import",
+    "line": 13,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/file_organization.py",
+    "module": "sys",
+    "type": "import",
+    "line": 355,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/validators.py",
+    "module": "re",
+    "type": "import",
+    "line": 11,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/validators.py",
+    "module": "shlex",
+    "type": "import",
+    "line": 12,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/bitbucket_ops.py",
+    "module": "os",
+    "type": "import",
+    "line": 14,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/bitbucket_ops.py",
+    "module": "requests",
+    "type": "import",
+    "line": 15,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/bitbucket_ops.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 340,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/bitbucket_ops.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 388,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/git_ops.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 7,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/git_ops.py",
+    "module": "json",
+    "type": "import",
+    "line": 8,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/git_ops.py",
+    "module": "logging",
+    "type": "import",
+    "line": 9,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/git_ops.py",
+    "module": "requests",
+    "type": "import",
+    "line": 153,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "glob",
+    "type": "import",
+    "line": 2,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "json",
+    "type": "import",
+    "line": 3,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "logging",
+    "type": "import",
+    "line": 4,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "os",
+    "type": "import",
+    "line": 5,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "subprocess",
+    "type": "import",
+    "line": 6,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "re",
+    "type": "import",
+    "line": 7,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "os",
+    "type": "import",
+    "line": 624,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "re",
+    "type": "import",
+    "line": 758,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "glob",
+    "type": "import",
+    "line": 766,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_agents.py",
+    "module": "concurrent.futures",
+    "name": "ThreadPoolExecutor",
+    "type": "from_import",
+    "line": 14,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_agents.py",
+    "module": "dotenv",
+    "name": "load_dotenv",
+    "type": "from_import",
+    "line": 15,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_agents.py",
+    "module": "adw_modules.data_types",
+    "name": "AgentPromptRequest",
+    "type": "from_import",
+    "line": 20,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_tests/test_agents.py",
+    "module": "adw_modules.agent",
+    "name": "prompt_claude_code",
+    "type": "from_import",
+    "line": 21,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_tests/test_agents.py",
+    "module": "adw_modules.utils",
+    "name": "make_adw_id",
+    "type": "from_import",
+    "line": 22,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_plan_build_test.py",
+    "module": "adw_modules.workflow_ops",
+    "name": "ensure_adw_id",
+    "type": "from_import",
+    "line": 24,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_plan_build_document.py",
+    "module": "adw_modules.workflow_ops",
+    "name": "ensure_adw_id",
+    "type": "from_import",
+    "line": 28,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_plan_build_test_review.py",
+    "module": "adw_modules.workflow_ops",
+    "name": "ensure_adw_id",
+    "type": "from_import",
+    "line": 25,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_tests/test_adw_test_e2e.py",
+    "module": "typing",
+    "name": "List",
+    "type": "from_import",
+    "line": 16,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_adw_test_e2e.py",
+    "module": "adw_test",
+    "name": "run_e2e_tests_with_resolution",
+    "type": "from_import",
+    "line": 21,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_tests/test_adw_test_e2e.py",
+    "module": "adw_modules.data_types",
+    "name": "E2ETestResult",
+    "type": "from_import",
+    "line": 22,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_tests/test_adw_test_e2e.py",
+    "module": "adw_modules.utils",
+    "name": "make_adw_id",
+    "type": "from_import",
+    "line": 23,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_tests/sandbox_poc.py",
+    "module": "dotenv",
+    "name": "load_dotenv",
+    "type": "from_import",
+    "line": 30,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/sandbox_poc.py",
+    "module": "e2b_code_interpreter",
+    "name": "Sandbox",
+    "type": "from_import",
+    "line": 31,
+    "status": "broken"
+  },
+  {
+    "file": "adws/adw_modules/state.py",
+    "module": "typing",
+    "name": "Dict",
+    "type": "from_import",
+    "line": 10,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/state.py",
+    "module": "adw_modules.data_types",
+    "name": "ADWStateData",
+    "type": "from_import",
+    "line": 11,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/state.py",
+    "module": "adw_modules.exceptions",
+    "name": "StateError",
+    "type": "from_import",
+    "line": 12,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_tests/test_r2_uploader.py",
+    "module": "pathlib",
+    "name": "Path",
+    "type": "from_import",
+    "line": 21,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_r2_uploader.py",
+    "module": "datetime",
+    "name": "datetime",
+    "type": "from_import",
+    "line": 23,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_r2_uploader.py",
+    "module": "dotenv",
+    "name": "load_dotenv",
+    "type": "from_import",
+    "line": 28,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_r2_uploader.py",
+    "module": "adw_modules.r2_uploader",
+    "name": "R2Uploader",
+    "type": "from_import",
+    "line": 29,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_patch.py",
+    "module": "typing",
+    "name": "Optional",
+    "type": "from_import",
+    "line": 29,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_patch.py",
+    "module": "dotenv",
+    "name": "load_dotenv",
+    "type": "from_import",
+    "line": 30,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_patch.py",
+    "module": "adw_modules.state",
+    "name": "ADWState",
+    "type": "from_import",
+    "line": 32,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_patch.py",
+    "module": "adw_modules.git_ops",
+    "name": "commit_changes",
+    "type": "from_import",
+    "line": 33,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_patch.py",
+    "module": "adw_modules.utils",
+    "name": "setup_logger",
+    "type": "from_import",
+    "line": 50,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_patch.py",
+    "module": "adw_modules.agent",
+    "name": "execute_template",
+    "type": "from_import",
+    "line": 56,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_plan.py",
+    "module": "typing",
+    "name": "Optional",
+    "type": "from_import",
+    "line": 24,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan.py",
+    "module": "dotenv",
+    "name": "load_dotenv",
+    "type": "from_import",
+    "line": 25,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_plan.py",
+    "module": "adw_modules.state",
+    "name": "ADWState",
+    "type": "from_import",
+    "line": 27,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_plan.py",
+    "module": "adw_modules.git_ops",
+    "name": "create_branch",
+    "type": "from_import",
+    "line": 28,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_plan.py",
+    "module": "adw_modules.utils",
+    "name": "setup_logger",
+    "type": "from_import",
+    "line": 44,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_plan.py",
+    "module": "adw_modules.data_types",
+    "name": "GitHubIssue",
+    "type": "from_import",
+    "line": 45,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_cron.py",
+    "module": "pathlib",
+    "name": "Path",
+    "type": "from_import",
+    "line": 25,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_cron.py",
+    "module": "typing",
+    "name": "Dict",
+    "type": "from_import",
+    "line": 26,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_cron.py",
+    "module": "dotenv",
+    "name": "load_dotenv",
+    "type": "from_import",
+    "line": 29,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_cron.py",
+    "module": "adw_modules.utils",
+    "name": "get_safe_subprocess_env",
+    "type": "from_import",
+    "line": 33,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_cron.py",
+    "module": "adw_modules.github",
+    "name": "fetch_open_issues",
+    "type": "from_import",
+    "line": 35,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_build.py",
+    "module": "typing",
+    "name": "Optional",
+    "type": "from_import",
+    "line": 23,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_build.py",
+    "module": "dotenv",
+    "name": "load_dotenv",
+    "type": "from_import",
+    "line": 24,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_build.py",
+    "module": "adw_modules.state",
+    "name": "ADWState",
+    "type": "from_import",
+    "line": 26,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_build.py",
+    "module": "adw_modules.git_ops",
+    "name": "commit_changes",
+    "type": "from_import",
+    "line": 27,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_build.py",
+    "module": "adw_modules.github",
+    "name": "fetch_issue",
+    "type": "from_import",
+    "line": 28,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_build.py",
+    "module": "adw_modules.utils",
+    "name": "setup_logger",
+    "type": "from_import",
+    "line": 35,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_build.py",
+    "module": "adw_modules.data_types",
+    "name": "GitHubIssue",
+    "type": "from_import",
+    "line": 36,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_build.py",
+    "module": "adw_modules.workflow_ops",
+    "name": "classify_issue",
+    "type": "from_import",
+    "line": 184,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_sdlc.py",
+    "module": "adw_modules.workflow_ops",
+    "name": "ensure_adw_id",
+    "type": "from_import",
+    "line": 26,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/constants.py",
+    "module": "pathlib",
+    "name": "Path",
+    "type": "from_import",
+    "line": 10,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/constants.py",
+    "module": "typing",
+    "name": "Optional",
+    "type": "from_import",
+    "line": 11,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/data_types.py",
+    "module": "datetime",
+    "name": "datetime",
+    "type": "from_import",
+    "line": 2,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/data_types.py",
+    "module": "typing",
+    "name": "Optional",
+    "type": "from_import",
+    "line": 3,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/data_types.py",
+    "module": "pydantic",
+    "name": "BaseModel",
+    "type": "from_import",
+    "line": 4,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/validators_v2_fix.py",
+    "module": "pydantic",
+    "name": "constr as constr_v1",
+    "type": "from_import",
+    "line": 3,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/validators_v2_fix.py",
+    "module": "typing_extensions",
+    "name": "Annotated",
+    "type": "from_import",
+    "line": 4,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/validators_v2_fix.py",
+    "module": "pydantic",
+    "name": "Field",
+    "type": "from_import",
+    "line": 5,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/test_validators.py",
+    "module": "pydantic",
+    "name": "ValidationError",
+    "type": "from_import",
+    "line": 12,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/vcs_detection.py",
+    "module": "typing",
+    "name": "Dict",
+    "type": "from_import",
+    "line": 16,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/vcs_detection.py",
+    "module": "urllib.parse",
+    "name": "urlparse",
+    "type": "from_import",
+    "line": 17,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/health_check.py",
+    "module": "typing",
+    "name": "Dict",
+    "type": "from_import",
+    "line": 27,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/health_check.py",
+    "module": "datetime",
+    "name": "datetime",
+    "type": "from_import",
+    "line": 28,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/health_check.py",
+    "module": "pathlib",
+    "name": "Path",
+    "type": "from_import",
+    "line": 29,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/health_check.py",
+    "module": "dotenv",
+    "name": "load_dotenv",
+    "type": "from_import",
+    "line": 32,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/health_check.py",
+    "module": "pydantic",
+    "name": "BaseModel",
+    "type": "from_import",
+    "line": 33,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_tests/health_check.py",
+    "module": "adw_modules.github",
+    "name": "get_repo_url",
+    "type": "from_import",
+    "line": 39,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_tests/health_check.py",
+    "module": "adw_modules.utils",
+    "name": "get_safe_subprocess_env",
+    "type": "from_import",
+    "line": 40,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_review.py",
+    "module": "typing",
+    "name": "Optional",
+    "type": "from_import",
+    "line": 28,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_review.py",
+    "module": "dotenv",
+    "name": "load_dotenv",
+    "type": "from_import",
+    "line": 29,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_review.py",
+    "module": "adw_modules.state",
+    "name": "ADWState",
+    "type": "from_import",
+    "line": 31,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_review.py",
+    "module": "adw_modules.git_ops",
+    "name": "commit_changes",
+    "type": "from_import",
+    "line": 32,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_review.py",
+    "module": "adw_modules.utils",
+    "name": "setup_logger",
+    "type": "from_import",
+    "line": 48,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_review.py",
+    "module": "adw_modules.agent",
+    "name": "execute_template",
+    "type": "from_import",
+    "line": 56,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_review.py",
+    "module": "adw_modules.r2_uploader",
+    "name": "R2Uploader",
+    "type": "from_import",
+    "line": 57,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/validators.py",
+    "module": "pathlib",
+    "name": "Path",
+    "type": "from_import",
+    "line": 13,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/validators.py",
+    "module": "typing",
+    "name": "List",
+    "type": "from_import",
+    "line": 14,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/validators.py",
+    "module": "urllib.parse",
+    "name": "urlparse",
+    "type": "from_import",
+    "line": 15,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/validators.py",
+    "module": "pydantic",
+    "name": "BaseModel",
+    "type": "from_import",
+    "line": 16,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/validators.py",
+    "module": "typing_extensions",
+    "name": "Annotated",
+    "type": "from_import",
+    "line": 17,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/validators.py",
+    "module": "adw_modules.constants",
+    "name": "ALLOWED_OUTPUT_PREFIXES",
+    "type": "from_import",
+    "line": 21,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_fix_dependencies.py",
+    "module": "pathlib",
+    "name": "Path",
+    "type": "from_import",
+    "line": 45,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_fix_dependencies.py",
+    "module": "typing",
+    "name": "List",
+    "type": "from_import",
+    "line": 46,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_fix_dependencies.py",
+    "module": "datetime",
+    "name": "datetime",
+    "type": "from_import",
+    "line": 48,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_fix_dependencies.py",
+    "module": "adws.adw_modules.utils",
+    "name": "setup_logger",
+    "type": "from_import",
+    "line": 53,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_fix_dependencies.py",
+    "module": "adws.adw_modules.state",
+    "name": "ADWState",
+    "type": "from_import",
+    "line": 54,
+    "status": "broken"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_webhook.py",
+    "module": "typing",
+    "name": "Optional",
+    "type": "from_import",
+    "line": 24,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_webhook.py",
+    "module": "fastapi",
+    "name": "FastAPI",
+    "type": "from_import",
+    "line": 25,
+    "status": "broken"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_webhook.py",
+    "module": "dotenv",
+    "name": "load_dotenv",
+    "type": "from_import",
+    "line": 26,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_webhook.py",
+    "module": "adw_modules.utils",
+    "name": "make_adw_id",
+    "type": "from_import",
+    "line": 32,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_webhook.py",
+    "module": "adw_modules.github",
+    "name": "make_issue_comment",
+    "type": "from_import",
+    "line": 33,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_webhook.py",
+    "module": "adw_modules.workflow_ops",
+    "name": "extract_adw_info",
+    "type": "from_import",
+    "line": 34,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_triggers/trigger_webhook.py",
+    "module": "adw_modules.state",
+    "name": "ADWState",
+    "type": "from_import",
+    "line": 35,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/bitbucket_ops.py",
+    "module": "typing",
+    "name": "Optional",
+    "type": "from_import",
+    "line": 16,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/bitbucket_ops.py",
+    "module": "urllib.parse",
+    "name": "urlparse",
+    "type": "from_import",
+    "line": 17,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_common.py",
+    "module": "dataclasses",
+    "name": "dataclass",
+    "type": "from_import",
+    "line": 7,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_common.py",
+    "module": "pathlib",
+    "name": "Path",
+    "type": "from_import",
+    "line": 8,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_common.py",
+    "module": "typing",
+    "name": "List",
+    "type": "from_import",
+    "line": 9,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_common.py",
+    "module": "datetime",
+    "name": "datetime",
+    "type": "from_import",
+    "line": 34,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_common.py",
+    "module": "datetime",
+    "name": "datetime",
+    "type": "from_import",
+    "line": 144,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_common.py",
+    "module": "datetime",
+    "name": "datetime",
+    "type": "from_import",
+    "line": 177,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_document.py",
+    "module": "typing",
+    "name": "Optional",
+    "type": "from_import",
+    "line": 24,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_document.py",
+    "module": "dotenv",
+    "name": "load_dotenv",
+    "type": "from_import",
+    "line": 25,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_document.py",
+    "module": "adw_modules.state",
+    "name": "ADWState",
+    "type": "from_import",
+    "line": 27,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_document.py",
+    "module": "adw_modules.git_ops",
+    "name": "commit_changes",
+    "type": "from_import",
+    "line": 28,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_document.py",
+    "module": "adw_modules.github",
+    "name": "fetch_issue",
+    "type": "from_import",
+    "line": 29,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_document.py",
+    "module": "adw_modules.utils",
+    "name": "setup_logger",
+    "type": "from_import",
+    "line": 35,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_document.py",
+    "module": "adw_modules.data_types",
+    "name": "GitHubIssue",
+    "type": "from_import",
+    "line": 36,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_document.py",
+    "module": "adw_modules.agent",
+    "name": "execute_template",
+    "type": "from_import",
+    "line": 37,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_plan_build_review.py",
+    "module": "adw_modules.workflow_ops",
+    "name": "ensure_adw_id",
+    "type": "from_import",
+    "line": 27,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/r2_uploader.py",
+    "module": "typing",
+    "name": "Optional",
+    "type": "from_import",
+    "line": 4,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/r2_uploader.py",
+    "module": "pathlib",
+    "name": "Path",
+    "type": "from_import",
+    "line": 5,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/r2_uploader.py",
+    "module": "botocore.client",
+    "name": "Config",
+    "type": "from_import",
+    "line": 7,
+    "status": "broken"
+  },
+  {
+    "file": "adws/adw_modules/r2_uploader.py",
+    "module": "botocore.exceptions",
+    "name": "ClientError",
+    "type": "from_import",
+    "line": 8,
+    "status": "broken"
+  },
+  {
+    "file": "adws/adw_test.py",
+    "module": "typing",
+    "name": "Tuple",
+    "type": "from_import",
+    "line": 29,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_test.py",
+    "module": "dotenv",
+    "name": "load_dotenv",
+    "type": "from_import",
+    "line": 30,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_test.py",
+    "module": "adw_modules.agent",
+    "name": "execute_template",
+    "type": "from_import",
+    "line": 39,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_test.py",
+    "module": "adw_modules.utils",
+    "name": "make_adw_id",
+    "type": "from_import",
+    "line": 46,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_test.py",
+    "module": "adw_modules.state",
+    "name": "ADWState",
+    "type": "from_import",
+    "line": 47,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_test.py",
+    "module": "adw_modules.git_ops",
+    "name": "commit_changes",
+    "type": "from_import",
+    "line": 48,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_test.py",
+    "module": "adw_modules.git_ops",
+    "name": "create_branch",
+    "type": "from_import",
+    "line": 911,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/scout_simple.py",
+    "module": "pathlib",
+    "name": "Path",
+    "type": "from_import",
+    "line": 8,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/scout_simple.py",
+    "module": "typing",
+    "name": "List",
+    "type": "from_import",
+    "line": 9,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/scout_simple.py",
+    "module": "adw_modules.constants",
+    "name": "get_scout_output_path",
+    "type": "from_import",
+    "line": 13,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_plan_build.py",
+    "module": "adw_modules.workflow_ops",
+    "name": "ensure_adw_id",
+    "type": "from_import",
+    "line": 23,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/utils.py",
+    "module": "datetime",
+    "name": "datetime",
+    "type": "from_import",
+    "line": 8,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/utils.py",
+    "module": "typing",
+    "name": "Any",
+    "type": "from_import",
+    "line": 9,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/memory_hooks.py",
+    "module": "datetime",
+    "name": "datetime",
+    "type": "from_import",
+    "line": 24,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/memory_hooks.py",
+    "module": "typing",
+    "name": "Dict",
+    "type": "from_import",
+    "line": 25,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/memory_hooks.py",
+    "module": "adw_modules.memory_manager",
+    "name": "MemoryManager",
+    "type": "from_import",
+    "line": 26,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/memory_hooks.py",
+    "module": "adw_modules.github",
+    "name": "get_repo_url",
+    "type": "from_import",
+    "line": 107,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_scout_parallel.py",
+    "module": "pathlib",
+    "name": "Path",
+    "type": "from_import",
+    "line": 11,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_scout_parallel.py",
+    "module": "typing",
+    "name": "List",
+    "type": "from_import",
+    "line": 12,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_scout_parallel.py",
+    "module": "datetime",
+    "name": "datetime",
+    "type": "from_import",
+    "line": 13,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_scout_parallel.py",
+    "module": "adw_modules.utils",
+    "name": "setup_environment",
+    "type": "from_import",
+    "line": 17,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_scout_parallel.py",
+    "module": "adw_modules.constants",
+    "name": "SCOUT_FINAL_FILE",
+    "type": "from_import",
+    "line": 18,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/exceptions.py",
+    "module": "typing",
+    "name": "Dict",
+    "type": "from_import",
+    "line": 7,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/exceptions.py",
+    "module": "datetime",
+    "name": "datetime",
+    "type": "from_import",
+    "line": 8,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/exceptions.py",
+    "module": "adw_modules.github",
+    "name": "make_issue_comment",
+    "type": "from_import",
+    "line": 432,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/exceptions.py",
+    "module": "adw_modules.workflow_ops",
+    "name": "format_issue_message",
+    "type": "from_import",
+    "line": 433,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/git_ops.py",
+    "module": "typing",
+    "name": "Optional",
+    "type": "from_import",
+    "line": 10,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/git_ops.py",
+    "module": "adw_modules.github",
+    "name": "get_repo_url",
+    "type": "from_import",
+    "line": 13,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/git_ops.py",
+    "module": "adw_modules.exceptions",
+    "name": "GitOperationError",
+    "type": "from_import",
+    "line": 14,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/git_ops.py",
+    "module": "adw_modules.validators",
+    "name": "validate_branch_name",
+    "type": "from_import",
+    "line": 15,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/git_ops.py",
+    "module": "adw_modules.vcs_detection",
+    "name": "detect_vcs_provider",
+    "type": "from_import",
+    "line": 16,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/git_ops.py",
+    "module": "adw_modules",
+    "name": "bitbucket_ops",
+    "type": "from_import",
+    "line": 154,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/git_ops.py",
+    "module": "adw_modules.exceptions",
+    "name": "StateError",
+    "type": "from_import",
+    "line": 308,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/git_ops.py",
+    "module": "adw_modules.github",
+    "name": "fetch_issue",
+    "type": "from_import",
+    "line": 369,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/git_ops.py",
+    "module": "adw_modules.workflow_ops",
+    "name": "create_pull_request",
+    "type": "from_import",
+    "line": 372,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/github.py",
+    "module": "typing",
+    "name": "Dict",
+    "type": "from_import",
+    "line": 19,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/github.py",
+    "module": "adw_modules.data_types",
+    "name": "GitHubIssue",
+    "type": "from_import",
+    "line": 20,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/github.py",
+    "module": "adw_modules.exceptions",
+    "name": "GitHubAPIError",
+    "type": "from_import",
+    "line": 21,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/file_organization.py",
+    "module": "datetime",
+    "name": "datetime",
+    "type": "from_import",
+    "line": 14,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/file_organization.py",
+    "module": "pathlib",
+    "name": "Path",
+    "type": "from_import",
+    "line": 15,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/file_organization.py",
+    "module": "typing",
+    "name": "Optional",
+    "type": "from_import",
+    "line": 16,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "typing",
+    "name": "Tuple",
+    "type": "from_import",
+    "line": 8,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "pydantic",
+    "name": "ValidationError as PydanticValidationError",
+    "type": "from_import",
+    "line": 9,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "adw_modules.agent",
+    "name": "execute_template",
+    "type": "from_import",
+    "line": 17,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "adw_modules.github",
+    "name": "get_repo_url",
+    "type": "from_import",
+    "line": 18,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "adw_modules.state",
+    "name": "ADWState",
+    "type": "from_import",
+    "line": 19,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "adw_modules.utils",
+    "name": "parse_json",
+    "type": "from_import",
+    "line": 20,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "adw_modules.data_types",
+    "name": "GitHubIssue",
+    "type": "from_import",
+    "line": 480,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "adw_modules.git_ops",
+    "name": "get_current_branch",
+    "type": "from_import",
+    "line": 522,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "adw_modules.utils",
+    "name": "make_adw_id",
+    "type": "from_import",
+    "line": 579,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "adw_modules.git_ops",
+    "name": "get_current_branch",
+    "type": "from_import",
+    "line": 670,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/workflow_ops.py",
+    "module": "adw_modules.git_ops",
+    "name": "create_branch",
+    "type": "from_import",
+    "line": 718,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/agent.py",
+    "module": "typing",
+    "name": "Optional",
+    "type": "from_import",
+    "line": 8,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/agent.py",
+    "module": "dotenv",
+    "name": "load_dotenv",
+    "type": "from_import",
+    "line": 9,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/agent.py",
+    "module": "adw_modules.utils",
+    "name": "get_safe_subprocess_env",
+    "type": "from_import",
+    "line": 181,
+    "status": "valid",
+    "location": "local"
+  },
+  {
+    "file": "adws/adw_modules/memory_manager.py",
+    "module": "typing",
+    "name": "Optional",
+    "type": "from_import",
+    "line": 23,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/memory_manager.py",
+    "module": "datetime",
+    "name": "datetime",
+    "type": "from_import",
+    "line": 24,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/memory_manager.py",
+    "module": "mem0",
+    "name": "Memory",
+    "type": "from_import",
+    "line": 85,
+    "status": "valid",
+    "location": "installed"
+  },
+  {
+    "file": "adws/adw_modules/memory_manager.py",
+    "module": "mem0.configs.base",
+    "name": "MemoryConfig",
+    "type": "from_import",
+    "line": 119,
+    "status": "valid",
+    "location": "installed"
+  }
+]

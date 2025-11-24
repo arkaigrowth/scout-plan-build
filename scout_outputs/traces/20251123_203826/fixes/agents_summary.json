@@ -1,0 +1,850 @@
+{
+  "total_agents": 93,
+  "timestamp": "2025-11-23T20:40:49.203330",
+  "agents": [
+    {
+      "index": 1,
+      "reference": "yaml",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_001_yaml.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_001_yaml.md",
+      "file": "scripts/install_declarative.py"
+    },
+    {
+      "index": 2,
+      "reference": "pytest",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_002_pytest.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_002_pytest.md",
+      "file": "tests/test_bitbucket_integration.py"
+    },
+    {
+      "index": 3,
+      "reference": "schedule",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_003_schedule.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_003_schedule.md",
+      "file": "adws/adw_triggers/trigger_cron.py"
+    },
+    {
+      "index": 4,
+      "reference": "boto3",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_004_boto3.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_004_boto3.md",
+      "file": "adws/adw_modules/r2_uploader.py"
+    },
+    {
+      "index": 5,
+      "reference": "pytest",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_005_pytest.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_005_pytest.md",
+      "file": "adws/adw_tests/test_validators.py"
+    },
+    {
+      "index": 6,
+      "reference": "psutil",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_006_psutil.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_006_psutil.md",
+      "file": "benchmarks/parallel_test_suite.py"
+    },
+    {
+      "index": 7,
+      "reference": "pytest",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_007_pytest.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_007_pytest.md",
+      "file": "benchmarks/parallel_test_suite.py"
+    },
+    {
+      "index": 8,
+      "reference": "mermaid",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_008_mermaid.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_008_mermaid.md",
+      "file": "ai_docs/architecture/diagrams/architecture-viewer.html"
+    },
+    {
+      "index": 9,
+      "reference": "adw_modules.workflow_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_009_adw_modules.workflow_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_009_adw_modules.workflow_ops.md",
+      "file": "adws/adw_plan_build.py"
+    },
+    {
+      "index": 10,
+      "reference": "adw_modules.data_types",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_010_adw_modules.data_types.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_010_adw_modules.data_types.md",
+      "file": "adws/adw_tests/test_agents.py"
+    },
+    {
+      "index": 11,
+      "reference": "adw_modules.agent",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_011_adw_modules.agent.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_011_adw_modules.agent.md",
+      "file": "adws/adw_tests/test_agents.py"
+    },
+    {
+      "index": 12,
+      "reference": "adw_modules.utils",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_012_adw_modules.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_012_adw_modules.utils.md",
+      "file": "adws/adw_tests/test_agents.py"
+    },
+    {
+      "index": 13,
+      "reference": "adw_modules.workflow_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_013_adw_modules.workflow_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_013_adw_modules.workflow_ops.md",
+      "file": "adws/adw_sdlc.py"
+    },
+    {
+      "index": 14,
+      "reference": "adw_modules.state",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_014_adw_modules.state.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_014_adw_modules.state.md",
+      "file": "adws/adw_patch.py"
+    },
+    {
+      "index": 15,
+      "reference": "adw_modules.git_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_015_adw_modules.git_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_015_adw_modules.git_ops.md",
+      "file": "adws/adw_patch.py"
+    },
+    {
+      "index": 16,
+      "reference": "adw_modules.utils",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_016_adw_modules.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_016_adw_modules.utils.md",
+      "file": "adws/adw_patch.py"
+    },
+    {
+      "index": 17,
+      "reference": "adw_modules.agent",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_017_adw_modules.agent.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_017_adw_modules.agent.md",
+      "file": "adws/adw_patch.py"
+    },
+    {
+      "index": 18,
+      "reference": "adw_modules.data_types",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_018_adw_modules.data_types.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_018_adw_modules.data_types.md",
+      "file": "adws/adw_modules/state.py"
+    },
+    {
+      "index": 19,
+      "reference": "adw_modules.exceptions",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_019_adw_modules.exceptions.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_019_adw_modules.exceptions.md",
+      "file": "adws/adw_modules/state.py"
+    },
+    {
+      "index": 20,
+      "reference": "adw_modules.workflow_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_020_adw_modules.workflow_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_020_adw_modules.workflow_ops.md",
+      "file": "adws/adw_plan_build_test.py"
+    },
+    {
+      "index": 21,
+      "reference": "adw_modules.github",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_021_adw_modules.github.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_021_adw_modules.github.md",
+      "file": "adws/adw_tests/health_check.py"
+    },
+    {
+      "index": 22,
+      "reference": "adw_modules.utils",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_022_adw_modules.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_022_adw_modules.utils.md",
+      "file": "adws/adw_tests/health_check.py"
+    },
+    {
+      "index": 23,
+      "reference": "adw_modules.workflow_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_023_adw_modules.workflow_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_023_adw_modules.workflow_ops.md",
+      "file": "adws/adw_plan_build_test_review.py"
+    },
+    {
+      "index": 24,
+      "reference": "adw_modules.state",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_024_adw_modules.state.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_024_adw_modules.state.md",
+      "file": "adws/adw_build.py"
+    },
+    {
+      "index": 25,
+      "reference": "adw_modules.git_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_025_adw_modules.git_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_025_adw_modules.git_ops.md",
+      "file": "adws/adw_build.py"
+    },
+    {
+      "index": 26,
+      "reference": "adw_modules.github",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_026_adw_modules.github.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_026_adw_modules.github.md",
+      "file": "adws/adw_build.py"
+    },
+    {
+      "index": 27,
+      "reference": "adw_modules.utils",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_027_adw_modules.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_027_adw_modules.utils.md",
+      "file": "adws/adw_build.py"
+    },
+    {
+      "index": 28,
+      "reference": "adw_modules.data_types",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_028_adw_modules.data_types.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_028_adw_modules.data_types.md",
+      "file": "adws/adw_build.py"
+    },
+    {
+      "index": 29,
+      "reference": "adw_modules.workflow_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_029_adw_modules.workflow_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_029_adw_modules.workflow_ops.md",
+      "file": "adws/adw_build.py"
+    },
+    {
+      "index": 30,
+      "reference": "adw_modules.workflow_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_030_adw_modules.workflow_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_030_adw_modules.workflow_ops.md",
+      "file": "adws/adw_plan_build_document.py"
+    },
+    {
+      "index": 31,
+      "reference": "e2b_code_interpreter",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_031_e2b_code_interpreter.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_031_e2b_code_interpreter.md",
+      "file": "adws/adw_tests/sandbox_poc.py"
+    },
+    {
+      "index": 32,
+      "reference": ".constants",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_032_.constants.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_032_.constants.md",
+      "file": "adws/adw_modules/validators.py"
+    },
+    {
+      "index": 33,
+      "reference": "adw_modules.state",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_033_adw_modules.state.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_033_adw_modules.state.md",
+      "file": "adws/adw_document.py"
+    },
+    {
+      "index": 34,
+      "reference": "adw_modules.git_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_034_adw_modules.git_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_034_adw_modules.git_ops.md",
+      "file": "adws/adw_document.py"
+    },
+    {
+      "index": 35,
+      "reference": "adw_modules.github",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_035_adw_modules.github.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_035_adw_modules.github.md",
+      "file": "adws/adw_document.py"
+    },
+    {
+      "index": 36,
+      "reference": "adw_modules.utils",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_036_adw_modules.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_036_adw_modules.utils.md",
+      "file": "adws/adw_document.py"
+    },
+    {
+      "index": 37,
+      "reference": "adw_modules.data_types",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_037_adw_modules.data_types.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_037_adw_modules.data_types.md",
+      "file": "adws/adw_document.py"
+    },
+    {
+      "index": 38,
+      "reference": "adw_modules.agent",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_038_adw_modules.agent.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_038_adw_modules.agent.md",
+      "file": "adws/adw_document.py"
+    },
+    {
+      "index": 39,
+      "reference": "adw_modules.utils",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_039_adw_modules.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_039_adw_modules.utils.md",
+      "file": "adws/adw_triggers/trigger_cron.py"
+    },
+    {
+      "index": 40,
+      "reference": "adw_modules.github",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_040_adw_modules.github.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_040_adw_modules.github.md",
+      "file": "adws/adw_triggers/trigger_cron.py"
+    },
+    {
+      "index": 41,
+      "reference": "adw_modules.workflow_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_041_adw_modules.workflow_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_041_adw_modules.workflow_ops.md",
+      "file": "adws/adw_plan_build_review.py"
+    },
+    {
+      "index": 42,
+      "reference": "botocore.client",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_042_botocore.client.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_042_botocore.client.md",
+      "file": "adws/adw_modules/r2_uploader.py"
+    },
+    {
+      "index": 43,
+      "reference": "botocore.exceptions",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_043_botocore.exceptions.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_043_botocore.exceptions.md",
+      "file": "adws/adw_modules/r2_uploader.py"
+    },
+    {
+      "index": 44,
+      "reference": "adw_modules.agent",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_044_adw_modules.agent.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_044_adw_modules.agent.md",
+      "file": "adws/adw_modules/workflow_ops.py"
+    },
+    {
+      "index": 45,
+      "reference": "adw_modules.github",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_045_adw_modules.github.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_045_adw_modules.github.md",
+      "file": "adws/adw_modules/workflow_ops.py"
+    },
+    {
+      "index": 46,
+      "reference": "adw_modules.state",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_046_adw_modules.state.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_046_adw_modules.state.md",
+      "file": "adws/adw_modules/workflow_ops.py"
+    },
+    {
+      "index": 47,
+      "reference": "adw_modules.utils",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_047_adw_modules.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_047_adw_modules.utils.md",
+      "file": "adws/adw_modules/workflow_ops.py"
+    },
+    {
+      "index": 48,
+      "reference": "adw_modules.data_types",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_048_adw_modules.data_types.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_048_adw_modules.data_types.md",
+      "file": "adws/adw_modules/workflow_ops.py"
+    },
+    {
+      "index": 49,
+      "reference": "adw_modules.git_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_049_adw_modules.git_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_049_adw_modules.git_ops.md",
+      "file": "adws/adw_modules/workflow_ops.py"
+    },
+    {
+      "index": 50,
+      "reference": "adw_modules.utils",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_050_adw_modules.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_050_adw_modules.utils.md",
+      "file": "adws/adw_modules/workflow_ops.py"
+    },
+    {
+      "index": 51,
+      "reference": "adw_modules.git_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_051_adw_modules.git_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_051_adw_modules.git_ops.md",
+      "file": "adws/adw_modules/workflow_ops.py"
+    },
+    {
+      "index": 52,
+      "reference": "adw_modules.git_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_052_adw_modules.git_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_052_adw_modules.git_ops.md",
+      "file": "adws/adw_modules/workflow_ops.py"
+    },
+    {
+      "index": 53,
+      "reference": "adw_modules.github",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_053_adw_modules.github.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_053_adw_modules.github.md",
+      "file": "adws/adw_modules/git_ops.py"
+    },
+    {
+      "index": 54,
+      "reference": "adw_modules.exceptions",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_054_adw_modules.exceptions.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_054_adw_modules.exceptions.md",
+      "file": "adws/adw_modules/git_ops.py"
+    },
+    {
+      "index": 55,
+      "reference": "adw_modules.validators",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_055_adw_modules.validators.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_055_adw_modules.validators.md",
+      "file": "adws/adw_modules/git_ops.py"
+    },
+    {
+      "index": 56,
+      "reference": "adw_modules.vcs_detection",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_056_adw_modules.vcs_detection.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_056_adw_modules.vcs_detection.md",
+      "file": "adws/adw_modules/git_ops.py"
+    },
+    {
+      "index": 57,
+      "reference": "adw_modules",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_057_adw_modules.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_057_adw_modules.md",
+      "file": "adws/adw_modules/git_ops.py"
+    },
+    {
+      "index": 58,
+      "reference": "adw_modules.exceptions",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_058_adw_modules.exceptions.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_058_adw_modules.exceptions.md",
+      "file": "adws/adw_modules/git_ops.py"
+    },
+    {
+      "index": 59,
+      "reference": "adw_modules.github",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_059_adw_modules.github.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_059_adw_modules.github.md",
+      "file": "adws/adw_modules/git_ops.py"
+    },
+    {
+      "index": 60,
+      "reference": "adw_modules.workflow_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_060_adw_modules.workflow_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_060_adw_modules.workflow_ops.md",
+      "file": "adws/adw_modules/git_ops.py"
+    },
+    {
+      "index": 61,
+      "reference": "adw_modules.constants",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_061_adw_modules.constants.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_061_adw_modules.constants.md",
+      "file": "adws/scout_simple.py"
+    },
+    {
+      "index": 62,
+      "reference": ".utils",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_062_.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_062_.utils.md",
+      "file": "adws/adw_modules/agent.py"
+    },
+    {
+      "index": 63,
+      "reference": "adw_test",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_063_adw_test.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_063_adw_test.md",
+      "file": "adws/adw_tests/test_adw_test_e2e.py"
+    },
+    {
+      "index": 64,
+      "reference": "adw_modules.data_types",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_064_adw_modules.data_types.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_064_adw_modules.data_types.md",
+      "file": "adws/adw_tests/test_adw_test_e2e.py"
+    },
+    {
+      "index": 65,
+      "reference": "adw_modules.utils",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_065_adw_modules.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_065_adw_modules.utils.md",
+      "file": "adws/adw_tests/test_adw_test_e2e.py"
+    },
+    {
+      "index": 66,
+      "reference": "fastapi",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_066_fastapi.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_066_fastapi.md",
+      "file": "adws/adw_triggers/trigger_webhook.py"
+    },
+    {
+      "index": 67,
+      "reference": "adw_modules.utils",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_067_adw_modules.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_067_adw_modules.utils.md",
+      "file": "adws/adw_triggers/trigger_webhook.py"
+    },
+    {
+      "index": 68,
+      "reference": "adw_modules.github",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_068_adw_modules.github.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_068_adw_modules.github.md",
+      "file": "adws/adw_triggers/trigger_webhook.py"
+    },
+    {
+      "index": 69,
+      "reference": "adw_modules.workflow_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_069_adw_modules.workflow_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_069_adw_modules.workflow_ops.md",
+      "file": "adws/adw_triggers/trigger_webhook.py"
+    },
+    {
+      "index": 70,
+      "reference": "adw_modules.state",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_070_adw_modules.state.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_070_adw_modules.state.md",
+      "file": "adws/adw_triggers/trigger_webhook.py"
+    },
+    {
+      "index": 71,
+      "reference": "adw_modules.utils",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_071_adw_modules.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_071_adw_modules.utils.md",
+      "file": "adws/adw_scout_parallel.py"
+    },
+    {
+      "index": 72,
+      "reference": "adw_modules.constants",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_072_adw_modules.constants.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_072_adw_modules.constants.md",
+      "file": "adws/adw_scout_parallel.py"
+    },
+    {
+      "index": 73,
+      "reference": "adw_modules.github",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_073_adw_modules.github.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_073_adw_modules.github.md",
+      "file": "adws/adw_modules/exceptions.py"
+    },
+    {
+      "index": 74,
+      "reference": "adw_modules.workflow_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_074_adw_modules.workflow_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_074_adw_modules.workflow_ops.md",
+      "file": "adws/adw_modules/exceptions.py"
+    },
+    {
+      "index": 75,
+      "reference": "adw_modules.memory_manager",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_075_adw_modules.memory_manager.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_075_adw_modules.memory_manager.md",
+      "file": "adws/adw_modules/memory_hooks.py"
+    },
+    {
+      "index": 76,
+      "reference": "adw_modules.github",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_076_adw_modules.github.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_076_adw_modules.github.md",
+      "file": "adws/adw_modules/memory_hooks.py"
+    },
+    {
+      "index": 77,
+      "reference": "adw_modules.r2_uploader",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_077_adw_modules.r2_uploader.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_077_adw_modules.r2_uploader.md",
+      "file": "adws/adw_tests/test_r2_uploader.py"
+    },
+    {
+      "index": 78,
+      "reference": "adw_modules.state",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_078_adw_modules.state.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_078_adw_modules.state.md",
+      "file": "adws/adw_plan.py"
+    },
+    {
+      "index": 79,
+      "reference": "adw_modules.git_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_079_adw_modules.git_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_079_adw_modules.git_ops.md",
+      "file": "adws/adw_plan.py"
+    },
+    {
+      "index": 80,
+      "reference": "adw_modules.utils",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_080_adw_modules.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_080_adw_modules.utils.md",
+      "file": "adws/adw_plan.py"
+    },
+    {
+      "index": 81,
+      "reference": "adw_modules.data_types",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_081_adw_modules.data_types.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_081_adw_modules.data_types.md",
+      "file": "adws/adw_plan.py"
+    },
+    {
+      "index": 82,
+      "reference": ".data_types",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_082_.data_types.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_082_.data_types.md",
+      "file": "adws/adw_modules/github.py"
+    },
+    {
+      "index": 83,
+      "reference": ".exceptions",
+      "complexity": "simple",
+      "model": "claude-3.5-sonnet-20241022",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_083_.exceptions.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_083_.exceptions.md",
+      "file": "adws/adw_modules/github.py"
+    },
+    {
+      "index": 84,
+      "reference": "adw_modules.state",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_084_adw_modules.state.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_084_adw_modules.state.md",
+      "file": "adws/adw_review.py"
+    },
+    {
+      "index": 85,
+      "reference": "adw_modules.git_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_085_adw_modules.git_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_085_adw_modules.git_ops.md",
+      "file": "adws/adw_review.py"
+    },
+    {
+      "index": 86,
+      "reference": "adw_modules.utils",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_086_adw_modules.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_086_adw_modules.utils.md",
+      "file": "adws/adw_review.py"
+    },
+    {
+      "index": 87,
+      "reference": "adw_modules.agent",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_087_adw_modules.agent.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_087_adw_modules.agent.md",
+      "file": "adws/adw_review.py"
+    },
+    {
+      "index": 88,
+      "reference": "adw_modules.r2_uploader",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_088_adw_modules.r2_uploader.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_088_adw_modules.r2_uploader.md",
+      "file": "adws/adw_review.py"
+    },
+    {
+      "index": 89,
+      "reference": "adw_modules.agent",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_089_adw_modules.agent.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_089_adw_modules.agent.md",
+      "file": "adws/adw_test.py"
+    },
+    {
+      "index": 90,
+      "reference": "adw_modules.utils",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_090_adw_modules.utils.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_090_adw_modules.utils.md",
+      "file": "adws/adw_test.py"
+    },
+    {
+      "index": 91,
+      "reference": "adw_modules.state",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_091_adw_modules.state.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_091_adw_modules.state.md",
+      "file": "adws/adw_test.py"
+    },
+    {
+      "index": 92,
+      "reference": "adw_modules.git_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_092_adw_modules.git_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_092_adw_modules.git_ops.md",
+      "file": "adws/adw_test.py"
+    },
+    {
+      "index": 93,
+      "reference": "adw_modules.git_ops",
+      "complexity": "complex",
+      "model": "claude-3-opus-20240229",
+      "prompt_file": "scout_outputs/traces/latest/fixes/prompt_093_adw_modules.git_ops.md",
+      "output_file": "scout_outputs/traces/latest/fixes/fix_093_adw_modules.git_ops.md",
+      "file": "adws/adw_test.py"
+    }
+  ],
+  "token_estimate": {
+    "main_context": 100,
+    "per_agent": 400,
+    "total": 37300,
+    "traditional": 50000,
+    "savings_percent": 25.4
+  }
+}

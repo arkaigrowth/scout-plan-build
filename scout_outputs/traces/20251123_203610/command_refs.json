@@ -1,0 +1,434 @@
+[
+  {
+    "file": ".claude/commands/analysis/document.md",
+    "reference": "assets/<screenshot-filename.png>",
+    "type": "markdown_link",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/analysis/document.md",
+    "reference": ".claude/commands/conditional_docs.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/analysis/document.md",
+    "reference": ".claude/commands/conditional_docs.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/analysis/review.md",
+    "reference": ".claude/commands/prepare_app.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/planning/patch.md",
+    "reference": "README.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/planning/patch.md",
+    "reference": ".claude/commands/conditional_docs.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/planning/bug.md",
+    "reference": ".claude/commands/test_e2e.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/planning/bug.md",
+    "reference": ".claude/commands/e2e/test_basic_query.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/planning/bug.md",
+    "reference": "README.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/planning/bug.md",
+    "reference": "README.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/planning/bug.md",
+    "reference": ".claude/commands/conditional_docs.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/planning/bug.md",
+    "reference": ".claude/commands/e2e/test_basic_query.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/planning/bug.md",
+    "reference": ".claude/commands/e2e/test_complex_query.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/planning/chore.md",
+    "reference": "README.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/planning/chore.md",
+    "reference": "README.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/planning/chore.md",
+    "reference": ".claude/commands/conditional_docs.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/planning/feature.md",
+    "reference": ".claude/commands/test_e2e.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/planning/feature.md",
+    "reference": ".claude/commands/e2e/test_basic_query.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/planning/feature.md",
+    "reference": "README.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/planning/feature.md",
+    "reference": "README.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/planning/feature.md",
+    "reference": ".claude/commands/conditional_docs.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/planning/feature.md",
+    "reference": ".claude/commands/e2e/test_basic_query.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/planning/feature.md",
+    "reference": ".claude/commands/e2e/test_complex_query.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/utilities/prepare_app.md",
+    "reference": "scripts/reset_db.sh",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/utilities/prepare_app.md",
+    "reference": "./scripts/stop_apps.sh",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/utilities/prepare_app.md",
+    "reference": "README.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/utilities/init-framework.md",
+    "reference": ".scout_framework.yaml",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/utilities/init-framework.md",
+    "reference": ".adw_config.json",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/utilities/init-framework.md",
+    "reference": ".scout_framework.yaml",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/utilities/init-framework.md",
+    "reference": ".adw_config.json",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/utilities/init-framework.md",
+    "reference": "files.json",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/utilities/init-framework.md",
+    "reference": ".scout_framework.yaml",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/utilities/install.md",
+    "reference": "./scripts/copy_dot_env.sh",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/utilities/install.md",
+    "reference": "./scripts/reset_db.sh",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/utilities/install.md",
+    "reference": "./scripts/start.sh",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/utilities/install.md",
+    "reference": "scripts/start.sh",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/utilities/research-add.md",
+    "reference": "subfolder/filename.md",
+    "type": "markdown_link",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/utilities/research-add.md",
+    "reference": "/path/to/file.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/utilities/research-add.md",
+    "reference": "./file.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/utilities/research-add.md",
+    "reference": "topic-source.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/utilities/research-add.md",
+    "reference": "agent-box-supervisor-chad.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/utilities/research-add.md",
+    "reference": "ai_docs/research/README.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/testing/test_e2e.md",
+    "reference": ".claude/commands/prepare_app.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/testing/resolve_failed_e2e_test.md",
+    "reference": ".claude/commands/test_e2e.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/testing/resolve_failed_e2e_test.md",
+    "reference": ".claude/commands/test_e2e.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/workflow/scout_fixed.md",
+    "reference": "scout_outputs/relevant_files.json",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/workflow/scout_fixed.md",
+    "reference": "scout_outputs/relevant_files.json",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/workflow/scout_improved.md",
+    "reference": "scout_outputs/relevant_files.json",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/workflow/scout_improved.md",
+    "reference": "path/to/file1.py",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/workflow/scout_improved.md",
+    "reference": "path/to/file2.py",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/workflow/scout_improved.md",
+    "reference": "scout_outputs/relevant_files.json",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/workflow/scout.md",
+    "reference": "scout_outputs/relevant_files.json",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/workflow/scout.md",
+    "reference": "scout_outputs/relevant_files.json",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/workflow/scout.md",
+    "reference": "relevant_files.json",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/workflow/scout.md",
+    "reference": "scout_outputs/relevant_files.json",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/workflow/scout_parallel.md",
+    "reference": "scout_outputs/relevant_files.json",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/workflow/scout_parallel.md",
+    "reference": "scout_outputs/relevant_files.json",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/workflow/scout_parallel.md",
+    "reference": "specs/issue-XXX-adw-YYY-auth.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/git/worktree_redo.md",
+    "reference": "ai_docs/architecture/GIT_WORKTREE_UNDO_SYSTEM.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/git/worktree_checkpoint.md",
+    "reference": "ai_docs/architecture/GIT_WORKTREE_UNDO_SYSTEM.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/git/init-parallel-worktrees.md",
+    "reference": "../../ai_docs/research/videos/idd-video-git-worktrees-f8RnRuaxee8-analysis.md",
+    "type": "markdown_link",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/git/worktree_undo.md",
+    "reference": "specs/issue-123.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/git/worktree_undo.md",
+    "reference": "specs/issue-123-v2.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/git/worktree_undo.md",
+    "reference": "ai_docs/architecture/GIT_WORKTREE_UNDO_SYSTEM.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/git/run-parallel-agents.md",
+    "reference": "../../ai_docs/research/videos/idd-video-git-worktrees-f8RnRuaxee8-analysis.md",
+    "type": "markdown_link",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/git/worktree_create.md",
+    "reference": "specs/issue-123.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/git/worktree_create.md",
+    "reference": "ai_docs/architecture/GIT_WORKTREE_UNDO_SYSTEM.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/session/resume.md",
+    "reference": "handoff-YYYY-MM-DD.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/session/resume.md",
+    "reference": "CLAUDE.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/session/prepare-compaction.md",
+    "reference": "ai_docs/research/COMPACTION_RESEARCH.md",
+    "type": "quoted_path",
+    "status": "broken"
+  },
+  {
+    "file": ".claude/commands/session/prepare-compaction.md",
+    "reference": "ai_docs/sessions/COMPACTION_PROMPT.md",
+    "type": "quoted_path",
+    "status": "valid"
+  },
+  {
+    "file": ".claude/commands/session/prepare-compaction.md",
+    "reference": "CLAUDE.md",
+    "type": "quoted_path",
+    "status": "valid"
+  }
+]

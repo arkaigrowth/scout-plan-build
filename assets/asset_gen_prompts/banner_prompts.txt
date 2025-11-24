@@ -1,0 +1,18 @@
+# Banner Prompts - Marketing/Product Style
+# Generated: 2025-11-23
+# Use with: Midjourney, DALL-E, Stable Diffusion
+
+## Prompt 1: Chaos to Order
+Split image: left side shows tangled, chaotic colorful threads in disarray. Right side shows the same threads organized into a beautiful, structured braid or weave. Transformation narrative, before/after concept. Vibrant colors. No text. 16:9 aspect ratio.
+
+## Prompt 2: Launch Ready
+Abstract rocket launching from a well-organized launchpad. Represents shipping with confidence. Warm gradient sky (orange to purple), clean geometric launchpad design, motion blur on rocket. Aspirational, achievement-focused. No text. 16:9 aspect ratio.
+
+## Prompt 3: Clarity Emerges
+Foggy, cluttered background gradually clearing to reveal a clear, golden path forward. Metaphor for workflow bringing clarity. Atmospheric, emotional, journey aesthetic. Warm color palette. No text. 16:9 aspect ratio.
+
+## Prompt 4: Structured Success
+Three stepping stones across water, each perfectly placed and stable. Water ripples showing confidence. Golden hour lighting, serene but purposeful. Represents reliable workflow. No text. 16:9 aspect ratio.
+
+## Prompt 5: Symphony of Tools
+Abstract orchestra conductor with three instrument sections (strings, brass, percussion) representing Scout, Plan, Build working in harmony. Artistic, elegant, teamwork aesthetic. Rich purple and gold palette. No text. 16:9 aspect ratio.

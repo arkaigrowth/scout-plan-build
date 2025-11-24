@@ -19,7 +19,7 @@ from typing_extensions import Annotated
 
 # Import canonical path constants for enforcement
 try:
-    from .constants import ALLOWED_OUTPUT_PREFIXES
+    from adw_modules.constants import ALLOWED_OUTPUT_PREFIXES
 except ImportError:
     # Fallback if constants not available (shouldn't happen in production)
     ALLOWED_OUTPUT_PREFIXES = [

@@ -1,0 +1,8 @@
+{
+  "total": 128,
+  "valid": 123,
+  "broken": 5,
+  "output_file": "scout_outputs/traces/2024-11-23_183045/python_imports.json",
+  "summary_file": "scout_outputs/traces/2024-11-23_183045/summary.md",
+  "message": "Found 5 broken imports. Read summary_file for details."
+}

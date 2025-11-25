@@ -1,245 +1,223 @@
 #!/usr/bin/env python3
 """
-ASCII Diagram Generator for Dependency Tracer
-Generates visual representations of import dependencies and broken references.
+Generate ASCII diagrams from dependency trace results.
+Creates visual representations of import trees, reference maps, and broken dependencies.
 
 Usage:
-    python generate_ascii_diagrams.py <trace_results.json> [output.md]
+    python generate_ascii_diagrams.py <trace_results.json> [output_format]
 
-Diagram Types:
-    1. Import Tree - Shows file → module dependencies
-    2. Broken Reference Map - Highlights problematic imports
-    3. Module Hierarchy - Package structure visualization
+Output formats:
+    tree     - Hierarchical import tree (default)
+    matrix   - Cross-reference matrix
+    broken   - Broken references visualization
+    summary  - Combined overview diagram
 """
 
 import json
 import sys
 from pathlib import Path
-from collections import defaultdict
-from typing import List, Dict, Set, Tuple
-
-# Box drawing characters for trees
-BOX_CHARS = {
-    'vertical': '│',
-    'horizontal': '─',
-    'top_left': '┌',
-    'top_right': '┐',
-    'bottom_left': '└',
-    'bottom_right': '┘',
-    'branch': '├',
-    'last_branch': '└',
-    'tee': '├',
-    'cross': '┼'
-}
-
-# Status indicators
-STATUS_SYMBOLS = {
-    'valid': '✓',
-    'broken': '✗',
-    'warning': '⚠',
-    'unknown': '?'
-}
-
+from collections import defaultdict, Counter
+from typing import Dict, List, Set, Tuple, Optional
 
 def load_trace_results(trace_file: Path) -> List[Dict]:
-    """Load and parse trace results JSON."""
+    """Load trace results from JSON file."""
     with open(trace_file) as f:
         return json.load(f)
 
+def generate_import_tree(results: List[Dict]) -> str:
+    """Generate ASCII tree showing import hierarchy."""
+    # Build import graph
+    imports_by_file = defaultdict(list)
+    for item in results:
+        if item.get('type') in ['import', 'from_import']:
+            file = item['file'].replace('/Users/alexkamysz/AI/scout_plan_build_mvp/', '')
+            module = item.get('module', 'unknown')
+            status = '✓' if item.get('status') == 'valid' else '✗'
+            imports_by_file[file].append(f"{status} {module}")
 
-def generate_import_tree(imports: List[Dict]) -> str:
-    """Generate a tree showing import relationships grouped by file."""
-    # Group imports by file
-    by_file = defaultdict(list)
-    for imp in imports:
-        by_file[imp['file']].append(imp)
-
-    output = []
-    output.append("# Import Dependency Tree\n")
-    output.append("```")
-
-    files = sorted(by_file.keys())
-    for i, file in enumerate(files):
-        is_last_file = (i == len(files) - 1)
-        file_prefix = BOX_CHARS['last_branch'] if is_last_file else BOX_CHARS['branch']
-
-        # Show file with import count
-        import_count = len(by_file[file])
-        broken_count = sum(1 for imp in by_file[file] if imp.get('status') == 'broken')
-
-        status = '✗' if broken_count > 0 else '✓'
-        output.append(f"{file_prefix}─ {status} {Path(file).name} ({import_count} imports, {broken_count} broken)")
-
-        # Show imports for this file
-        continuation = "   " if is_last_file else "│  "
-        imports_list = by_file[file]
-
-        for j, imp in enumerate(imports_list):
-            is_last_import = (j == len(imports_list) - 1)
-            import_prefix = BOX_CHARS['last_branch'] if is_last_import else BOX_CHARS['branch']
-
-            status = STATUS_SYMBOLS.get(imp.get('status', 'unknown'), '?')
-            module = imp['module']
-            imp_type = "from" if imp['type'] == 'from_import' else "import"
-            location = imp.get('location', 'unknown')
-
-            # Color broken imports differently (using markdown syntax)
-            if imp.get('status') == 'broken':
-                output.append(f"{continuation}{import_prefix}─ {status} **{module}** [{imp_type}] (BROKEN - {location})")
+    # Generate tree
+    tree_lines = ["═══ Python Import Tree ═══\n"]
+    for file, imports in sorted(imports_by_file.items()):
+        if not imports:
+            continue
+        tree_lines.append(f"📁 {file}")
+        for i, imp in enumerate(imports[:10]):  # Limit to 10 per file
+            if i == len(imports) - 1 or i == 9:
+                tree_lines.append(f"    └── {imp}")
             else:
-                output.append(f"{continuation}{import_prefix}─ {status} {module} [{imp_type}] ({location})")
+                tree_lines.append(f"    ├── {imp}")
+        if len(imports) > 10:
+            tree_lines.append(f"    └── ... (+{len(imports)-10} more)")
+        tree_lines.append("")
 
-    output.append("```\n")
-    return '\n'.join(output)
+    return "\n".join(tree_lines)
 
+def generate_reference_matrix(results: List[Dict]) -> str:
+    """Generate cross-reference matrix for file dependencies."""
+    # Collect unique files
+    files = set()
+    refs = defaultdict(set)
 
-def generate_broken_reference_map(imports: List[Dict]) -> str:
-    """Generate a focused view of broken imports and their relationships."""
-    broken = [imp for imp in imports if imp.get('status') == 'broken']
+    for item in results:
+        if 'file' in item and 'reference' in item:
+            from_file = Path(item['file']).name
+            to_file = Path(item['reference']).name if '/' in item['reference'] else item['reference']
+            files.add(from_file)
+            files.add(to_file)
+            refs[from_file].add(to_file)
+
+    # Limit matrix size
+    file_list = sorted(list(files))[:15]
+
+    # Generate matrix
+    matrix_lines = ["═══ Reference Matrix ═══\n"]
+
+    # Header
+    header = "            "
+    for f in file_list:
+        header += f[:8].center(9)
+    matrix_lines.append(header)
+    matrix_lines.append("─" * len(header))
+
+    # Rows
+    for from_file in file_list:
+        row = f"{from_file[:10]:11}"
+        for to_file in file_list:
+            if from_file == to_file:
+                row += "    ·    "
+            elif to_file in refs.get(from_file, set()):
+                row += "    ▶    "
+            else:
+                row += "         "
+        matrix_lines.append(row)
+
+    matrix_lines.append("\n▶ = references")
+    return "\n".join(matrix_lines)
+
+def generate_broken_visualization(results: List[Dict]) -> str:
+    """Visualize broken references with context."""
+    broken = [r for r in results if r.get('status') == 'broken']
 
     if not broken:
-        return "# Broken Reference Map\n\nNo broken references found! ✓\n"
+        return "═══ No Broken References Found! ═══"
 
-    # Group by module to see which modules are commonly broken
-    by_module = defaultdict(list)
-    for imp in broken:
-        by_module[imp['module']].append(imp['file'])
+    # Group by type
+    broken_imports = [b for b in broken if b.get('type') in ['import', 'from_import']]
+    broken_refs = [b for b in broken if b.get('type') not in ['import', 'from_import']]
 
-    output = []
-    output.append("# Broken Reference Map\n")
-    output.append(f"Found {len(broken)} broken imports across {len(set(imp['file'] for imp in broken))} files\n")
-    output.append("```")
-    output.append("BROKEN MODULES")
-    output.append("│")
+    viz_lines = ["═══ Broken Dependencies ═══\n"]
 
-    modules = sorted(by_module.keys(), key=lambda m: len(by_module[m]), reverse=True)
+    # Import issues
+    if broken_imports:
+        viz_lines.append("🔴 Broken Imports:")
+        viz_lines.append("┌" + "─" * 78 + "┐")
 
-    for i, module in enumerate(modules):
-        is_last = (i == len(modules) - 1)
-        prefix = BOX_CHARS['last_branch'] if is_last else BOX_CHARS['branch']
+        for i, item in enumerate(broken_imports[:10]):
+            file = Path(item['file']).name
+            module = item.get('module', 'unknown')
+            viz_lines.append(f"│ {file:30} ✗→ {module:43} │")
 
-        files = by_module[module]
-        output.append(f"{prefix}─ ✗ {module} ({len(files)} file{'s' if len(files) > 1 else ''})")
+        if len(broken_imports) > 10:
+            viz_lines.append(f"│ ... and {len(broken_imports)-10} more{' '*59}│")
 
-        continuation = "   " if is_last else "│  "
-        for j, file in enumerate(sorted(set(files))):
-            is_last_file = (j == len(set(files)) - 1)
-            file_prefix = BOX_CHARS['last_branch'] if is_last_file else BOX_CHARS['branch']
-            output.append(f"{continuation}{file_prefix}─ {Path(file).name}")
+        viz_lines.append("└" + "─" * 78 + "┘")
+        viz_lines.append("")
 
-    output.append("```\n")
-    return '\n'.join(output)
+    # File reference issues
+    if broken_refs:
+        viz_lines.append("🔴 Broken File References:")
+        viz_lines.append("┌" + "─" * 78 + "┐")
 
+        for i, item in enumerate(broken_refs[:10]):
+            file = Path(item['file']).name
+            ref = item.get('reference', 'unknown')
+            if len(ref) > 43:
+                ref = "..." + ref[-40:]
+            viz_lines.append(f"│ {file:30} ✗→ {ref:43} │")
 
-def generate_module_hierarchy(imports: List[Dict]) -> str:
-    """Generate a hierarchy showing package structure from imports."""
-    # Extract unique local modules (starting with project packages)
-    local_modules = set()
+        if len(broken_refs) > 10:
+            viz_lines.append(f"│ ... and {len(broken_refs)-10} more{' '*59}│")
 
-    for imp in imports:
-        module = imp['module']
-        # Focus on local/project modules (e.g., adw_modules.*)
-        if not module.startswith(('.', '/')):
-            if imp.get('location') == 'local' or 'adw' in module or module.startswith('scripts'):
-                local_modules.add(module)
+        viz_lines.append("└" + "─" * 78 + "┘")
 
-    if not local_modules:
-        return "# Module Hierarchy\n\nNo local modules detected.\n"
+    return "\n".join(viz_lines)
 
-    # Build hierarchy tree
-    tree = {}
-    for module in local_modules:
-        parts = module.split('.')
-        current = tree
-        for part in parts:
-            if part not in current:
-                current[part] = {}
-            current = current[part]
+def generate_summary_diagram(results: List[Dict]) -> str:
+    """Generate combined summary diagram with statistics."""
+    total = len(results)
+    valid = len([r for r in results if r.get('status') == 'valid'])
+    broken = len([r for r in results if r.get('status') == 'broken'])
 
-    output = []
-    output.append("# Module Hierarchy\n")
-    output.append("```")
-    output.append("Local Module Structure:")
-    output.append("│")
-
-    def render_tree(node: Dict, prefix: str = "", is_last: bool = False) -> None:
-        items = list(node.items())
-        for i, (key, subtree) in enumerate(items):
-            is_last_item = (i == len(items) - 1)
-
-            # Determine if this module is imported anywhere
-            full_path = prefix.replace("│  ", "").replace("├─ ", "").replace("└─ ", "").replace("   ", "").strip()
-            if full_path:
-                full_path = full_path.replace(" ", ".") + "." + key
-            else:
-                full_path = key
-
-            # Check if this module appears in broken imports
-            is_broken = any(imp['module'] == full_path and imp.get('status') == 'broken'
-                          for imp in imports)
-
-            symbol = '✗' if is_broken else '✓'
-            branch = BOX_CHARS['last_branch'] if is_last_item else BOX_CHARS['branch']
-
-            output.append(f"{prefix}{branch}─ {symbol} {key}")
-
-            if subtree:
-                extension = "   " if is_last_item else "│  "
-                render_tree(subtree, prefix + extension, is_last_item)
-
-    render_tree(tree, "")
-    output.append("```\n")
-    return '\n'.join(output)
-
-
-def generate_statistics_summary(imports: List[Dict]) -> str:
-    """Generate a statistical summary of the trace results."""
-    total = len(imports)
-    broken = sum(1 for imp in imports if imp.get('status') == 'broken')
-    valid = sum(1 for imp in imports if imp.get('status') == 'valid')
-
-    # Group by location
-    by_location = defaultdict(int)
-    for imp in imports:
-        by_location[imp.get('location', 'unknown')] += 1
+    # Count by type
+    type_counts = Counter(r.get('type', 'unknown') for r in results)
 
     # Most imported modules
-    module_counts = defaultdict(int)
-    for imp in imports:
-        module_counts[imp['module']] += 1
+    module_counts = Counter(r.get('module', '') for r in results if r.get('module'))
+    top_modules = module_counts.most_common(5)
 
-    output = []
-    output.append("# Import Statistics Summary\n")
-    output.append("```")
-    output.append(f"Total Imports: {total}")
-    output.append(f"├─ ✓ Valid: {valid} ({valid*100//total if total else 0}%)")
-    output.append(f"└─ ✗ Broken: {broken} ({broken*100//total if total else 0}%)")
-    output.append("")
-    output.append("By Location:")
+    # Most referenced files
+    file_counts = Counter(Path(r.get('file', '')).name for r in results if r.get('file'))
+    top_files = file_counts.most_common(5)
 
-    locations = sorted(by_location.items(), key=lambda x: x[1], reverse=True)
-    for i, (location, count) in enumerate(locations):
-        is_last = (i == len(locations) - 1)
-        prefix = BOX_CHARS['last_branch'] if is_last else BOX_CHARS['branch']
-        output.append(f"{prefix}─ {location}: {count} ({count*100//total if total else 0}%)")
+    diagram = f"""
+╔═══════════════════════════════════════════════════════════════════════════╗
+║                       DEPENDENCY ANALYSIS SUMMARY                          ║
+╠═══════════════════════════════════════════════════════════════════════════╣
+║                                                                             ║
+║  Total References: {total:4}     Valid: {valid:4} ✓     Broken: {broken:4} ✗           ║
+║                                                                             ║
+║  ┌─────────────────────┐     ┌─────────────────────┐                      ║
+║  │   Reference Types   │     │    Health Status    │                      ║
+║  ├─────────────────────┤     ├─────────────────────┤                      ║
+"""
 
-    output.append("")
-    output.append("Top 5 Most Imported Modules:")
-    top_modules = sorted(module_counts.items(), key=lambda x: x[1], reverse=True)[:5]
-    for i, (module, count) in enumerate(top_modules):
-        is_last = (i == len(top_modules) - 1)
-        prefix = BOX_CHARS['last_branch'] if is_last else BOX_CHARS['branch']
-        output.append(f"{prefix}─ {module}: {count} times")
+    # Add type breakdown
+    for ref_type, count in sorted(type_counts.items())[:3]:
+        diagram += f"║  │ {ref_type[:15]:15} {count:4} │     "
 
-    output.append("```\n")
-    return '\n'.join(output)
+    # Add health bar
+    if total > 0:
+        health_pct = (valid / total) * 100
+        bar_width = 20
+        filled = int((valid / total) * bar_width)
+        bar = "█" * filled + "░" * (bar_width - filled)
+        diagram += f"│ Health: {bar} {health_pct:.0f}% │                      ║\n"
 
+    diagram += f"""║  └─────────────────────┘     └─────────────────────┘                      ║
+║                                                                             ║
+║  Top Imported Modules:            Most Active Files:                       ║
+║  ┌──────────────────────────┐     ┌──────────────────────────┐            ║"""
+
+    # Add top modules and files
+    for i in range(5):
+        left_content = ""
+        right_content = ""
+
+        if i < len(top_modules):
+            mod, count = top_modules[i]
+            if len(mod) > 20:
+                mod = mod[:17] + "..."
+            left_content = f"{i+1}. {mod[:20]:20} ({count})"
+
+        if i < len(top_files):
+            file, count = top_files[i]
+            if len(file) > 20:
+                file = file[:17] + "..."
+            right_content = f"{i+1}. {file[:20]:20} ({count})"
+
+        diagram += f"\n║  │ {left_content:26} │     │ {right_content:26} │            ║"
+
+    diagram += """
+║  └──────────────────────────┘     └──────────────────────────┘            ║
+║                                                                             ║
+╚═══════════════════════════════════════════════════════════════════════════╝
+"""
+
+    return diagram
 
 def main():
-    """Main entry point for diagram generation."""
     if len(sys.argv) < 2:
         print(__doc__)
-        print("\nUsage: python generate_ascii_diagrams.py <trace_results.json> [output.md]")
         sys.exit(1)
 
     trace_file = Path(sys.argv[1])
@@ -247,33 +225,23 @@ def main():
         print(f"Error: File not found: {trace_file}")
         sys.exit(1)
 
-    # Load trace results
-    try:
-        imports = load_trace_results(trace_file)
-        print(f"Loaded {len(imports)} import records from {trace_file}")
-    except Exception as e:
-        print(f"Error loading trace results: {e}")
-        sys.exit(1)
+    output_format = sys.argv[2] if len(sys.argv) > 2 else 'summary'
 
-    # Generate diagrams
-    diagrams = []
-    diagrams.append(generate_statistics_summary(imports))
-    diagrams.append(generate_import_tree(imports))
-    diagrams.append(generate_broken_reference_map(imports))
-    diagrams.append(generate_module_hierarchy(imports))
+    # Load results
+    results = load_trace_results(trace_file)
 
-    # Combine all diagrams
-    output = '\n'.join(diagrams)
-
-    # Save or print output
-    if len(sys.argv) > 2:
-        output_file = Path(sys.argv[2])
-        with open(output_file, 'w') as f:
-            f.write(output)
-        print(f"✓ Diagrams saved to: {output_file}")
-    else:
-        print("\n" + output)
-
+    # Generate requested diagram
+    if output_format == 'tree':
+        print(generate_import_tree(results))
+    elif output_format == 'matrix':
+        print(generate_reference_matrix(results))
+    elif output_format == 'broken':
+        print(generate_broken_visualization(results))
+    else:  # summary
+        print(generate_summary_diagram(results))
+        if any(r.get('status') == 'broken' for r in results):
+            print("\nRun with 'broken' format to see detailed broken references:")
+            print(f"  python {sys.argv[0]} {trace_file} broken")
 
 if __name__ == "__main__":
     main()

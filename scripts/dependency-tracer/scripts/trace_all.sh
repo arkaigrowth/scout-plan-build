@@ -145,3 +145,10 @@ echo ""
 echo "  Option C: Generate comprehensive report"
 echo "    → Build dependency graph, analyze impact, prioritize fixes"
 echo ""
+echo "  Option D: Generate ASCII diagrams (NEW!)"
+if [ "$ENV" = "local" ]; then
+    echo "    → python $SCRIPT_DIR/generate_ascii_diagrams.py scout_outputs/traces/latest/python_imports.json"
+else
+    echo "    → python $SCRIPT_DIR/generate_ascii_diagrams.py /mnt/user-data/outputs/dependency-traces/latest/python_imports.json"
+fi
+echo ""

@@ -261,6 +261,18 @@ case "$CONTEXT_MODE" in
         ;;
 esac
 
+# Auto-generate ASCII diagrams if script exists
+if [ -f "$SCRIPT_DIR/generate_ascii_diagrams.py" ]; then
+    DIAGRAM_FILE="${OUTPUT_DIR}/diagrams.md"
+    echo ""
+    echo "📊 Generating ASCII diagrams..."
+    if python "$SCRIPT_DIR/generate_ascii_diagrams.py" "$OUTPUT_FILE" "$DIAGRAM_FILE" 2>/dev/null; then
+        echo "✅ Diagrams saved to: $DIAGRAM_FILE"
+    else
+        echo "⚠️  Diagram generation skipped (Python not available or error occurred)"
+    fi
+fi
+
 echo ""
 echo "💡 Tip: Use CONTEXT_MODE=minimal for lowest token usage"
 echo "   Example: CONTEXT_MODE=minimal bash $0"

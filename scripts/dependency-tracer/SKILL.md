@@ -12,12 +12,13 @@ Traces file references and import statements using deterministic CLI tools. Desi
 
 ## What's New in v2.1
 
-✅ **Environment Detection**: Auto-detects Claude Code CLI vs Claude Web  
-✅ **Smart Path Handling**: Non-invasive defaults (`.dependency-traces/` fallback)  
-✅ **scout_outputs/ Respect**: Uses if exists, doesn't create if missing  
-✅ **Terminology Update**: "fix conversation (subagent)" for clarity  
-✅ **ADW Integration Stub**: Python template for repo Claude to implement  
-✅ **Claude Web Support**: Outputs to `/mnt/user-data/outputs/` when needed  
+✅ **Environment Detection**: Auto-detects Claude Code CLI vs Claude Web
+✅ **Smart Path Handling**: Non-invasive defaults (`.dependency-traces/` fallback)
+✅ **scout_outputs/ Respect**: Uses if exists, doesn't create if missing
+✅ **Terminology Update**: "fix conversation (subagent)" for clarity
+✅ **ADW Integration Stub**: Python template for repo Claude to implement
+✅ **Claude Web Support**: Outputs to `/mnt/user-data/outputs/` when needed
+✅ **ASCII Diagram Generation**: Visual dependency trees and broken reference maps  
 
 ## Architecture Principle
 
@@ -167,7 +168,51 @@ bash scripts/trace_command_refs.sh .claude/commands /path/to/output
 }
 ```
 
-## Use Case 2: Trace Python Imports in `adws/`
+## Use Case 2: Generate ASCII Dependency Diagrams
+
+### Script: `generate_ascii_diagrams.py`
+
+**What it does:**
+- Visualizes import dependencies as ASCII trees
+- Highlights broken references with visual indicators
+- Groups imports by file and module
+- Shows statistics and module hierarchy
+
+**Diagram Types:**
+1. **Import Statistics Summary** - Overview with percentages
+2. **Import Dependency Tree** - File-by-file import listing
+3. **Broken Reference Map** - Focused view of problems
+4. **Module Hierarchy** - Package structure visualization
+
+**Usage:**
+```bash
+# Generate diagrams from trace results
+python scripts/generate_ascii_diagrams.py scout_outputs/traces/latest/python_imports.json
+
+# Save to file
+python scripts/generate_ascii_diagrams.py scout_outputs/traces/latest/python_imports.json diagrams.md
+
+# For command references
+python scripts/generate_ascii_diagrams.py scout_outputs/traces/latest/command_refs.json
+```
+
+**Sample Output:**
+```
+# Import Statistics Summary
+Total Imports: 324
+├─ ✓ Valid: 316 (97%)
+└─ ✗ Broken: 8 (2%)
+
+# Broken Reference Map
+BROKEN MODULES
+│
+├─ ✗ schedule (1 file)
+│  └─ trigger_cron.py
+└─ ✗ pytest (1 file)
+   └─ test_validators.py
+```
+
+## Use Case 3: Trace Python Imports in `adws/`
 
 ### Script: `trace_python_imports.sh`
 

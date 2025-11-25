@@ -6,12 +6,13 @@ Traces file references and Python imports using deterministic CLI tools. Context
 
 ## What's New in v2.1
 
-✅ **Environment Detection** - Auto-detects Claude Code CLI vs Claude Web  
-✅ **Smart Paths** - Non-invasive defaults (`.dependency-traces/` fallback)  
-✅ **scout_outputs/ Respect** - Uses if exists, doesn't force on other repos  
-✅ **Terminology** - "fix conversation (subagent)" for clarity  
-✅ **ADW Stub** - Python template for repo Claude to implement  
-✅ **Claude Web** - Full support with `/mnt/user-data/outputs/`  
+✅ **Environment Detection** - Auto-detects Claude Code CLI vs Claude Web
+✅ **Smart Paths** - Non-invasive defaults (`.dependency-traces/` fallback)
+✅ **scout_outputs/ Respect** - Uses if exists, doesn't force on other repos
+✅ **Terminology** - "fix conversation (subagent)" for clarity
+✅ **ADW Stub** - Python template for repo Claude to implement
+✅ **Claude Web** - Full support with `/mnt/user-data/outputs/`
+✅ **ASCII Diagrams** - Visual dependency trees and broken reference maps  
 
 ## Quick Start
 
@@ -28,6 +29,9 @@ CONTEXT_MODE=minimal bash scripts/trace_all.sh
 # 4. Read summary (not full JSON!)
 cat scout_outputs/traces/latest/summary.md
 # or .dependency-traces/latest/summary.md
+
+# 5. Generate ASCII diagrams (NEW!)
+python scripts/generate_ascii_diagrams.py scout_outputs/traces/latest/python_imports.json
 ```
 
 ## Architecture: Data Producer, Not Context Consumer
@@ -47,6 +51,56 @@ Script → JSON + Summary → Claude reads summary → 100 tokens
 - Traditional MCP + full JSON: **60,000 tokens**
 - v2.1 minimal + fix conversations (10 broken refs): **3,100 tokens**
 - **Savings: 95%+**
+
+## ASCII Dependency Diagrams
+
+Generate visual representations of your dependencies without leaving the terminal:
+
+```bash
+python scripts/generate_ascii_diagrams.py trace_results.json [output.md]
+```
+
+**Four Diagram Types:**
+
+### 1. Import Statistics
+```
+Total Imports: 324
+├─ ✓ Valid: 316 (97%)
+└─ ✗ Broken: 8 (2%)
+```
+
+### 2. Dependency Tree
+```
+├─ ✓ adw_build.py (13 imports, 0 broken)
+│  ├─ ✓ sys [import] (installed)
+│  ├─ ✓ adw_modules.state [from] (local)
+│  └─ ✓ adw_modules.git_ops [from] (local)
+└─ ✗ adw_fix_dependencies.py (8 imports, 1 broken)
+   ├─ ✓ json [import] (installed)
+   └─ ✗ **adws.adw_modules.state** [from] (BROKEN)
+```
+
+### 3. Broken Reference Map
+```
+BROKEN MODULES
+│
+├─ ✗ schedule (1 file)
+│  └─ trigger_cron.py
+└─ ✗ pytest (1 file)
+   └─ test_validators.py
+```
+
+### 4. Module Hierarchy
+```
+Local Module Structure:
+│
+├─ ✓ adw_modules
+│  ├─ ✓ agent
+│  ├─ ✓ data_types
+│  └─ ✓ utils
+└─ ✓ scripts
+   └─ ✓ dependency-tracer
+```
 
 ## Output Structure
 

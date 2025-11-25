@@ -43,6 +43,7 @@ Token Efficiency:
 
 import json
 import sys
+import subprocess
 from pathlib import Path
 from typing import List, Dict, Optional
 import logging
@@ -395,6 +396,26 @@ def main():
             logger.info(f"  - {ref_name} in {ref.get('file', 'unknown')}")
         if len(broken_refs) > 3:
             logger.info(f"  ... and {len(broken_refs) - 3} more")
+
+        # Generate ASCII diagrams for visualization
+        diagrams_file = trace_file.parent / "diagrams.md"
+        try:
+            # Try to generate diagrams if the script is available
+            import subprocess
+            script_path = Path(__file__).parent.parent / "scripts" / "dependency-tracer" / "scripts" / "generate_ascii_diagrams.py"
+            if script_path.exists():
+                result = subprocess.run(
+                    ["python", str(script_path), str(trace_file), str(diagrams_file)],
+                    capture_output=True,
+                    text=True,
+                    timeout=10
+                )
+                if result.returncode == 0:
+                    logger.info(f"📊 Generated ASCII diagrams: {diagrams_file}")
+                else:
+                    logger.debug(f"Diagram generation failed: {result.stderr}")
+        except Exception as e:
+            logger.debug(f"Diagram generation skipped: {e}")
 
         # Determine output directory
         output_dir = trace_file.parent

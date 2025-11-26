@@ -41,7 +41,7 @@ echo ""
 # Create required directories
 echo "📁 Creating directory structure..."
 mkdir -p "$TARGET_REPO/specs"
-mkdir -p "$TARGET_REPO/ai_docs/scout"
+# Note: ai_docs/scout is DEPRECATED - use scout_outputs/ instead
 mkdir -p "$TARGET_REPO/ai_docs/build_reports"
 mkdir -p "$TARGET_REPO/.claude/commands"
 mkdir -p "$TARGET_REPO/.claude/state"
@@ -51,27 +51,14 @@ mkdir -p "$TARGET_REPO/scripts"
 echo "📋 Copying core modules..."
 cp -r "$SOURCE_DIR/adws" "$TARGET_REPO/"
 
-# Copy working slash commands (all with risk headers)
+# Copy ALL slash commands (including subdirectories)
 echo "📝 Copying slash commands..."
-# Core workflow commands
-cp "$SOURCE_DIR/.claude/commands/plan_w_docs.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
-cp "$SOURCE_DIR/.claude/commands/plan_w_docs_improved.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
-cp "$SOURCE_DIR/.claude/commands/build_adw.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
-cp "$SOURCE_DIR/.claude/commands/build.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
-
-# Scout commands (FIXED - now use Python scripts)
-cp "$SOURCE_DIR/.claude/commands/scout.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
-cp "$SOURCE_DIR/.claude/commands/scout_improved.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
-cp "$SOURCE_DIR/.claude/commands/scout_fixed.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
-cp "$SOURCE_DIR/.claude/commands/scout_parallel.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
-
-# Interactive setup (NEW)
-cp "$SOURCE_DIR/.claude/commands/init-framework.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
-
-# Worktree commands
-cp "$SOURCE_DIR/.claude/commands/init-parallel-worktrees.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
-cp "$SOURCE_DIR/.claude/commands/compare-worktrees.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
-cp "$SOURCE_DIR/.claude/commands/merge-worktree.md" "$TARGET_REPO/.claude/commands/" 2>/dev/null || true
+if [ -d "$SOURCE_DIR/.claude/commands" ]; then
+    cp -r "$SOURCE_DIR/.claude/commands" "$TARGET_REPO/.claude/"
+    echo "   ✅ Copied all slash commands"
+else
+    echo "   ⚠️ No commands directory found"
+fi
 
 # Copy hooks (includes session tracking!)
 echo "🪝 Copying hooks (logging + session tracking)..."
@@ -163,7 +150,7 @@ export $(grep -v '^#' .env | xargs)
 python adws/scout_simple.py "implement user authentication"
 
 # Create a plan/spec
-/plan_w_docs "implement user auth" "" "ai_docs/scout/relevant_files.json"
+/plan_w_docs "implement user auth" "" "scout_outputs/relevant_files.json"
 
 # Build from the spec
 /build_adw "specs/issue-001-*.md"
@@ -223,80 +210,9 @@ else
     echo "   ⚠️ Install uv for dependency management: https://github.com/astral-sh/uv"
 fi
 
-# Create test file
-echo "🧪 Creating test script..."
-cat > "$TARGET_REPO/test_installation.py" << 'EOF'
-#!/usr/bin/env python3
-"""Test Scout-Plan-Build installation"""
-
-import os
-import sys
-from pathlib import Path
-
-def test_installation():
-    """Verify installation is complete"""
-
-    print("🧪 Testing Scout-Plan-Build Installation")
-    print("=" * 40)
-
-    errors = []
-    warnings = []
-
-    # Check directories
-    required_dirs = ["specs", "agents", "ai_docs", ".claude/commands", "adws"]
-    for dir_name in required_dirs:
-        if not Path(dir_name).exists():
-            errors.append(f"Missing directory: {dir_name}")
-        else:
-            print(f"✅ Directory exists: {dir_name}")
-
-    # Check core modules
-    if Path("adws/adw_plan.py").exists():
-        print("✅ Core modules installed")
-    else:
-        errors.append("Core modules missing")
-
-    # Check environment
-    if Path(".env").exists():
-        print("✅ .env file exists")
-        if not os.getenv("ANTHROPIC_API_KEY"):
-            warnings.append("ANTHROPIC_API_KEY not set in environment")
-    else:
-        warnings.append(".env file not found (copy from .env.template)")
-
-    # Check commands
-    if Path(".claude/commands/plan_w_docs.md").exists():
-        print("✅ Slash commands installed")
-    else:
-        errors.append("Slash commands missing")
-
-    # Results
-    print("\n" + "=" * 40)
-
-    if errors:
-        print("❌ Installation FAILED:")
-        for error in errors:
-            print(f"   - {error}")
-        return False
-
-    if warnings:
-        print("⚠️ Warnings:")
-        for warning in warnings:
-            print(f"   - {warning}")
-
-    print("\n✨ Installation successful!")
-    print("\nNext steps:")
-    print("1. Copy .env.template to .env and add your API keys")
-    print("2. Run: export $(grep -v '^#' .env | xargs)")
-    print("3. Test with: ./scripts/validate_pipeline.sh")
-
-    return True
-
-if __name__ == "__main__":
-    success = test_installation()
-    sys.exit(0 if success else 1)
-EOF
-
+# Copy test file from scripts/
+echo "🧪 Copying test script..."
+cp "$SOURCE_DIR/scripts/test_installation.py" "$TARGET_REPO/"
 chmod +x "$TARGET_REPO/test_installation.py"
 
 # Final summary

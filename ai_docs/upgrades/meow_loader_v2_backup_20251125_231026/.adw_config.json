@@ -1,0 +1,36 @@
+{
+  "project": {
+    "name": "meow_loader_v2",
+    "type": "python",
+    "framework": "streamlit"
+  },
+  "paths": {
+    "specs": "specs/",
+    "scout_outputs": "scout_outputs/",
+    "ai_docs": "ai_docs/",
+    "app_code": "src/",
+    "tests": "tests/",
+    "allowed": [
+      "specs",
+      "scout_outputs",
+      "ai_docs",
+      "docs",
+      "src",
+      "tests",
+      "data",
+      "scripts"
+    ]
+  },
+  "workflow": {
+    "use_github": true,
+    "auto_branch": true,
+    "branch_prefix": "feature/"
+  },
+  "language_specific": {
+    "python": {
+      "package_manager": "pip",
+      "test_command": "pytest -v",
+      "lint_command": "ruff check"
+    }
+  }
+}

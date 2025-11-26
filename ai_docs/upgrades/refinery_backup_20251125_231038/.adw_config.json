@@ -1,0 +1,23 @@
+{
+  "project": {
+    "name": "refinery-data-refiner",
+    "type": "typescript"
+  },
+  "paths": {
+    "specs": "specs/",
+    "agents": "agents/",
+    "ai_docs": "ai_docs/",
+    "app_code": "src/",
+    "docs": "docs/",
+    "allowed": ["specs", "agents", "ai_docs", "src", "tests", "docs"]
+  },
+  "workflow": {
+    "use_github": false,
+    "auto_branch": false,
+    "branch_prefix": "feature/"
+  },
+  "typescript": {
+    "strict": true,
+    "test_framework": "vitest"
+  }
+}

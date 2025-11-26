@@ -49,6 +49,8 @@ After installation, your target repo will have:
 - ✅ Proper directory structure
 - ✅ Documentation and examples
 
+⚡ **After installation** → Check [Quick Reference](QUICK_REFERENCE.md) for essential commands and troubleshooting.
+
 ---
 
 ## 📋 Prerequisites

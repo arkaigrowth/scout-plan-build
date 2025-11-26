@@ -36,6 +36,8 @@ Claude automatically:
 
 See [Natural Language Guide](docs/NATURAL_LANGUAGE_GUIDE.md) for examples and patterns.
 
+📋 **[Quick Reference](docs/QUICK_REFERENCE.md)** - One-page cheatsheet for commands, troubleshooting, and workflows.
+
 ### Command-Driven Approach
 
 For more control, use explicit commands:

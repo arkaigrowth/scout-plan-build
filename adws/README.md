@@ -58,6 +58,8 @@ curl -LsSf https://astral.sh/uv/install.sh | sh  # macOS/Linux
 gh auth login
 ```
 
+⚡ **Need a cheatsheet?** → See [Quick Reference](../docs/QUICK_REFERENCE.md) for commands and troubleshooting.
+
 ### 3. Run ADW
 
 ```bash

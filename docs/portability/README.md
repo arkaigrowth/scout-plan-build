@@ -3,7 +3,7 @@
 ## Quick Links
 - **New to the system?** → Read [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md)
 - **Installing to new repo?** → Read [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)
-- **Troubleshooting?** → Read [QUICK_REFERENCE.md](QUICK_REFERENCE.md)
+- **Quick commands & troubleshooting?** → Read [Quick Reference](../QUICK_REFERENCE.md) ⭐
 - **Need code locations?** → Read [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md)
 
 ## Portability Score

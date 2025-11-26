@@ -37,7 +37,11 @@ This document combines battle-tested patterns from enterprise AI development wit
 12. [Security Layers](#12-security-reality)
 13. [Testing LLMs](#13-testing-reality-check)
 14. [Cost Management](#14-cost-management-imperative)
-15. [Quick Reference](#quick-reference)
+15. [Parallel Execution Patterns](#15-parallel-execution-patterns-new) ⭐
+16. [Git Worktree Isolation](#16-git-worktree-isolation-new) ⭐
+17. [Session Lifecycle Management](#17-session-lifecycle-management-new) ⭐
+18. [Quick Reference](#quick-reference)
+19. [Adoption Framework](#adoption-framework) ⭐
 
 ---
 
@@ -75,22 +79,27 @@ scout_plan_build_mvp/
 **File:** `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/file_organization.py`
 
 ```python
-class FileOrganization:
-    """Canonical paths - NEVER write to repo root"""
+class FileOrganizer:
+    """Manages standardized file output for ADW workflows."""
 
-    AI_DOCS = "ai_docs"
-    SPECS = "specs"
-    SCOUT_OUTPUTS = "scout_outputs"
+    def __init__(self, base_dir: str = "ai_docs/outputs"):
+        self.base_dir = Path(base_dir)
+        self.base_dir.mkdir(parents=True, exist_ok=True)
 
-    @staticmethod
-    def get_analysis_path(name: str) -> str:
-        """ai_docs/analyses/auth-analysis.md"""
-        return f"{FileOrganization.AI_DOCS}/analyses/{name}.md"
+        # Legacy directories for compatibility
+        self.legacy_dirs = {
+            "scout": Path("scout_outputs"),
+            "specs": Path("specs"),
+            "build_reports": Path("ai_docs/build_reports"),
+            "reviews": Path("ai_docs/reviews")
+        }
 
-    @staticmethod
-    def get_spec_path(adw_id: str, issue_class: str) -> str:
-        """specs/issue-001-adw-AUTH-login.md"""
-        return f"{FileOrganization.SPECS}/issue-{adw_id}-{issue_class}.md"
+    def create_task_directory(self, task_name: str, adw_id: str = None) -> Path:
+        """Create timestamped directory for task outputs"""
+        timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
+        clean_name = "".join(c if c.isalnum() or c in "-_" else "_"
+                            for c in task_name.lower())[:50]
+        return self.base_dir / f"{timestamp}-{clean_name}"
 ```
 
 ### What We Learned
@@ -122,22 +131,26 @@ Using Opus for everything = bankruptcy. Using Haiku for complex tasks = garbage 
 
 **File:** `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/agent.py`
 
+**Note:** *Routing is currently configured via constants. Dynamic routing is planned.*
+
 ```python
-class Agent:
-    def __init__(self, model="claude-opus-4-20250514"):
-        self.model = model  # Default to opus for safety
+# Current implementation uses constant-based model selection
+SLASH_COMMAND_MODEL_MAP = {
+    "haiku": "claude-3-haiku-20240307",
+    "sonnet": "claude-sonnet-4-20250514",
+    "opus": "claude-opus-4-20250514",
+}
 
-    def route_by_complexity(self, task: str) -> str:
-        """Route to appropriate model"""
+# Default model for production operations
+DEFAULT_MODEL = "claude-opus-4-20250514"
 
-        if "simple" in task.lower() or "quick" in task.lower():
-            return "claude-haiku-3-20240307"
-
-        if "analyze" in task.lower() or "review" in task.lower():
-            return "claude-sonnet-4-5-20250929"  # Balanced
-
-        # Default to opus for production work
-        return "claude-opus-4-20250514"
+# Proposed: Dynamic routing based on task complexity
+def route_by_complexity(task: str) -> str:
+    """Future: Route to appropriate model based on task analysis"""
+    complexity_indicators = ["architecture", "security", "refactor"]
+    if any(ind in task.lower() for ind in complexity_indicators):
+        return SLASH_COMMAND_MODEL_MAP["opus"]
+    return SLASH_COMMAND_MODEL_MAP["sonnet"]  # Default to balanced
 ```
 
 ### Pattern: Opus Plans, Sonnet Executes
@@ -189,19 +202,25 @@ memory = QdrantClient().search(query_vector)
 
 ### Our Implementation
 
-**File:** `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/adw_state.py`
+**File:** `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/state.py`
 
 ```python
 class ADWState:
-    """Lightweight state for Scout-Plan-Build workflow"""
+    """Container for ADW workflow state with file persistence."""
+
+    STATE_FILENAME = "adw_state.json"
 
     def __init__(self, adw_id: str):
         self.adw_id = adw_id
-        self.data = {"adw_id": adw_id}
+        self.data: Dict[str, Any] = {"adw_id": self.adw_id}
+        self.logger = logging.getLogger(__name__)
 
-    def set_phase(self, phase: str):
-        self.data["current_phase"] = phase
-        self.data[f"{phase}_started"] = datetime.now().isoformat()
+    def update(self, **kwargs):
+        """Update state with new key-value pairs."""
+        core_fields = {"adw_id", "issue_number", "branch_name", "plan_file", "issue_class"}
+        for key, value in kwargs.items():
+            if key in core_fields or key.startswith(("status", "timestamp")):
+                self.data[key] = value
 ```
 
 ### What We Learned
@@ -235,7 +254,7 @@ def generate_report(mode="minimal"):
 
 ### Our Implementation
 
-**File:** `/Users/alexkamysz/AI/scout_plan_build_mvp/.claude/skills/dependency-tracer-OLD.md`
+**File:** `/Users/alexkamysz/AI/scout_plan_build_mvp/scripts/dependency-tracer/SKILL.md`
 
 ```markdown
 ## Efficiency Protocol
@@ -302,7 +321,7 @@ def generate_dependency_diagram(files: dict) -> str:
 
 ### Our Implementation
 
-**File:** `/Users/alexkamysz/AI/scout_plan_build_mvp/.claude/skills/dependency-tracer-OLD.md`
+**File:** `/Users/alexkamysz/AI/scout_plan_build_mvp/scripts/dependency-tracer/`
 
 **Output Example:**
 
@@ -334,6 +353,81 @@ ANALYSIS:
 **Use Case:** Perfect for onboarding, architecture reviews, debugging
 
 **Tool:** `dependency-tracer` skill generates these automatically
+
+### Real-World Diagram Examples
+
+The following diagrams are generated by our `scripts/dependency-tracer/` tool:
+
+#### Import Statistics Summary
+```
+Total Imports: 324
+├─ ✓ Valid: 316 (97%)
+└─ ✗ Broken: 8 (2%)
+
+By Location:
+├─ installed: 235 (72%)
+├─ local: 81 (25%)
+└─ unknown: 8 (2%)
+
+Top 5 Most Imported Modules:
+├─ os: 31 times
+├─ typing: 30 times
+├─ sys: 28 times
+├─ subprocess: 23 times
+└─ json: 22 times
+```
+
+#### Import Dependency Tree
+```
+├─ ✓ adw_build.py (13 imports, 0 broken)
+│  ├─ ✓ sys [import] (installed)
+│  ├─ ✓ json [import] (installed)
+│  ├─ ✓ adw_modules.state [from] (local)
+│  ├─ ✓ adw_modules.git_ops [from] (local)
+│  └─ ✓ adw_modules.workflow_ops [from] (local)
+│
+├─ ✗ r2_uploader.py (7 imports, 3 broken)
+│  ├─ ✓ os [import] (installed)
+│  ├─ ✗ **boto3** [import] (BROKEN)
+│  ├─ ✗ **botocore.client** [from] (BROKEN)
+│  └─ ✗ **botocore.exceptions** [from] (BROKEN)
+│
+└─ ✓ agent.py (9 imports, 0 broken)
+   ├─ ✓ subprocess [import] (installed)
+   └─ ✓ adw_modules.utils [from] (local)
+```
+
+#### Broken Reference Map
+```
+BROKEN MODULES
+│
+├─ ✗ boto3 (1 file)
+│  └─ r2_uploader.py
+├─ ✗ pytest (1 file)
+│  └─ test_validators.py
+├─ ✗ fastapi (1 file)
+│  └─ trigger_webhook.py
+└─ ✗ schedule (1 file)
+   └─ trigger_cron.py
+```
+
+#### Module Hierarchy
+```
+Local Module Structure:
+│
+├─ ✓ adw_modules
+│  ├─ ✓ agent
+│  ├─ ✓ state
+│  ├─ ✓ utils
+│  ├─ ✓ validators
+│  ├─ ✓ github
+│  ├─ ✓ git_ops
+│  └─ ✓ workflow_ops
+└─ ✓ scripts
+   └─ ✓ dependency-tracer
+```
+
+**Source:** `scripts/dependency-tracer/examples/diagrams_example.md`
 
 ---
 
@@ -560,7 +654,7 @@ Every project reinvents common tools (video download, dependency tracing, data a
 
 ### Our Implementation
 
-**File:** `/Users/alexkamysz/AI/scout_plan_build_mvp/.claude/skills/dependency-tracer-OLD.md`
+**File:** `/Users/alexkamysz/AI/scout_plan_build_mvp/scripts/dependency-tracer/SKILL.md`
 
 ```markdown
 **Topic**: Dependency Tracing
@@ -575,6 +669,26 @@ Portable to any IDE/terminal, zero MCP overhead, zero zombie processes.
 - Find circular dependencies
 - Generate ASCII diagrams
 - Onboard new developers
+```
+
+### VALID Pattern for Robust Skills
+
+Skills use the VALID pattern for consistent execution:
+
+```python
+# V - Validate inputs before processing
+# A - Assert preconditions are met
+# L - Locate resources deterministically
+# I - Identify outputs clearly
+# D - Deterministic execution (temperature: 0.0)
+```
+
+**Frontmatter Example:**
+```yaml
+version: 1.0.0
+deterministic: true
+temperature: 0.0
+validation: strict
 ```
 
 ### Skill Catalog
@@ -623,15 +737,23 @@ def scout_phase(task: str):
 
 ### Our Current State
 
-**File:** `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/logger.py`
+**File:** `/Users/alexkamysz/AI/scout_plan_build_mvp/adws/adw_modules/utils.py`
 
 ```python
 import logging
 
-logger = logging.getLogger(__name__)
+def setup_logger(adw_id: str, trigger_type: str = "adw_plan_build") -> logging.Logger:
+    """Configure logging for ADW workflows."""
+    logger = logging.getLogger(f"ADW-{adw_id}")
+    logger.setLevel(logging.INFO)
 
-# Basic logging (Level 1)
-logger.info(f"Scout phase started: {task}")
+    # Basic logging (Level 1)
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter(
+        '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+    ))
+    logger.addHandler(handler)
+    return logger
 ```
 
 ### Recommended Upgrade
@@ -903,7 +1025,7 @@ class CostLimiter:
 
 ### Our Implementation
 
-**File:** `/Users/alexkamysz/AI/scout_plan_build_mvp/.env.example`
+**File:** `/Users/alexkamysz/AI/scout_plan_build_mvp/.env.sample`
 
 ```bash
 # Token limits
@@ -942,6 +1064,273 @@ results = gemini.batch_process(items)
 **Next Step:** Add cost tracking per phase (scout/plan/build)
 
 **Expected:** Identify 50% cost reduction opportunities
+
+---
+
+## 15. Parallel Execution Patterns (NEW)
+
+### The Problem
+
+Sequential workflow execution is slow. Plan→Build→Test→Review→Document takes 12-17 minutes.
+
+### The Pattern: Parallel Phase Execution
+
+```
+SEQUENTIAL (12-17 min)
+├─ Plan: ████ (2-3 min)
+├─ Build: ██████ (3-4 min)
+├─ Test: ████ (3-4 min)
+├─ Review: ███ (2-3 min)
+└─ Document: ███ (2-3 min)
+
+PARALLEL (8-11 min) - 40% FASTER
+├─ Plan: ████ (2-3 min)
+├─ Build: ██████ (3-4 min)
+└─ Test||Review||Doc: ████ (3-4 min max)
+   ├─ Test: ████
+   ├─ Review: ███
+   └─ Document: ███
+```
+
+### Our Implementation
+
+**File:** `adws/adw_sdlc.py`
+
+```python
+# Parallel QA phases (30 lines of code!)
+test_proc = subprocess.Popen(["python", "adw_test.py", "--no-commit"])
+review_proc = subprocess.Popen(["python", "adw_review.py", "--no-commit"])
+doc_proc = subprocess.Popen(["python", "adw_document.py", "--no-commit"])
+
+# Wait for all to complete
+test_proc.wait()
+review_proc.wait()
+doc_proc.wait()
+
+# Single aggregated commit
+subprocess.run(["git", "add", "."])
+subprocess.run(["git", "commit", "-m", "Test, review, and docs complete"])
+```
+
+### Git Conflict Resolution
+
+```
+❌ PROBLEM: Parallel commits = conflicts
+├─ Test: git commit (10:00:05)  ─┐
+├─ Review: git commit (10:00:05) ├─ CONFLICT!
+└─ Doc: git commit (10:00:06)   ─┘
+
+✅ SOLUTION: --no-commit flags
+├─ Test: work, NO COMMIT
+├─ Review: work, NO COMMIT
+└─ Doc: work, NO COMMIT
+    ↓
+Coordinator: git add . && git commit
+    ↓
+Result: Single clean commit ✅
+```
+
+### Parallel Scout Squadron
+
+**File:** `adws/adw_scout_parallel.py`
+
+Launch 6 scouts simultaneously with different search strategies:
+
+```python
+strategies = [
+    "implementation",  # .py, .js, .ts files
+    "tests",           # test patterns
+    "config",          # .env, settings.py
+    "architecture",    # design patterns
+    "dependencies",    # package.json, requirements.txt
+    "documentation"    # .md files
+]
+
+# Spawn all scouts in parallel
+scouts = [subprocess.Popen(["python", "scout_simple.py", s]) for s in strategies]
+
+# Wait and aggregate
+for scout in scouts:
+    scout.wait()
+```
+
+**Performance:** 3.2x speedup over sequential scouting
+
+### What We Learned
+
+**Savings:** 40-50% faster execution
+
+**Key:** `--no-commit` flags prevent git conflicts
+
+**Pattern:** Plan and Build are sequential, QA phases are parallel
+
+---
+
+## 16. Git Worktree Isolation (NEW)
+
+### The Problem
+
+Testing multiple implementation approaches risks polluting the main branch.
+
+### The Pattern: Isolated Worktrees
+
+```
+main/                          # Protected
+├─ trees/
+│  ├─ feature-auth-1/          # Agent 1's approach
+│  ├─ feature-auth-2/          # Agent 2's approach
+│  └─ feature-auth-3/          # Agent 3's approach
+```
+
+### Our Implementation
+
+**Commands:** `.claude/commands/git/worktree_*.md`
+
+```bash
+# Create isolated worktree
+/git:worktree_create auth-feature main
+
+# Each agent works independently
+# Checkpoints every 5 minutes (auto)
+
+# Compare approaches
+/git:compare-worktrees auth-feature
+
+# Merge best one
+/git:merge-worktree trees/auth-feature-2
+```
+
+### Checkpoint System
+
+```
+Worktree Metadata:
+├─ .worktree-meta.json      # Machine state
+├─ .checkpoint-history      # Human log
+└─ .git/REDO_STACK          # Undo/redo stack
+
+# Undo last N changes
+/git:worktree_undo 3
+
+# Redo if needed
+/git:worktree_redo
+```
+
+### Parallel Agent Execution
+
+**Command:** `/git:run-parallel-agents`
+
+```python
+# Launch N agents with same spec, different approaches
+for i in range(n_agents):
+    worktree_path = f"trees/{feature_name}-{i}"
+    Task(
+        prompt=f"Implement {spec} in {worktree_path}",
+        subagent_type="general-purpose"
+    )
+
+# Compare results
+/git:compare-worktrees feature_name
+```
+
+### What We Learned
+
+**Impact:** Safe experimentation without branch pollution
+
+**Use Case:** Try 3 approaches, merge the best
+
+**Safety:** Auto-checkpoint every 5 minutes (max 50 checkpoints, older archived)
+
+---
+
+## 17. Session Lifecycle Management (NEW)
+
+### The Problem
+
+Context is lost between sessions. "What was I working on?"
+
+### The Pattern: Handoff Documents
+
+```
+ai_docs/sessions/handoffs/
+├─ handoff-2025-11-24.md    # Today
+├─ handoff-2025-11-23.md    # Yesterday
+└─ ...
+```
+
+### Handoff Structure
+
+```markdown
+# Session Handoff - 2025-11-24
+
+**Branch:** main
+**Last Commit:** abc123
+**Context at Handoff:** ~25% remaining
+
+## Accomplished This Session
+- [x] Item 1 (commit: xyz789)
+- [x] Item 2
+
+## Pending Items
+| Priority | Item | Command | Effort |
+|----------|------|---------|--------|
+| 1 | Build SDK feature | /build_adw "specs/..." | 3 hrs |
+
+## Key File Pointers
+- `specs/feature.md` - Implementation spec
+- `ai_docs/research/...` - Background research
+
+## Quick Start for Next Session
+/session:resume
+```
+
+### Our Implementation
+
+**Commands:**
+
+- `/session:prepare-compaction` - Create handoff before ending session
+- `/session:resume` - Load handoff at session start
+
+**Hook:** `.claude/hooks/session_start.py` - Auto-detects handoffs
+
+```python
+# SessionStart hook output
+COMPACTED_SESSION_AVAILABLE
+========================================
+Handoff files found:
+  - handoff-2025-11-24.md [today] (most recent)
+  - handoff-2025-11-23.md [yesterday]
+
+To resume: /session:resume
+========================================
+```
+
+### Session Compaction Flow
+
+```
+Session Active
+    ↓
+Context > 75% used
+    ↓
+/session:prepare-compaction
+    ↓
+Haiku extracts actions → JSON
+    ↓
+User selects what to preserve
+    ↓
+Generate handoff document
+    ↓
+/compact
+    ↓
+New session: /session:resume
+```
+
+### What We Learned
+
+**Impact:** Resume in seconds, not minutes
+
+**Pattern:** Write handoff BEFORE context runs out
+
+**Trigger:** When context > 75% used
 
 ---
 
@@ -1056,6 +1445,55 @@ assert response["confidence"] <= 1.0
 
 ---
 
+## Adoption Framework
+
+### Priority Classification
+
+| 🟢 ADOPT NOW | 🟡 ADOPT LATER | 🔵 INVESTIGATE | 🔴 SKIP |
+|--------------|----------------|----------------|---------|
+| Langfuse decorators | Redis state | Gemini for Scout | Kubernetes |
+| Feedback directory | Multi-model router | Drift detection | Kafka events |
+| Canonical paths | Vector memory | A/B testing | Enterprise DAGs |
+| Token tracking | MCP integration | | |
+| Session handoffs | | | |
+| Parallel execution | | | |
+
+### Effort Estimates
+
+| Pattern | One-Time | Monthly | ROI Period |
+|---------|----------|---------|------------|
+| Observability | 16 hrs | $0 | Immediate |
+| Feedback Loops | 40 hrs | $0 | 2 months |
+| Multi-Model | 24 hrs | $200 | 1 month |
+| State (Redis) | 60 hrs | $10 | 3 months |
+| Parallel Execution | 8 hrs | $0 | Immediate |
+| Session Lifecycle | 4 hrs | $0 | Immediate |
+
+### Current Maturity Level
+
+**Assessment:** Level 1.5 of 4
+
+```
+Level 1: Basic       ████████░░ (Current: SSOT, validation, parallel exec)
+Level 2: Monitored   ████░░░░░░ (Partial: logging, session handoffs)
+Level 3: Optimized   ██░░░░░░░░ (Started: cost awareness)
+Level 4: Autonomous  ░░░░░░░░░░ (Missing: feedback loops, drift detection)
+```
+
+**Target:** Level 3 within 3 months
+
+### Risk Matrix
+
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| Redis failure | Low | High | Fallback to file-based state |
+| Model API changes | Medium | Medium | Abstract interfaces |
+| Cost overrun | Low | High | Hard limits in router |
+| Complexity creep | High | Medium | Phased adoption |
+| Context loss | Medium | High | Session handoffs |
+
+---
+
 ## Real Failures We Learned From
 
 ### Failure 1: Output Chaos
@@ -1136,11 +1574,13 @@ All examples reference actual files in `/Users/alexkamysz/AI/scout_plan_build_mv
 
 - **Agent Logic:** `adws/adw_modules/agent.py`
 - **File Organization:** `adws/adw_modules/file_organization.py`
-- **State Management:** `adws/adw_modules/adw_state.py`
+- **State Management:** `adws/adw_modules/state.py`
 - **Utilities:** `adws/adw_modules/utils.py`
 - **Validators:** `adws/adw_modules/validators.py`
-- **Skills:** `.claude/skills/dependency-tracer-OLD.md`
-- **Commands:** `.claude/commands/sc:*.md`
+- **Skills:** `scripts/dependency-tracer/SKILL.md`, `.claude/skills/`
+- **Commands:** `.claude/commands/[analysis|git|planning|workflow]/*.md`
 - **Framework Guide:** `CLAUDE.md`
+- **Session Handoffs:** `ai_docs/sessions/handoffs/`
+- **Worktree Commands:** `.claude/commands/git/worktree_*.md`
 
 Use `Grep` or `Glob` to find specific implementations.

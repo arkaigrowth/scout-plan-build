@@ -33,6 +33,7 @@ readonly TEMP_DIR="${TMPDIR:-/tmp}/spb-install-$$"
 # Installation modes
 MODE_MINIMAL="minimal"
 MODE_FULL="full"
+MODE_INTERACTIVE="interactive"
 DEFAULT_MODE="$MODE_MINIMAL"
 
 # =============================================================================
@@ -75,6 +76,508 @@ header() {
     echo -e "${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
 }
 
+# Spinner characters for progress display
+readonly SPINNER=('|' '/' '-' '\')
+
+# =============================================================================
+# Interactive Mode Detection and TTY Handling
+# =============================================================================
+
+# Track interactive mode TTY source
+INTERACTIVE_TTY=""
+
+detect_interactive_mode() {
+    local force_interactive="$1"
+
+    # Check for explicit --interactive flag
+    if [[ "$force_interactive" == "true" ]]; then
+        # When forced, try to find a TTY for input
+        if [[ -t 1 ]] && [[ -r /dev/tty ]]; then
+            export INTERACTIVE_TTY="/dev/tty"
+            return 0  # Interactive
+        elif [[ -t 0 ]]; then
+            export INTERACTIVE_TTY="/dev/stdin"
+            return 0  # Interactive
+        else
+            warn "Cannot enable interactive mode - no TTY available"
+            return 1  # Non-interactive
+        fi
+    fi
+
+    # When piped via curl, stdin is not a TTY
+    # We need to read from /dev/tty for user input
+    if [[ ! -t 0 ]]; then
+        # stdin is not a TTY (likely piped)
+        # Check if we can access /dev/tty for interactive input
+        if [[ -t 1 ]] && [[ -r /dev/tty ]]; then
+            # stdout is TTY and we can read from /dev/tty
+            # This allows interactive mode when piped via curl
+            export INTERACTIVE_TTY="/dev/tty"
+            return 0  # Interactive
+        else
+            return 1  # Non-interactive
+        fi
+    else
+        # stdin is a TTY (normal terminal execution)
+        export INTERACTIVE_TTY="/dev/stdin"
+        return 0  # Interactive
+    fi
+}
+
+# Read user input (works with curl piping)
+read_user_input() {
+    local prompt="$1"
+    local default="$2"
+    local response=""
+
+    echo -n "$prompt" >&2
+
+    if [[ -n "$INTERACTIVE_TTY" ]]; then
+        read -r response < "$INTERACTIVE_TTY"
+    else
+        read -r response
+    fi
+
+    # Use default if response is empty
+    echo "${response:-$default}"
+}
+
+# =============================================================================
+# Component Selection State Management
+# =============================================================================
+
+# Associative array for component state (0=off, 1=on)
+declare -A COMPONENT_STATE
+
+# Initialize default selections based on preset
+init_component_state() {
+    local preset="${1:-standard}"
+
+    # Slash command categories
+    COMPONENT_STATE["planning"]=0
+    COMPONENT_STATE["workflow"]=0
+    COMPONENT_STATE["git"]=0
+    COMPONENT_STATE["testing"]=0
+    COMPONENT_STATE["session"]=0
+    COMPONENT_STATE["analysis"]=0
+    COMPONENT_STATE["utilities"]=0
+
+    # Advanced components
+    COMPONENT_STATE["python_adw"]=0
+    COMPONENT_STATE["hooks"]=0
+    COMPONENT_STATE["skills"]=0
+    COMPONENT_STATE["scripts"]=0
+
+    # Apply preset
+    case "$preset" in
+        minimal)
+            COMPONENT_STATE["planning"]=1
+            COMPONENT_STATE["workflow"]=1
+            ;;
+        standard)
+            COMPONENT_STATE["planning"]=1
+            COMPONENT_STATE["workflow"]=1
+            COMPONENT_STATE["python_adw"]=1
+            ;;
+        full)
+            for key in "${!COMPONENT_STATE[@]}"; do
+                COMPONENT_STATE["$key"]=1
+            done
+            ;;
+    esac
+}
+
+# Toggle component selection
+toggle_component() {
+    local component="$1"
+
+    if [[ "${COMPONENT_STATE[$component]}" == "1" ]]; then
+        COMPONENT_STATE["$component"]=0
+    else
+        COMPONENT_STATE["$component"]=1
+    fi
+}
+
+# Toggle all components on or off
+toggle_all() {
+    local target_state="$1"  # "on" or "off"
+
+    local new_state
+    if [[ "$target_state" == "on" ]]; then
+        new_state=1
+    else
+        new_state=0
+    fi
+
+    for key in "${!COMPONENT_STATE[@]}"; do
+        COMPONENT_STATE["$key"]=$new_state
+    done
+}
+
+# Get selection indicator for display
+get_indicator() {
+    local component="$1"
+
+    if [[ "${COMPONENT_STATE[$component]}" == "1" ]]; then
+        echo -e "${GREEN}+${NC}"
+    else
+        echo -e "${DIM}o${NC}"
+    fi
+}
+
+# Count selected components
+count_selected() {
+    local count=0
+    for key in "${!COMPONENT_STATE[@]}"; do
+        if [[ "${COMPONENT_STATE[$key]}" == "1" ]]; then
+            ((count++))
+        fi
+    done
+    echo "$count"
+}
+
+# =============================================================================
+# Interactive Menu Display
+# =============================================================================
+
+show_component_menu() {
+    clear
+
+    cat << EOF
+${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}
+${BOLD}  Scout-Plan-Build Framework Installer v${VERSION}${NC}
+${BOLD}  Interactive Component Selection${NC}
+${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}
+
+${BOLD}CORE${NC} (Always Installed)
+  + Directory structure
+  + Configuration files (.adw_config.json, .env.template)
+  + Documentation (CLAUDE.md)
+
+${BOLD}SLASH COMMANDS${NC} (Select categories)
+  ${DIM}[1]${NC} $(get_indicator planning) Planning Commands        ${DIM}(plan, scout, design)${NC}
+  ${DIM}[2]${NC} $(get_indicator workflow) Workflow Commands        ${DIM}(implement, build)${NC}
+  ${DIM}[3]${NC} $(get_indicator git) Git Commands             ${DIM}(worktree, branch, PR)${NC}
+  ${DIM}[4]${NC} $(get_indicator testing) Testing Commands         ${DIM}(test, e2e, validate)${NC}
+  ${DIM}[5]${NC} $(get_indicator session) Session Commands         ${DIM}(save, resume, compact)${NC}
+  ${DIM}[6]${NC} $(get_indicator analysis) Analysis Commands        ${DIM}(analyze, review, doc)${NC}
+  ${DIM}[7]${NC} $(get_indicator utilities) Utility Commands         ${DIM}(install, prepare)${NC}
+
+${BOLD}ADVANCED COMPONENTS${NC}
+  ${DIM}[8]${NC}  $(get_indicator python_adw) Python ADW System        ${DIM}(adws/ orchestration)${NC}
+  ${DIM}[9]${NC}  $(get_indicator hooks) Event Hooks              ${DIM}(.claude/hooks/)${NC}
+  ${DIM}[10]${NC} $(get_indicator skills) Skills                   ${DIM}(advanced workflows)${NC}
+  ${DIM}[11]${NC} $(get_indicator scripts) Scripts                  ${DIM}(bash utilities)${NC}
+
+${BOLD}QUICK PRESETS${NC}
+  ${DIM}[M]${NC} Minimal   - Commands only (1-2)
+  ${DIM}[S]${NC} Standard  - Commands + ADW (1-2, 8)
+  ${DIM}[F]${NC} Full      - Everything (1-11)
+  ${DIM}[A]${NC} Toggle All / None
+
+${DIM}[ENTER]${NC} Continue with selection
+${DIM}[Q]${NC}     Quit
+
+${CYAN}Current selection: $(count_selected) components${NC}
+
+EOF
+
+    echo -n "Select option: "
+}
+
+# Handle menu selection input
+handle_menu_selection() {
+    local choice
+    choice=$(read_user_input "" "")
+
+    case "$choice" in
+        1) toggle_component "planning" ;;
+        2) toggle_component "workflow" ;;
+        3) toggle_component "git" ;;
+        4) toggle_component "testing" ;;
+        5) toggle_component "session" ;;
+        6) toggle_component "analysis" ;;
+        7) toggle_component "utilities" ;;
+        8) toggle_component "python_adw" ;;
+        9) toggle_component "hooks" ;;
+        10) toggle_component "skills" ;;
+        11) toggle_component "scripts" ;;
+
+        [Mm])
+            init_component_state "minimal"
+            ;;
+        [Ss])
+            init_component_state "standard"
+            ;;
+        [Ff])
+            init_component_state "full"
+            ;;
+        [Aa])
+            local current_count
+            current_count=$(count_selected)
+            if [[ "$current_count" -gt 0 ]]; then
+                toggle_all "off"
+            else
+                toggle_all "on"
+            fi
+            ;;
+        "")
+            # Enter pressed - continue with installation
+            return 0
+            ;;
+        [Qq])
+            error "Installation cancelled by user"
+            exit 0
+            ;;
+        *)
+            warn "Invalid selection: $choice"
+            sleep 1
+            ;;
+    esac
+
+    # Continue showing menu (return 1 to loop)
+    return 1
+}
+
+# Run interactive menu loop
+run_interactive_menu() {
+    init_component_state "standard"  # Start with standard preset
+
+    while true; do
+        show_component_menu
+        if handle_menu_selection; then
+            break  # User pressed Enter to continue
+        fi
+    done
+}
+
+# =============================================================================
+# Installation Summary and Confirmation
+# =============================================================================
+
+show_installation_summary() {
+    local target="$1"
+
+    # Calculate component counts
+    local cmd_categories=0
+    local cmd_count=0
+    local adv_components=0
+
+    # Count selected command categories
+    for cat in planning workflow git testing session analysis utilities; do
+        if [[ "${COMPONENT_STATE[$cat]}" == "1" ]]; then
+            ((cmd_categories++))
+            # Estimate files per category (approximation)
+            case "$cat" in
+                planning) ((cmd_count += 6)) ;;
+                workflow) ((cmd_count += 9)) ;;
+                git) ((cmd_count += 11)) ;;
+                testing) ((cmd_count += 4)) ;;
+                session) ((cmd_count += 4)) ;;
+                analysis) ((cmd_count += 4)) ;;
+                utilities) ((cmd_count += 6)) ;;
+            esac
+        fi
+    done
+
+    # Count advanced components
+    for comp in python_adw hooks skills scripts; do
+        if [[ "${COMPONENT_STATE[$comp]}" == "1" ]]; then
+            ((adv_components++))
+        fi
+    done
+
+    # Estimate disk space
+    local disk_space="500 KB"  # Base
+    [[ "${COMPONENT_STATE[python_adw]}" == "1" ]] && disk_space="2.5 MB"
+
+    cat << EOF
+
+${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}
+${BOLD}  Installation Summary${NC}
+${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}
+
+${BOLD}Target:${NC} $target
+${BOLD}Mode:${NC}   Interactive (Custom selection)
+
+${BOLD}Will install:${NC}
+  + Core directory structure
+EOF
+
+    # Show selected command categories
+    if [[ "$cmd_categories" -gt 0 ]]; then
+        echo "  + Slash commands: $cmd_categories categories ($cmd_count commands)"
+        [[ "${COMPONENT_STATE[planning]}" == "1" ]] && echo "    - Planning Commands"
+        [[ "${COMPONENT_STATE[workflow]}" == "1" ]] && echo "    - Workflow Commands"
+        [[ "${COMPONENT_STATE[git]}" == "1" ]] && echo "    - Git Commands"
+        [[ "${COMPONENT_STATE[testing]}" == "1" ]] && echo "    - Testing Commands"
+        [[ "${COMPONENT_STATE[session]}" == "1" ]] && echo "    - Session Commands"
+        [[ "${COMPONENT_STATE[analysis]}" == "1" ]] && echo "    - Analysis Commands"
+        [[ "${COMPONENT_STATE[utilities]}" == "1" ]] && echo "    - Utility Commands"
+    fi
+
+    # Show selected advanced components
+    [[ "${COMPONENT_STATE[python_adw]}" == "1" ]] && echo "  + Python ADW System (12 modules)"
+    [[ "${COMPONENT_STATE[hooks]}" == "1" ]] && echo "  + Event Hooks (8 hooks)"
+    [[ "${COMPONENT_STATE[skills]}" == "1" ]] && echo "  + Skills (2 workflow skills)"
+    [[ "${COMPONENT_STATE[scripts]}" == "1" ]] && echo "  + Utility Scripts (4 scripts)"
+
+    cat << EOF
+
+${BOLD}Disk space required:${NC} ~$disk_space
+${BOLD}Estimated time:${NC} 30-60 seconds
+
+EOF
+}
+
+confirm_installation() {
+    local response
+    response=$(read_user_input "Proceed with installation? [Y/n] " "Y")
+
+    if [[ "$response" =~ ^[Yy]$ ]] || [[ -z "$response" ]]; then
+        return 0  # Proceed
+    else
+        error "Installation cancelled by user"
+        exit 0
+    fi
+}
+
+# =============================================================================
+# Component-Based Installation Functions
+# =============================================================================
+
+install_slash_command_category() {
+    local source="$1"
+    local target="$2"
+    local category="$3"
+    local dry_run="$4"
+
+    # Only install if selected
+    if [[ "${COMPONENT_STATE[$category]}" != "1" ]]; then
+        return 0
+    fi
+
+    local cmd_dir="$source/.claude/commands/$category"
+
+    if [[ ! -d "$cmd_dir" ]]; then
+        warn "Command category directory not found: $category"
+        return 0
+    fi
+
+    info "Installing $category commands..."
+
+    local count=0
+    while IFS= read -r -d '' file; do
+        if [[ "$dry_run" == "true" ]]; then
+            step_pending "Would copy: .claude/commands/$category/$(basename "$file")"
+        else
+            mkdir -p "$target/.claude/commands/$category"
+            cp "$file" "$target/.claude/commands/$category/"
+            ((count++))
+        fi
+    done < <(find "$cmd_dir" -maxdepth 1 -type f -name "*.md" -print0)
+
+    if [[ "$dry_run" != "true" ]]; then
+        step "Installed $count $category commands"
+    fi
+}
+
+install_advanced_component() {
+    local source="$1"
+    local target="$2"
+    local component="$3"
+    local dry_run="$4"
+
+    # Only install if selected
+    if [[ "${COMPONENT_STATE[$component]}" != "1" ]]; then
+        return 0
+    fi
+
+    case "$component" in
+        python_adw)
+            if [[ -d "$source/adws" ]]; then
+                if [[ "$dry_run" == "true" ]]; then
+                    step_pending "Would copy: adws/ (Python modules)"
+                else
+                    cp -r "$source/adws" "$target/"
+                    step "Installed Python ADW System"
+                fi
+            fi
+            ;;
+        hooks)
+            if [[ -d "$source/.claude/hooks" ]]; then
+                if [[ "$dry_run" == "true" ]]; then
+                    step_pending "Would copy: .claude/hooks/"
+                else
+                    cp -r "$source/.claude/hooks" "$target/.claude/"
+                    step "Installed Event Hooks"
+                fi
+            fi
+            ;;
+        skills)
+            if [[ -d "$source/.claude/skills" ]]; then
+                if [[ "$dry_run" == "true" ]]; then
+                    step_pending "Would copy: .claude/skills/"
+                else
+                    cp -r "$source/.claude/skills" "$target/.claude/"
+                    step "Installed Skills"
+                fi
+            fi
+            ;;
+        scripts)
+            if [[ -d "$source/scripts" ]]; then
+                if [[ "$dry_run" == "true" ]]; then
+                    step_pending "Would copy: scripts/"
+                else
+                    mkdir -p "$target/scripts"
+                    cp "$source/scripts/"*.sh "$target/scripts/" 2>/dev/null || true
+                    chmod +x "$target/scripts/"*.sh 2>/dev/null || true
+                    step "Installed Utility Scripts"
+                fi
+            fi
+            ;;
+    esac
+}
+
+# Main installation with component selection
+run_component_installation() {
+    local source="$1"
+    local target="$2"
+    local dry_run="$3"
+
+    header "Installing Components"
+    echo ""
+
+    # Always install core
+    info "Installing core components..."
+    create_directories "$target" "$dry_run"
+    generate_env_template "$target" "$dry_run"
+    generate_config "$target" "$dry_run"
+    generate_claude_md "$target" "$MODE_INTERACTIVE" "$dry_run"
+    generate_install_info "$target" "$MODE_INTERACTIVE" "$dry_run"
+    echo ""
+
+    # Install selected slash command categories
+    info "Installing slash commands..."
+    for category in planning workflow git testing session analysis utilities; do
+        install_slash_command_category "$source" "$target" "$category" "$dry_run"
+    done
+    echo ""
+
+    # Install selected advanced components
+    info "Installing advanced components..."
+    for component in python_adw hooks skills scripts; do
+        install_advanced_component "$source" "$target" "$component" "$dry_run"
+    done
+    echo ""
+
+    if [[ "$dry_run" == "true" ]]; then
+        success "Dry run complete - no changes made"
+    else
+        success "Installation complete"
+    fi
+}
+
 # =============================================================================
 # Cleanup Handler
 # =============================================================================
@@ -104,47 +607,64 @@ show_help() {
 ${BOLD}Scout-Plan-Build Framework Installer v${VERSION}${NC}
 
 ${BOLD}USAGE:${NC}
-    curl -sL ${REPO_URL}/raw/main/install.sh | bash -s [TARGET] [OPTIONS]
+    # Quick install (minimal)
+    curl -sL ${REPO_URL}/raw/main/install.sh | bash -s /path/to/target
 
-    # Or if downloaded locally:
-    ./install.sh [TARGET] [OPTIONS]
+    # Interactive selection
+    ./install.sh /path/to/target --interactive
+
+    # Force interactive with curl piping
+    curl -sL URL | bash -s -- /path/to/target --interactive
 
 ${BOLD}ARGUMENTS:${NC}
     TARGET              Target directory for installation (required)
                         Must be an existing, writable directory
 
 ${BOLD}OPTIONS:${NC}
-    --minimal           Install slash commands only (default, quick eval)
-    --full              Install everything (commands, modules, hooks, skills)
+    --minimal           Install slash commands only (default for piped)
+    --full              Install everything (all components)
+    --interactive       Show interactive menu for component selection
     --dry-run           Show what would be installed without making changes
     --force             Overwrite existing installation without prompting
     --help, -h          Show this help message
 
+${BOLD}INSTALLATION MODES:${NC}
+    ${GREEN}Minimal${NC}         - Essential commands only (planning + workflow)
+    ${GREEN}Standard${NC}        - Recommended setup (commands + Python ADW)
+    ${GREEN}Full${NC}            - Complete installation (all components)
+    ${GREEN}Interactive${NC}     - Custom component selection via menu
+
 ${BOLD}EXAMPLES:${NC}
-    # Basic installation to current project
+    # Quick minimal install
     curl -sL ${REPO_URL}/raw/main/install.sh | bash -s ./my-project
 
-    # Full installation with all features
+    # Full installation
     curl -sL ${REPO_URL}/raw/main/install.sh | bash -s -- ./my-project --full
 
+    # Interactive selection (local execution)
+    ./install.sh ./my-project --interactive
+
+    # Interactive via curl (requires TTY)
+    curl -sL URL | bash -s -- ./my-project --interactive
+
     # Preview what would be installed
-    curl -sL ${REPO_URL}/raw/main/install.sh | bash -s -- ./my-project --dry-run
+    ./install.sh ./my-project --interactive --dry-run
 
-${BOLD}INSTALLATION MODES:${NC}
-    ${GREEN}--minimal (default)${NC}
-        - .claude/commands/ (slash commands)
-        - .adw_config.json
-        - .env.template
-        - Basic CLAUDE.md
-        Best for: Quick evaluation, small projects
+${BOLD}COMPONENT CATEGORIES (Interactive Mode):${NC}
+    Slash Commands:
+      [1] Planning   - plan, scout, design commands
+      [2] Workflow   - implement, build commands
+      [3] Git        - worktree, branch, PR commands
+      [4] Testing    - test, e2e, validate commands
+      [5] Session    - save, resume, compact commands
+      [6] Analysis   - analyze, review, doc commands
+      [7] Utilities  - install, prepare commands
 
-    ${GREEN}--full${NC}
-        - Everything from --minimal
-        - adws/ (Python workflow modules)
-        - .claude/hooks/ (event hooks)
-        - .claude/skills/ (workflow skills)
-        - scripts/ (utility scripts)
-        Best for: Full adoption, CI/CD integration
+    Advanced Components:
+      [8]  Python ADW - adws/ orchestration modules
+      [9]  Hooks      - .claude/hooks/ event automation
+      [10] Skills     - advanced workflow patterns
+      [11] Scripts    - bash utility scripts
 
 ${BOLD}REQUIREMENTS:${NC}
     - Bash >= 4.0
@@ -748,7 +1268,12 @@ show_next_steps() {
     echo "     ${CYAN}/build_adw \"specs/your-plan.md\"${NC}"
     echo ""
 
+    # Show validation step for full install or if scripts were selected in interactive mode
     if [[ "$mode" == "$MODE_FULL" ]]; then
+        echo "  4. Validate installation:"
+        echo "     ${CYAN}./scripts/validate_pipeline.sh${NC}"
+        echo ""
+    elif [[ "$mode" == "$MODE_INTERACTIVE" ]] && [[ "${COMPONENT_STATE[scripts]}" == "1" ]]; then
         echo "  4. Validate installation:"
         echo "     ${CYAN}./scripts/validate_pipeline.sh${NC}"
         echo ""
@@ -764,9 +1289,10 @@ show_next_steps() {
 
 main() {
     local target=""
-    local mode="$DEFAULT_MODE"
+    local mode=""  # Will be set based on interactive/non-interactive
     local dry_run="false"
     local force="false"
+    local use_interactive="false"
 
     # Parse arguments
     while [[ $# -gt 0 ]]; do
@@ -776,10 +1302,17 @@ main() {
                 ;;
             --minimal)
                 mode="$MODE_MINIMAL"
+                use_interactive="false"
                 shift
                 ;;
             --full)
                 mode="$MODE_FULL"
+                use_interactive="false"
+                shift
+                ;;
+            --interactive)
+                use_interactive="true"
+                mode=""  # Will be set via menu
                 shift
                 ;;
             --dry-run)
@@ -822,6 +1355,29 @@ main() {
     # Convert to absolute path
     target=$(cd "$target" 2>/dev/null && pwd)
 
+    # Detect interactive mode if not explicitly set via flags
+    if [[ -z "$mode" ]] && [[ "$use_interactive" != "true" ]]; then
+        # No mode specified - check if we should auto-enable interactive
+        if detect_interactive_mode "false"; then
+            # TTY available but user didn't specify mode
+            # Default to minimal for backward compatibility
+            mode="$MODE_MINIMAL"
+        else
+            # Non-interactive, use minimal as default
+            mode="$MODE_MINIMAL"
+        fi
+    fi
+
+    # If --interactive was requested, verify TTY availability
+    if [[ "$use_interactive" == "true" ]]; then
+        if ! detect_interactive_mode "true"; then
+            error "Interactive mode requires a terminal (TTY)"
+            echo "Falling back to --minimal mode"
+            mode="$MODE_MINIMAL"
+            use_interactive="false"
+        fi
+    fi
+
     # Show banner
     echo ""
     echo -e "${BOLD}${CYAN}"
@@ -835,22 +1391,43 @@ main() {
     echo -e "  ${DIM}Version ${VERSION}${NC}"
     echo ""
 
-    # Run installation steps
+    # Run pre-flight checks
     run_preflight_checks "$target" "$force" || exit 1
 
+    # Download framework (needed for all modes)
     if [[ "$dry_run" != "true" ]]; then
         download_framework || exit 1
     else
         info "Skipping download (dry run)"
-        mkdir -p "$TEMP_DIR/repo/.claude/commands"
+        mkdir -p "$TEMP_DIR/repo/.claude/commands/planning"
+        mkdir -p "$TEMP_DIR/repo/.claude/commands/workflow"
+        mkdir -p "$TEMP_DIR/repo/.claude/commands/git"
+        mkdir -p "$TEMP_DIR/repo/.claude/commands/testing"
+        mkdir -p "$TEMP_DIR/repo/.claude/commands/session"
+        mkdir -p "$TEMP_DIR/repo/.claude/commands/analysis"
+        mkdir -p "$TEMP_DIR/repo/.claude/commands/utilities"
         mkdir -p "$TEMP_DIR/repo/adws"
         mkdir -p "$TEMP_DIR/repo/.claude/hooks"
         mkdir -p "$TEMP_DIR/repo/.claude/skills"
         mkdir -p "$TEMP_DIR/repo/scripts"
     fi
 
-    run_installation "$target" "$mode" "$dry_run" || exit 1
+    local source="$TEMP_DIR/repo"
 
+    # Run installation based on mode
+    if [[ "$use_interactive" == "true" ]]; then
+        # Interactive menu mode
+        run_interactive_menu
+        show_installation_summary "$target"
+        confirm_installation
+        run_component_installation "$source" "$target" "$dry_run"
+        mode="$MODE_INTERACTIVE"  # For next steps display
+    else
+        # Non-interactive (--minimal or --full)
+        run_installation "$target" "$mode" "$dry_run" || exit 1
+    fi
+
+    # Show next steps
     if [[ "$dry_run" != "true" ]]; then
         show_next_steps "$target" "$mode"
     fi

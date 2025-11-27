@@ -20,7 +20,7 @@ from typing import Optional
 
 
 # Configuration
-SUBFOLDERS = ["videos", "articles", "implementations", "papers"]
+SUBFOLDERS = ["videos", "articles", "implementations", "papers", "llm-chats"]
 
 # Marker patterns for finding index sections in README
 MARKER_START = "<!-- INDEX:{folder}:start -->"
@@ -59,6 +59,12 @@ TABLE_CONFIGS = {
         "source_keys": ["title", "paper", "name"],
         "topic_keys": ["topic", "subject", "area"],
         "date_keys": ["date added", "date analyzed", "date"],
+    },
+    "llm-chats": {
+        "headers": ["AI Model", "Topic", "File", "Date Added"],
+        "source_keys": ["model", "ai", "assistant", "source", "llm"],
+        "topic_keys": ["topic", "subject", "discussion", "title"],
+        "date_keys": ["date added", "date", "date analyzed"],
     },
 }
 

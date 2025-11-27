@@ -80,6 +80,11 @@ components:
       - workflow.sh
       - worktree_manager.sh
       - fix_agents_naming.sh
+      - update-research-index.py
+      - test_installation.py
+      - start.sh
+      - stop_apps.sh
+      - reset_db.sh
 
 # Directories to create
 directories:
@@ -125,6 +130,10 @@ directories:
 
   - path: "ai_docs/research/papers/"
     description: "Academic papers"
+    gitkeep: true
+
+  - path: "ai_docs/research/llm-chats/"
+    description: "LLM conversation transcripts (Claude, GPT, Gemini, etc.)"
     gitkeep: true
 
   - path: "ai_docs/outputs/"

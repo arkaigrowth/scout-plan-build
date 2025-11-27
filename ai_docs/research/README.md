@@ -17,7 +17,8 @@ research/
 ├── videos/             ← Video transcript analyses
 ├── articles/           ← Article summaries and notes
 ├── implementations/    ← Notes on reference codebases/repos
-└── papers/             ← Academic papers (if any)
+├── papers/             ← Academic papers (if any)
+└── llm-chats/          ← LLM conversation transcripts (Claude, GPT, etc.)
 ```
 
 ## Semantic Clarification
@@ -45,6 +46,7 @@ research/
 <!-- INDEX:articles:start -->
 | Source | Topic | File | Date Added |
 |-------- | ------- | ------ | ------------|
+| Technical Advisory | video-analysis-sota-pipeline | [Analysis](articles/video-analysis-sota-pipeline-technical-advisory.md) | 2025-11-23 |
 | Openai Quick Start | Developer quickstart | [Analysis](articles/openai_quick_start.md) | Unknown |
 <!-- INDEX:articles:end -->
 
@@ -53,6 +55,7 @@ research/
 <!-- INDEX:implementations:start -->
 | Repository | Topic | File | Date Added |
 |------------ | ------- | ------ | ------------|
+| Claude Agent SDK Documentation, GitHub, Context7 | SDK Installation, Configuration, and Custom Agents | [Analysis](implementations/claude-agent-sdk-analysis.md) | 2025-11-24 |
 | Analysis compiled by Chad (ChatGPT) | Claude Code Slash Commands + Chaining Patterns | [Analysis](implementations/slash-commands-chaining-chad.md) | 2025-11-22 18:54 |
 | Chad (ChatGPT) & Gemini 3.0 | Agent Box v6.2: Supervisor Wrapper... | [Analysis](implementations/agent-box-supervisor-chad.md) | 2025-11-22 |
 <!-- INDEX:implementations:end -->
@@ -64,6 +67,16 @@ research/
 | ----- | ----- | ---- | ---------- |
 | *Coming soon* | | | |
 <!-- INDEX:papers:end -->
+
+### LLM Chats
+
+Valuable insights from conversations with AI assistants (Claude, ChatGPT, Gemini, etc.).
+
+<!-- INDEX:llm-chats:start -->
+| AI Model | Topic | File | Date Added |
+| -------- | ----- | ---- | ---------- |
+| *Coming soon* | | | |
+<!-- INDEX:llm-chats:end -->
 
 ## Adding New Research
 

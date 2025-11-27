@@ -1,0 +1,797 @@
+# ══════════════════════════════════════════════════════════════════════════════
+# Scout-Plan-Build Framework - Enhanced Component Manifest v2
+# ══════════════════════════════════════════════════════════════════════════════
+# Version: 2.0.0
+# Framework Version: 2024.11.8
+#
+# PURPOSE:
+#   Granular, selectable component installation for Scout-Plan-Build framework
+#   Enables custom installation profiles and fine-grained control
+#
+# USAGE:
+#   - default: true/false → Auto-selected in standard install
+#   - recommended: true/false → Shows recommendation badge in UI
+#   - depends_on: [] → Component dependencies (auto-install if selected)
+#   - size_estimate: → Rough size for download estimation
+# ══════════════════════════════════════════════════════════════════════════════
+
+version: "2.0.0"
+framework_version: "2024.11.8"
+
+metadata:
+  name: "Scout-Plan-Build Framework"
+  description: "AI-assisted development workflow automation"
+  author: "Alex Kamysz"
+  license: "MIT"
+  repository: "https://github.com/yourusername/scout_plan_build_mvp"
+
+# ══════════════════════════════════════════════════════════════════════════════
+# INSTALLATION PROFILES
+# ══════════════════════════════════════════════════════════════════════════════
+# Quick-select profiles for common use cases
+
+profiles:
+  minimal:
+    name: "Minimal"
+    description: "Essential commands only - no automation"
+    size_estimate: "300KB"
+    components:
+      - slash_commands.workflow.core
+      - slash_commands.utilities.minimal
+      - directories.essential
+
+  standard:
+    name: "Standard (Recommended)"
+    description: "Commands + automation hooks + skills"
+    size_estimate: "400KB"
+    recommended: true
+    components:
+      - slash_commands.workflow.all
+      - slash_commands.git.basic
+      - slash_commands.testing.basic
+      - slash_commands.session.all
+      - slash_commands.utilities.standard
+      - hooks.recommended
+      - skills.all
+      - directories.all
+
+  full:
+    name: "Full Framework"
+    description: "Everything including Python orchestrators"
+    size_estimate: "1.7MB"
+    components:
+      - core_modules.all
+      - slash_commands.all
+      - hooks.all
+      - skills.all
+      - scripts.all
+      - directories.all
+
+  custom:
+    name: "Custom Selection"
+    description: "Pick individual components"
+    components: []  # User selects manually
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CORE COMPONENTS
+# ══════════════════════════════════════════════════════════════════════════════
+
+components:
+  # ────────────────────────────────────────────────────────────────────────────
+  # Core Python Modules (adws/)
+  # ────────────────────────────────────────────────────────────────────────────
+  core_modules:
+    description: "Python workflow orchestrators and automation"
+    default: false
+    recommended: true
+    size_estimate: "1.0MB"
+
+    subcomponents:
+      all:
+        description: "All Python orchestration modules"
+        source: "adws/"
+        destination: "adws/"
+        files: all
+        includes:
+          - adw_sdlc.py
+          - scout_simple.py
+          - adw_modules/
+
+      orchestrators_only:
+        description: "Just SDLC orchestrators (no agents)"
+        source: "adws/"
+        destination: "adws/"
+        files:
+          - adw_sdlc.py
+          - adw_modules/agent.py
+          - adw_modules/utils.py
+          - adw_modules/github.py
+          - __init__.py
+
+      minimal:
+        description: "Scout only (for /build_adw)"
+        source: "adws/"
+        destination: "adws/"
+        files:
+          - scout_simple.py
+          - adw_modules/utils.py
+          - __init__.py
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Slash Commands - Organized by Category
+  # ────────────────────────────────────────────────────────────────────────────
+  slash_commands:
+    description: "Workflow automation slash commands"
+    default: true
+    recommended: true
+    size_estimate: "284KB"
+
+    # WORKFLOW: Core development workflow commands
+    subcomponents:
+      workflow:
+        description: "Scout → Plan → Build workflow commands"
+        default: true
+        recommended: true
+        size_estimate: "120KB"
+
+        components:
+          core:
+            description: "Essential workflow trinity"
+            default: true
+            recommended: true
+            files:
+              - source: ".claude/commands/workflow/scout_improved.md"
+                destination: ".claude/commands/workflow/scout_improved.md"
+              - source: ".claude/commands/planning/plan_w_docs_improved.md"
+                destination: ".claude/commands/planning/plan_w_docs_improved.md"
+              - source: ".claude/commands/workflow/build_adw.md"
+                destination: ".claude/commands/workflow/build_adw.md"
+
+          all:
+            description: "All workflow variants"
+            default: false
+            files:
+              - source: ".claude/commands/workflow/"
+                destination: ".claude/commands/workflow/"
+                pattern: "*.md"
+              - source: ".claude/commands/planning/"
+                destination: ".claude/commands/planning/"
+                pattern: "*.md"
+
+          legacy:
+            description: "Legacy workflow commands (deprecated)"
+            default: false
+            recommended: false
+            files:
+              - ".claude/commands/workflow/scout.md"
+              - ".claude/commands/workflow/scout_plan_build.md"
+              - ".claude/commands/planning/plan_w_docs.md"
+
+      # GIT: Version control and collaboration
+      git:
+        description: "Git workflow automation"
+        default: true
+        recommended: true
+        size_estimate: "48KB"
+
+        components:
+          basic:
+            description: "Essential git operations"
+            default: true
+            recommended: true
+            files:
+              - ".claude/commands/git/commit.md"
+              - ".claude/commands/git/generate_branch_name.md"
+              - ".claude/commands/git/pull_request.md"
+
+          worktree:
+            description: "Parallel worktree management"
+            default: true
+            recommended: true
+            depends_on:
+              - scripts.worktree
+            files:
+              - ".claude/commands/git/init-parallel-worktrees.md"
+              - ".claude/commands/git/run-parallel-agents.md"
+              - ".claude/commands/git/compare-worktrees.md"
+              - ".claude/commands/git/merge-worktree.md"
+              - ".claude/commands/git/worktree_create.md"
+
+          checkpoint:
+            description: "Undo/redo checkpoint system"
+            default: false
+            recommended: true
+            files:
+              - ".claude/commands/git/worktree_checkpoint.md"
+              - ".claude/commands/git/worktree_undo.md"
+              - ".claude/commands/git/worktree_redo.md"
+
+          all:
+            description: "All git commands"
+            default: false
+            files:
+              - source: ".claude/commands/git/"
+                destination: ".claude/commands/git/"
+                pattern: "*.md"
+
+      # TESTING: Test execution and validation
+      testing:
+        description: "Testing and quality validation"
+        default: true
+        recommended: true
+        size_estimate: "32KB"
+
+        components:
+          basic:
+            description: "Core testing commands"
+            default: true
+            files:
+              - ".claude/commands/testing/test.md"
+              - ".claude/commands/testing/test_e2e.md"
+
+          resolution:
+            description: "Test failure resolution"
+            default: true
+            recommended: true
+            files:
+              - ".claude/commands/testing/resolve_failed_test.md"
+              - ".claude/commands/testing/resolve_failed_e2e_test.md"
+
+          e2e_suites:
+            description: "E2E test suite definitions"
+            default: false
+            files:
+              - source: ".claude/commands/e2e/"
+                destination: ".claude/commands/e2e/"
+                pattern: "*.md"
+
+          all:
+            description: "All testing commands"
+            default: false
+            files:
+              - source: ".claude/commands/testing/"
+                destination: ".claude/commands/testing/"
+                pattern: "*.md"
+              - source: ".claude/commands/e2e/"
+                destination: ".claude/commands/e2e/"
+                pattern: "*.md"
+
+      # SESSION: Session lifecycle management
+      session:
+        description: "Session persistence and context management"
+        default: true
+        recommended: true
+        size_estimate: "24KB"
+
+        components:
+          all:
+            description: "Complete session management"
+            default: true
+            files:
+              - ".claude/commands/session/prime.md"
+              - ".claude/commands/session/prepare-compaction.md"
+              - ".claude/commands/session/resume.md"
+              - ".claude/commands/session/start.md"
+
+      # ANALYSIS: Code analysis and documentation
+      analysis:
+        description: "Code review and documentation generation"
+        default: true
+        recommended: true
+        size_estimate: "36KB"
+
+        components:
+          core:
+            description: "Essential analysis commands"
+            default: true
+            files:
+              - ".claude/commands/analysis/review.md"
+              - ".claude/commands/analysis/document.md"
+
+          classification:
+            description: "Issue classification and routing"
+            default: false
+            recommended: true
+            files:
+              - ".claude/commands/analysis/classify_issue.md"
+              - ".claude/commands/analysis/classify_adw.md"
+
+          all:
+            description: "All analysis commands"
+            default: false
+            files:
+              - source: ".claude/commands/analysis/"
+                destination: ".claude/commands/analysis/"
+                pattern: "*.md"
+
+      # UTILITIES: Helper and setup commands
+      utilities:
+        description: "Setup, tools, and helper commands"
+        default: true
+        recommended: true
+        size_estimate: "24KB"
+
+        components:
+          minimal:
+            description: "Bare essentials"
+            default: true
+            files:
+              - ".claude/commands/utilities/tools.md"
+              - ".claude/commands/utilities/conditional_docs.md"
+
+          standard:
+            description: "Standard utilities"
+            default: true
+            recommended: true
+            files:
+              - ".claude/commands/utilities/tools.md"
+              - ".claude/commands/utilities/conditional_docs.md"
+              - ".claude/commands/utilities/install.md"
+              - ".claude/commands/utilities/prepare_app.md"
+              - ".claude/commands/utilities/research-add.md"
+
+          all:
+            description: "All utilities including setup wizard"
+            default: false
+            files:
+              - source: ".claude/commands/utilities/"
+                destination: ".claude/commands/utilities/"
+                pattern: "*.md"
+
+      # COACH: Interactive coaching system
+      coach:
+        description: "AI coaching and guidance system"
+        default: false
+        recommended: false
+        size_estimate: "8KB"
+        files:
+          - ".claude/commands/coach.md"
+
+      # Convenience group: All slash commands
+      all:
+        description: "All slash commands (every category)"
+        default: false
+        components:
+          - slash_commands.workflow.all
+          - slash_commands.git.all
+          - slash_commands.testing.all
+          - slash_commands.session.all
+          - slash_commands.analysis.all
+          - slash_commands.utilities.all
+          - slash_commands.coach
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Hooks - Event-driven automation
+  # ────────────────────────────────────────────────────────────────────────────
+  hooks:
+    description: "Event hooks for observability and automation"
+    default: false
+    recommended: true
+    size_estimate: "60KB"
+
+    subcomponents:
+      recommended:
+        description: "Essential hooks for productivity"
+        default: true
+        recommended: true
+        files:
+          - source: ".claude/hooks/session_start.py"
+            destination: ".claude/hooks/session_start.py"
+            description: "Auto-prime session context on startup"
+          - source: ".claude/hooks/pre_compact.py"
+            destination: ".claude/hooks/pre_compact.py"
+            description: "Auto-save context before compaction"
+
+      optional:
+        description: "Optional enhancement hooks"
+        default: false
+        files:
+          - source: ".claude/hooks/user_prompt_submit.py"
+            destination: ".claude/hooks/user_prompt_submit.py"
+            description: "Validate prompts before execution"
+          - source: ".claude/hooks/notification.py"
+            destination: ".claude/hooks/notification.py"
+            description: "Desktop notifications for long operations"
+          - source: ".claude/hooks/stop.py"
+            destination: ".claude/hooks/stop.py"
+            description: "Cleanup on session stop"
+
+      development:
+        description: "Development and debugging hooks"
+        default: false
+        files:
+          - source: ".claude/hooks/pre_tool_use.py"
+            destination: ".claude/hooks/pre_tool_use.py"
+            description: "Log tool usage for debugging"
+          - source: ".claude/hooks/post_tool_use.py"
+            destination: ".claude/hooks/post_tool_use.py"
+            description: "Validate tool outputs"
+          - source: ".claude/hooks/subagent_stop.py"
+            destination: ".claude/hooks/subagent_stop.py"
+            description: "Track subagent lifecycle"
+
+      all:
+        description: "All available hooks"
+        default: false
+        files:
+          - source: ".claude/hooks/"
+            destination: ".claude/hooks/"
+            pattern: "*.py"
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Skills - Advanced workflow capabilities
+  # ────────────────────────────────────────────────────────────────────────────
+  skills:
+    description: "Advanced workflow skills and capabilities"
+    default: false
+    recommended: true
+    size_estimate: "32KB"
+
+    subcomponents:
+      all:
+        description: "All available skills"
+        default: true
+        recommended: true
+        files:
+          - source: ".claude/skills/"
+            destination: ".claude/skills/"
+            pattern: "*.md"
+        includes:
+          - adw-scout.md
+          - adw-complete.md
+          - README.md
+
+      core:
+        description: "Core workflow skills only"
+        default: false
+        files:
+          - ".claude/skills/adw-scout.md"
+          - ".claude/skills/adw-complete.md"
+
+  # ────────────────────────────────────────────────────────────────────────────
+  # Scripts - Utility automation
+  # ────────────────────────────────────────────────────────────────────────────
+  scripts:
+    description: "Bash automation and utility scripts"
+    default: true
+    recommended: true
+    size_estimate: "396KB"
+
+    subcomponents:
+      essential:
+        description: "Core validation and workflow scripts"
+        default: true
+        recommended: true
+        files:
+          - source: "scripts/validate_pipeline.sh"
+            destination: "scripts/validate_pipeline.sh"
+            description: "Validate framework installation"
+          - source: "scripts/workflow.sh"
+            destination: "scripts/workflow.sh"
+            description: "Workflow orchestration helper"
+
+      worktree:
+        description: "Git worktree management"
+        default: true
+        recommended: true
+        files:
+          - source: "scripts/worktree_manager.sh"
+            destination: "scripts/worktree_manager.sh"
+            description: "Parallel worktree operations"
+
+      utilities:
+        description: "Additional utility scripts"
+        default: false
+        files:
+          - source: "scripts/fix_agents_naming.sh"
+            destination: "scripts/fix_agents_naming.sh"
+            description: "Fix legacy agent naming"
+
+      all:
+        description: "All utility scripts"
+        default: false
+        files:
+          - source: "scripts/"
+            destination: "scripts/"
+            pattern: "*.sh"
+          - source: "scripts/"
+            destination: "scripts/"
+            pattern: "*.py"
+
+# ══════════════════════════════════════════════════════════════════════════════
+# DIRECTORY STRUCTURE
+# ══════════════════════════════════════════════════════════════════════════════
+# Required directories for framework operation
+
+directories:
+  essential:
+    description: "Minimal directory structure"
+    default: true
+    paths:
+      - path: "specs/"
+        description: "Implementation plans and specifications"
+        gitkeep: true
+      - path: "scout_outputs/"
+        description: "Scout discovery results (canonical location)"
+        gitkeep: true
+      - path: "ai_docs/build_reports/"
+        description: "Build execution reports"
+        gitkeep: true
+
+  standard:
+    description: "Standard project structure"
+    default: true
+    recommended: true
+    paths:
+      - path: "specs/"
+        description: "Implementation plans and specifications"
+        gitkeep: true
+      - path: "scout_outputs/"
+        description: "Scout discovery results (canonical location)"
+        gitkeep: true
+      - path: "scout_outputs/temp/"
+        description: "Temporary scout working files"
+        gitkeep: true
+      - path: "scout_outputs/workflows/"
+        description: "Workflow execution state"
+        gitkeep: true
+      - path: "ai_docs/build_reports/"
+        description: "Build execution reports"
+        gitkeep: true
+      - path: "ai_docs/reviews/"
+        description: "Code review reports"
+        gitkeep: true
+      - path: ".claude/memory/"
+        description: "Workflow memory and learning"
+        gitkeep: true
+      - path: ".claude/state/"
+        description: "Workflow state persistence"
+        gitkeep: true
+
+  research:
+    description: "Research and learning directories"
+    default: false
+    recommended: true
+    paths:
+      - path: "ai_docs/research/"
+        description: "External learning resources"
+        gitkeep: true
+      - path: "ai_docs/research/videos/"
+        description: "Video transcript analyses"
+        gitkeep: true
+      - path: "ai_docs/research/articles/"
+        description: "Article summaries and notes"
+        gitkeep: true
+      - path: "ai_docs/research/implementations/"
+        description: "Reference codebase notes"
+        gitkeep: true
+      - path: "ai_docs/research/papers/"
+        description: "Academic papers"
+        gitkeep: true
+
+  all:
+    description: "Complete directory structure"
+    default: false
+    includes:
+      - directories.essential
+      - directories.standard
+      - directories.research
+    paths:
+      - path: "ai_docs/outputs/"
+        description: "Timestamped output directory (FileOrganizer)"
+        gitkeep: true
+
+# ══════════════════════════════════════════════════════════════════════════════
+# CONFIGURATION FILES
+# ══════════════════════════════════════════════════════════════════════════════
+
+configurations:
+  - file: ".env"
+    template: ".env.template"
+    required: true
+    overwrite: false
+    description: "Environment variables"
+    default: true
+
+  - file: ".adw_config.json"
+    auto_generate: true
+    required: true
+    description: "Framework configuration"
+    default: true
+    content: |
+      {
+        "project": {
+          "name": "${REPO_NAME}",
+          "type": "auto-detect"
+        },
+        "paths": {
+          "specs": "specs/",
+          "scout_outputs": "scout_outputs/",
+          "ai_docs": "ai_docs/",
+          "app_code": ".",
+          "allowed": ["specs", "scout_outputs", "ai_docs", "app", "src", "lib"]
+        },
+        "workflow": {
+          "use_github": true,
+          "auto_branch": true,
+          "branch_prefix": "feature/"
+        }
+      }
+
+  - file: "CLAUDE.md"
+    template: "CLAUDE_template.md"
+    auto_generate: true
+    overwrite: false
+    description: "Project instructions for Claude"
+    default: true
+    recommended: true
+
+  - file: "test_installation.py"
+    source: "scripts/test_installation.py"
+    required: true
+    description: "Installation validation script"
+    default: true
+
+# ══════════════════════════════════════════════════════════════════════════════
+# DEPENDENCY MATRIX
+# ══════════════════════════════════════════════════════════════════════════════
+# Explicit component dependencies for validation
+
+dependencies:
+  slash_commands.git.worktree:
+    requires:
+      - scripts.worktree
+    reason: "Worktree commands use worktree_manager.sh"
+
+  slash_commands.workflow.core:
+    requires:
+      - core_modules.minimal
+    reason: "/build_adw requires scout_simple.py"
+    optional: false
+
+  core_modules.all:
+    requires:
+      - directories.standard
+    reason: "Orchestrators write to specs/ and ai_docs/"
+
+  hooks.recommended:
+    requires:
+      - directories.standard
+    reason: "Hooks write to .claude/memory/ and .claude/state/"
+
+# ══════════════════════════════════════════════════════════════════════════════
+# COMPONENT METADATA
+# ══════════════════════════════════════════════════════════════════════════════
+# Additional metadata for installer UI
+
+metadata_extended:
+  tags:
+    workflow: ["scout", "plan", "build", "automation"]
+    git: ["version-control", "collaboration", "worktree"]
+    testing: ["quality", "validation", "e2e"]
+    session: ["context", "persistence", "memory"]
+    analysis: ["review", "documentation", "classification"]
+
+  complexity:
+    minimal: "Beginner - Just commands, no automation"
+    standard: "Intermediate - Full workflow with automation"
+    full: "Advanced - Python orchestration included"
+
+  use_cases:
+    minimal:
+      - "Quick prototyping"
+      - "Simple feature development"
+      - "Learning the framework"
+    standard:
+      - "Team collaboration"
+      - "Production development"
+      - "Automated workflows"
+    full:
+      - "Custom workflow development"
+      - "Framework contribution"
+      - "Advanced automation"
+
+# ══════════════════════════════════════════════════════════════════════════════
+# INSTALLATION VALIDATION
+# ══════════════════════════════════════════════════════════════════════════════
+
+validation:
+  profiles:
+    minimal:
+      checks:
+        - name: "Core workflow commands exist"
+          test: "test -f .claude/commands/workflow/scout_improved.md && test -f .claude/commands/workflow/build_adw.md"
+          critical: true
+
+    standard:
+      checks:
+        - name: "Workflow commands installed"
+          test: "test -d .claude/commands/workflow"
+          critical: true
+        - name: "Session commands installed"
+          test: "test -d .claude/commands/session"
+          critical: true
+        - name: "Essential directories created"
+          test: "test -d specs && test -d scout_outputs && test -d ai_docs"
+          critical: true
+        - name: "Recommended hooks installed"
+          test: "test -f .claude/hooks/session_start.py"
+          critical: false
+
+    full:
+      checks:
+        - name: "Python modules installed"
+          test: "test -d adws && test -f adws/scout_simple.py"
+          critical: true
+        - name: "All command categories present"
+          test: "test -d .claude/commands/workflow && test -d .claude/commands/git && test -d .claude/commands/testing"
+          critical: true
+        - name: "Scripts executable"
+          test: "test -x scripts/validate_pipeline.sh"
+          critical: true
+
+# ══════════════════════════════════════════════════════════════════════════════
+# UNINSTALL CONFIGURATION
+# ══════════════════════════════════════════════════════════════════════════════
+
+uninstall:
+  by_component:
+    core_modules:
+      remove: ["adws/"]
+      preserve: []
+
+    slash_commands:
+      remove: [".claude/commands/"]
+      preserve: []
+
+    hooks:
+      remove: [".claude/hooks/"]
+      preserve: []
+
+    skills:
+      remove: [".claude/skills/"]
+      preserve: []
+
+    scripts:
+      remove: ["scripts/validate_pipeline.sh", "scripts/workflow.sh", "scripts/worktree_manager.sh"]
+      preserve: []
+
+  always_preserve:
+    - ".env"
+    - ".adw_config.json"
+    - "specs/**/*.md"
+    - "ai_docs/**/*.md"
+    - ".claude/memory/"
+    - ".claude/state/"
+
+  remove_empty_dirs:
+    - "agents/"
+    - "specs/"
+    - "scout_outputs/"
+    - "ai_docs/"
+    - ".claude/commands/"
+    - ".claude/hooks/"
+    - ".claude/skills/"
+
+# ══════════════════════════════════════════════════════════════════════════════
+# UPGRADE PATHS
+# ══════════════════════════════════════════════════════════════════════════════
+
+upgrade:
+  strategy: "preserve_config_and_data"
+
+  migrations:
+    "1.0.0_to_2.0.0":
+      description: "Component manifest restructure with granular selection"
+      breaking_changes:
+        - "Command directory structure reorganized"
+        - "Component selection now granular by category"
+      actions:
+        - backup: [".env", ".adw_config.json", "specs/", "ai_docs/"]
+        - migrate_commands: true
+        - update_config: true
+        - validate: true
+
+# ══════════════════════════════════════════════════════════════════════════════
+# END OF MANIFEST
+# ══════════════════════════════════════════════════════════════════════════════

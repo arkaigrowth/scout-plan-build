@@ -23,12 +23,15 @@ set -euo pipefail
 # Configuration
 # =============================================================================
 
-readonly VERSION="1.0.0"
+readonly VERSION="1.1.0"
 readonly REPO_URL="https://github.com/arkaigrowth/scout-plan-build"
 readonly REPO_NAME="arkaigrowth/scout-plan-build"
-readonly MIN_BASH_VERSION=4
+readonly MIN_BASH_VERSION=3  # Minimum for --minimal/--full (4+ for --interactive)
 readonly MIN_PYTHON_VERSION="3.10"
 readonly TEMP_DIR="${TMPDIR:-/tmp}/spb-install-$$"
+
+# Bash version flag (set by check_bash_version)
+BASH_TOO_OLD_FOR_INTERACTIVE="false"
 
 # Installation modes
 MODE_MINIMAL="minimal"
@@ -624,6 +627,7 @@ ${BOLD}OPTIONS:${NC}
     --minimal           Install slash commands only (default for piped)
     --full              Install everything (all components)
     --interactive       Show interactive menu for component selection
+    --upgrade           Upgrade existing installation (backup + replace + validate)
     --dry-run           Show what would be installed without making changes
     --force             Overwrite existing installation without prompting
     --help, -h          Show this help message
@@ -643,6 +647,12 @@ ${BOLD}EXAMPLES:${NC}
 
     # Interactive selection (local execution)
     ./install.sh ./my-project --interactive
+
+    # Upgrade existing installation
+    curl -sL ${REPO_URL}/raw/main/install.sh | bash -s -- ./my-project --upgrade
+
+    # Preview upgrade without making changes
+    ./install.sh ./my-project --upgrade --dry-run
 
     # Interactive via curl (requires TTY)
     curl -sL URL | bash -s -- ./my-project --interactive
@@ -667,9 +677,15 @@ ${BOLD}COMPONENT CATEGORIES (Interactive Mode):${NC}
       [11] Scripts    - bash utility scripts
 
 ${BOLD}REQUIREMENTS:${NC}
-    - Bash >= 4.0
+    - Bash >= 3.2 (for --minimal and --full modes)
+    - Bash >= 4.0 (for --interactive mode only)
     - Git >= 2.0
     - Python >= 3.10
+
+${BOLD}macOS USERS:${NC}
+    macOS ships with Bash 3.2. For --interactive mode:
+      brew install bash
+      /opt/homebrew/bin/bash install.sh /path --interactive
 
 ${BOLD}MORE INFO:${NC}
     Repository: ${REPO_URL}
@@ -685,15 +701,24 @@ EOF
 
 check_bash_version() {
     local bash_version="${BASH_VERSINFO[0]}"
-    if [[ "$bash_version" -lt "$MIN_BASH_VERSION" ]]; then
-        error "Bash version $MIN_BASH_VERSION or higher required (found: $BASH_VERSION)"
+
+    # Bash 3.2+ required for --minimal and --full modes
+    if [[ "$bash_version" -lt 3 ]]; then
+        error "Bash version 3.2 or higher required (found: $BASH_VERSION)"
         echo ""
         echo "Upgrade bash:"
         echo "  macOS: brew install bash"
         echo "  Linux: sudo apt-get install bash"
         return 1
     fi
-    step "Bash ${BASH_VERSION}"
+
+    # Bash 4.0+ required for --interactive mode (associative arrays)
+    if [[ "$bash_version" -lt 4 ]]; then
+        BASH_TOO_OLD_FOR_INTERACTIVE="true"
+        step "Bash ${BASH_VERSION} (interactive mode disabled)"
+    else
+        step "Bash ${BASH_VERSION}"
+    fi
 }
 
 check_git() {
@@ -814,6 +839,325 @@ run_preflight_checks() {
 
     echo ""
     success "All pre-flight checks passed"
+}
+
+# =============================================================================
+# Upgrade Functions
+# =============================================================================
+
+# Files to never touch during upgrade (user owns these)
+readonly UPGRADE_PRESERVE_NEVER=(
+    ".env"
+    ".claude/settings.local.json"
+    "specs/"
+    "ai_docs/"
+    "scout_outputs/"
+    ".claude/memory/"
+    ".claude/state/"
+)
+
+# Files to merge (framework file but user may have customized)
+readonly UPGRADE_MERGE=(
+    "CLAUDE.md"
+    ".adw_config.json"
+)
+
+detect_existing_installation() {
+    local target="$1"
+
+    # Method 1: Check for .scout_install_info.json (v1.0.0+)
+    if [[ -f "$target/.scout_install_info.json" ]]; then
+        local installed_version
+        installed_version=$(grep -o '"installer_version"[[:space:]]*:[[:space:]]*"[^"]*"' "$target/.scout_install_info.json" 2>/dev/null | cut -d'"' -f4 || echo "unknown")
+        echo "DETECTED:$installed_version:TRACKED"
+        return 0
+    fi
+
+    # Method 2: Check for .adw_config.json (legacy detection)
+    if [[ -f "$target/.adw_config.json" ]]; then
+        echo "DETECTED:unknown:LEGACY"
+        return 0
+    fi
+
+    # Method 3: Check for adws/ directory (very old)
+    if [[ -d "$target/adws" ]]; then
+        echo "DETECTED:pre-1.0.0:VERY_OLD"
+        return 0
+    fi
+
+    echo "NONE"
+    return 1
+}
+
+get_installed_version() {
+    local target="$1"
+    if [[ -f "$target/.scout_install_info.json" ]]; then
+        grep -o '"installer_version"[[:space:]]*:[[:space:]]*"[^"]*"' "$target/.scout_install_info.json" 2>/dev/null | cut -d'"' -f4 || echo "unknown"
+    else
+        echo "unknown"
+    fi
+}
+
+create_upgrade_backup() {
+    local target="$1"
+    local timestamp
+    timestamp=$(date +"%Y%m%d_%H%M%S")
+    local backup_dir="$target/.scout_backup_$timestamp"
+
+    info "Creating backup at: .scout_backup_$timestamp"
+    mkdir -p "$backup_dir"
+
+    # Backup config files (always)
+    [[ -f "$target/.env" ]] && cp "$target/.env" "$backup_dir/"
+    [[ -f "$target/.adw_config.json" ]] && cp "$target/.adw_config.json" "$backup_dir/"
+    [[ -f "$target/.scout_install_info.json" ]] && cp "$target/.scout_install_info.json" "$backup_dir/"
+    [[ -f "$target/CLAUDE.md" ]] && cp "$target/CLAUDE.md" "$backup_dir/"
+
+    # Backup framework components (for rollback)
+    [[ -d "$target/adws" ]] && cp -r "$target/adws" "$backup_dir/"
+    [[ -d "$target/.claude/commands" ]] && { mkdir -p "$backup_dir/.claude"; cp -r "$target/.claude/commands" "$backup_dir/.claude/"; }
+    [[ -d "$target/.claude/hooks" ]] && { mkdir -p "$backup_dir/.claude"; cp -r "$target/.claude/hooks" "$backup_dir/.claude/"; }
+    [[ -d "$target/.claude/skills" ]] && { mkdir -p "$backup_dir/.claude"; cp -r "$target/.claude/skills" "$backup_dir/.claude/"; }
+    [[ -d "$target/scripts" ]] && cp -r "$target/scripts" "$backup_dir/"
+
+    # Create backup manifest
+    cat > "$backup_dir/manifest.json" << EOF
+{
+  "backup_date": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+  "original_version": "$(get_installed_version "$target")",
+  "target_version": "${VERSION}",
+  "backup_reason": "upgrade"
+}
+EOF
+
+    # Generate rollback script
+    cat > "$backup_dir/rollback.sh" << 'ROLLBACK_EOF'
+#!/usr/bin/env bash
+set -euo pipefail
+
+BACKUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+TARGET_DIR="$(dirname "$BACKUP_DIR")"
+
+echo "Rolling back to previous installation..."
+echo "Backup: $BACKUP_DIR"
+echo "Target: $TARGET_DIR"
+echo ""
+
+# Remove current installation
+rm -rf "$TARGET_DIR/adws"
+rm -rf "$TARGET_DIR/.claude/commands"
+rm -rf "$TARGET_DIR/.claude/hooks"
+rm -rf "$TARGET_DIR/.claude/skills"
+
+# Restore from backup
+[[ -d "$BACKUP_DIR/adws" ]] && cp -r "$BACKUP_DIR/adws" "$TARGET_DIR/"
+[[ -d "$BACKUP_DIR/.claude/commands" ]] && { mkdir -p "$TARGET_DIR/.claude"; cp -r "$BACKUP_DIR/.claude/commands" "$TARGET_DIR/.claude/"; }
+[[ -d "$BACKUP_DIR/.claude/hooks" ]] && { mkdir -p "$TARGET_DIR/.claude"; cp -r "$BACKUP_DIR/.claude/hooks" "$TARGET_DIR/.claude/"; }
+[[ -d "$BACKUP_DIR/.claude/skills" ]] && { mkdir -p "$TARGET_DIR/.claude"; cp -r "$BACKUP_DIR/.claude/skills" "$TARGET_DIR/.claude/"; }
+[[ -d "$BACKUP_DIR/scripts" ]] && cp -r "$BACKUP_DIR/scripts" "$TARGET_DIR/"
+[[ -f "$BACKUP_DIR/.adw_config.json" ]] && cp "$BACKUP_DIR/.adw_config.json" "$TARGET_DIR/"
+[[ -f "$BACKUP_DIR/.scout_install_info.json" ]] && cp "$BACKUP_DIR/.scout_install_info.json" "$TARGET_DIR/"
+
+echo ""
+echo "Rollback complete. Backup directory preserved at: $BACKUP_DIR"
+ROLLBACK_EOF
+
+    chmod +x "$backup_dir/rollback.sh"
+    step "Backup created with rollback script"
+    echo "$backup_dir"
+}
+
+uninstall_old_version() {
+    local target="$1"
+
+    info "Removing old framework files..."
+
+    # Remove framework directories
+    [[ -d "$target/adws" ]] && rm -rf "$target/adws"
+    [[ -d "$target/.claude/commands" ]] && rm -rf "$target/.claude/commands"
+    [[ -d "$target/.claude/hooks" ]] && rm -rf "$target/.claude/hooks"
+    [[ -d "$target/.claude/skills" ]] && rm -rf "$target/.claude/skills"
+
+    # Remove framework-managed scripts (keep user scripts)
+    local framework_scripts=("validate_pipeline.sh" "workflow.sh" "update-research-index.py" "research-add.py" "test_installation.py")
+    for script in "${framework_scripts[@]}"; do
+        [[ -f "$target/scripts/$script" ]] && rm "$target/scripts/$script"
+    done
+
+    # Remove templates
+    [[ -f "$target/.env.template" ]] && rm "$target/.env.template"
+
+    step "Old framework files removed"
+}
+
+merge_preserved_files() {
+    local target="$1"
+    local backup_dir="$2"
+
+    info "Restoring preserved configurations..."
+
+    # Restore .env (never touch)
+    if [[ -f "$backup_dir/.env" ]] && [[ ! -f "$target/.env" ]]; then
+        cp "$backup_dir/.env" "$target/.env"
+        step "Restored .env"
+    fi
+
+    # Restore settings.local.json (never touch)
+    if [[ -f "$backup_dir/.claude/settings.local.json" ]]; then
+        mkdir -p "$target/.claude"
+        cp "$backup_dir/.claude/settings.local.json" "$target/.claude/"
+        step "Restored .claude/settings.local.json"
+    fi
+
+    # Handle CLAUDE.md - check if user customized it
+    if [[ -f "$backup_dir/CLAUDE.md" ]]; then
+        # Save user's version as backup
+        cp "$backup_dir/CLAUDE.md" "$target/CLAUDE.md.user_backup"
+        step "User's CLAUDE.md saved to CLAUDE.md.user_backup"
+    fi
+}
+
+show_upgrade_preview() {
+    local target="$1"
+    local detection_result="$2"
+
+    cat << EOF
+
+${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}
+${BOLD}  Upgrade Preview${NC}
+${BOLD}${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}
+
+${BOLD}Current Installation:${NC}
+  Version: $(get_installed_version "$target")
+  Detection: ${detection_result}
+
+${BOLD}Upgrade Target:${NC}
+  Version: ${VERSION}
+
+${BOLD}${GREEN}Files to PRESERVE (untouched):${NC}
+  .env, specs/, ai_docs/, scout_outputs/
+
+${BOLD}${YELLOW}Files to REPLACE:${NC}
+  adws/, .claude/commands/, .claude/hooks/, .claude/skills/, scripts/
+
+${BOLD}${CYAN}Files to MERGE:${NC}
+  CLAUDE.md (your version saved as .user_backup)
+  .adw_config.json (custom settings preserved)
+
+EOF
+}
+
+validate_upgrade() {
+    local target="$1"
+    local backup_dir="$2"
+
+    header "Validating Upgrade"
+    echo ""
+
+    local errors=0
+
+    # Check critical files exist
+    if [[ ! -d "$target/adws" ]]; then
+        error "Missing: adws/"
+        ((errors++))
+    else
+        step "adws/ directory exists"
+    fi
+
+    if [[ ! -f "$target/.adw_config.json" ]]; then
+        error "Missing: .adw_config.json"
+        ((errors++))
+    else
+        step ".adw_config.json exists"
+    fi
+
+    if [[ ! -d "$target/.claude/commands" ]]; then
+        error "Missing: .claude/commands/"
+        ((errors++))
+    else
+        step ".claude/commands/ exists"
+    fi
+
+    # Check Python imports work
+    if python3 -c "import sys; sys.path.insert(0, '$target/adws'); from adw_modules import utils" 2>/dev/null; then
+        step "Python imports work"
+    else
+        warn "Python imports may have issues (non-critical)"
+    fi
+
+    if [[ "$errors" -gt 0 ]]; then
+        error "Upgrade validation failed with $errors errors"
+        echo ""
+        echo "Rollback available: $backup_dir/rollback.sh"
+        return 1
+    fi
+
+    success "All validation checks passed"
+}
+
+run_upgrade() {
+    local target="$1"
+    local dry_run="$2"
+    local force="$3"
+
+    header "Upgrade Mode"
+    echo ""
+
+    # Phase 1: Detect
+    local detection_result
+    detection_result=$(detect_existing_installation "$target")
+
+    if [[ "$detection_result" == "NONE" ]]; then
+        error "No existing installation detected at: $target"
+        echo ""
+        echo "Use --minimal or --full for fresh installation instead."
+        return 1
+    fi
+
+    info "Detected: $detection_result"
+
+    # Phase 2: Show preview
+    show_upgrade_preview "$target" "$detection_result"
+
+    if [[ "$dry_run" == "true" ]]; then
+        success "Dry run complete - no changes made"
+        return 0
+    fi
+
+    # Phase 3: User confirmation
+    if [[ "$force" != "true" ]]; then
+        echo ""
+        read -r -p "${YELLOW}Proceed with upgrade? This will replace framework files. [y/N]${NC} " response
+        if [[ ! "$response" =~ ^[Yy]$ ]]; then
+            error "Upgrade cancelled by user"
+            return 1
+        fi
+    fi
+
+    # Phase 4: Backup
+    local backup_dir
+    backup_dir=$(create_upgrade_backup "$target")
+
+    # Phase 5: Uninstall old
+    uninstall_old_version "$target"
+
+    # Phase 6: Download new version
+    download_framework || { error "Download failed"; return 1; }
+
+    # Phase 7: Install new (using full mode)
+    run_installation "$target" "$MODE_FULL" "false" || { error "Installation failed"; return 1; }
+
+    # Phase 8: Merge preserved files
+    merge_preserved_files "$target" "$backup_dir"
+
+    # Phase 9: Validate
+    validate_upgrade "$target" "$backup_dir" || return 1
+
+    echo ""
+    success "Upgrade complete!"
+    echo ""
+    info "Backup preserved at: $(basename "$backup_dir")"
+    info "Rollback if needed: $backup_dir/rollback.sh"
 }
 
 # =============================================================================
@@ -1293,6 +1637,7 @@ main() {
     local dry_run="false"
     local force="false"
     local use_interactive="false"
+    local upgrade_mode="false"
 
     # Parse arguments
     while [[ $# -gt 0 ]]; do
@@ -1300,17 +1645,36 @@ main() {
             --help|-h)
                 show_help
                 ;;
+            --upgrade)
+                upgrade_mode="true"
+                shift
+                ;;
             --minimal)
+                if [[ "$upgrade_mode" == "true" ]]; then
+                    error "Cannot combine --upgrade with --minimal"
+                    echo "Use --upgrade alone for upgrade, or --minimal for fresh install"
+                    exit 1
+                fi
                 mode="$MODE_MINIMAL"
                 use_interactive="false"
                 shift
                 ;;
             --full)
+                if [[ "$upgrade_mode" == "true" ]]; then
+                    error "Cannot combine --upgrade with --full"
+                    echo "Use --upgrade alone for upgrade, or --full for fresh install"
+                    exit 1
+                fi
                 mode="$MODE_FULL"
                 use_interactive="false"
                 shift
                 ;;
             --interactive)
+                if [[ "$upgrade_mode" == "true" ]]; then
+                    error "Cannot combine --upgrade with --interactive"
+                    echo "Upgrade mode is non-interactive by design"
+                    exit 1
+                fi
                 use_interactive="true"
                 mode=""  # Will be set via menu
                 shift
@@ -1368,9 +1732,21 @@ main() {
         fi
     fi
 
-    # If --interactive was requested, verify TTY availability
+    # If --interactive was requested, verify TTY availability AND Bash version
     if [[ "$use_interactive" == "true" ]]; then
-        if ! detect_interactive_mode "true"; then
+        # Check Bash version first (interactive requires Bash 4+ for associative arrays)
+        if [[ "$BASH_TOO_OLD_FOR_INTERACTIVE" == "true" ]]; then
+            error "Interactive mode requires Bash 4.0+ (found: $BASH_VERSION)"
+            echo ""
+            echo "Options:"
+            echo "  1. Upgrade Bash: brew install bash && /opt/homebrew/bin/bash install.sh ..."
+            echo "  2. Use --minimal (default, works on Bash 3.2+)"
+            echo "  3. Use --full (installs everything, works on Bash 3.2+)"
+            echo ""
+            warn "Falling back to --minimal mode"
+            mode="$MODE_MINIMAL"
+            use_interactive="false"
+        elif ! detect_interactive_mode "true"; then
             error "Interactive mode requires a terminal (TTY)"
             echo "Falling back to --minimal mode"
             mode="$MODE_MINIMAL"
@@ -1391,8 +1767,25 @@ main() {
     echo -e "  ${DIM}Version ${VERSION}${NC}"
     echo ""
 
-    # Run pre-flight checks
-    run_preflight_checks "$target" "$force" || exit 1
+    # Run pre-flight checks (skip existing installation check for upgrade mode)
+    if [[ "$upgrade_mode" == "true" ]]; then
+        header "Pre-flight Checks"
+        echo ""
+        check_bash_version || exit 1
+        check_git || exit 1
+        check_python || exit 1
+        check_target_directory "$target" || exit 1
+        echo ""
+        success "All pre-flight checks passed"
+    else
+        run_preflight_checks "$target" "$force" || exit 1
+    fi
+
+    # Handle upgrade mode separately
+    if [[ "$upgrade_mode" == "true" ]]; then
+        run_upgrade "$target" "$dry_run" "$force" || exit 1
+        exit 0
+    fi
 
     # Download framework (needed for all modes)
     if [[ "$dry_run" != "true" ]]; then

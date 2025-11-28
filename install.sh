@@ -12,7 +12,7 @@
 #   curl -sL URL | bash -s -- /path/to/target --dry-run
 #   curl -sL URL | bash -s -- --help
 #
-# Version: 1.0.0
+# Version: 1.2.0
 # License: MIT
 # Repository: https://github.com/arkaigrowth/scout-plan-build
 #
@@ -23,7 +23,7 @@ set -euo pipefail
 # Configuration
 # =============================================================================
 
-readonly VERSION="1.1.0"
+readonly VERSION="1.2.0"
 readonly REPO_URL="https://github.com/arkaigrowth/scout-plan-build"
 readonly REPO_NAME="arkaigrowth/scout-plan-build"
 readonly MIN_BASH_VERSION=3  # Minimum for --minimal/--full (4+ for --interactive)
@@ -1167,13 +1167,26 @@ run_upgrade() {
 download_with_sparse_checkout() {
     info "Downloading framework (sparse checkout)..."
 
-    mkdir -p "$TEMP_DIR"
-    cd "$TEMP_DIR"
+    mkdir -p "$TEMP_DIR" || return 1
+    cd "$TEMP_DIR" || return 1
 
     # Try sparse checkout first (most efficient)
     if git clone --depth 1 --filter=blob:none --sparse "$REPO_URL.git" repo 2>/dev/null; then
-        cd repo
-        git sparse-checkout set adws .claude scripts .scout_framework.yaml 2>/dev/null || true
+        cd repo || return 1
+        # Check return code - don't use || true which masks failures
+        if ! git sparse-checkout set adws .claude scripts .scout_framework.yaml 2>/dev/null; then
+            error "Sparse checkout configuration failed"
+            cd ..
+            rm -rf repo
+            return 1
+        fi
+        # Verify critical directories exist
+        if [[ ! -d "adws" ]] || [[ ! -d ".claude" ]] || [[ ! -d "scripts" ]]; then
+            error "Sparse checkout incomplete - missing required directories"
+            cd ..
+            rm -rf repo
+            return 1
+        fi
         step "Downloaded via sparse checkout"
         return 0
     fi
@@ -1184,22 +1197,60 @@ download_with_sparse_checkout() {
 download_with_tarball() {
     info "Downloading framework (tarball fallback)..."
 
-    mkdir -p "$TEMP_DIR"
-    cd "$TEMP_DIR"
+    mkdir -p "$TEMP_DIR" || return 1
+    cd "$TEMP_DIR" || return 1
 
     local tarball_url="${REPO_URL}/archive/refs/heads/main.tar.gz"
 
+    # Download and extract with proper error checking
     if command -v curl &> /dev/null; then
-        curl -sL "$tarball_url" | tar -xz
+        if ! curl -sL "$tarball_url" -o framework.tar.gz; then
+            error "Download failed (curl)"
+            return 1
+        fi
     elif command -v wget &> /dev/null; then
-        wget -qO- "$tarball_url" | tar -xz
+        if ! wget -q "$tarball_url" -O framework.tar.gz; then
+            error "Download failed (wget)"
+            return 1
+        fi
     else
         error "Neither curl nor wget available for download"
         return 1
     fi
 
-    # Rename extracted directory
-    mv scout-plan-build-main repo
+    # Check file was actually downloaded
+    if [[ ! -f "framework.tar.gz" ]] || [[ ! -s "framework.tar.gz" ]]; then
+        error "Downloaded file is missing or empty"
+        return 1
+    fi
+
+    # Extract with error checking
+    if ! tar -xzf framework.tar.gz; then
+        error "Extraction failed"
+        rm -f framework.tar.gz
+        return 1
+    fi
+    rm -f framework.tar.gz
+
+    # Check if extraction created expected directory
+    if [[ ! -d "scout-plan-build-main" ]]; then
+        error "Extraction failed - expected directory not found"
+        return 1
+    fi
+
+    # Rename with error checking
+    if ! mv scout-plan-build-main repo; then
+        error "Failed to rename extracted directory"
+        return 1
+    fi
+
+    # Verify critical directories exist
+    if [[ ! -d "repo/adws" ]] || [[ ! -d "repo/.claude" ]] || [[ ! -d "repo/scripts" ]]; then
+        error "Downloaded archive incomplete - missing required directories"
+        rm -rf repo
+        return 1
+    fi
+
     step "Downloaded via tarball"
     return 0
 }
@@ -1214,6 +1265,12 @@ download_framework() {
             error "Failed to download framework"
             return 1
         fi
+    fi
+
+    # Final validation - ensure we have what we need
+    if [[ ! -d "$TEMP_DIR/repo/adws" ]]; then
+        error "Download validation failed - adws/ directory missing"
+        return 1
     fi
 
     echo ""

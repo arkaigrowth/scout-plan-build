@@ -30,6 +30,14 @@
 
 ## 🔧 Improvements
 
+- [ ] **Add stdin support to research-add.py**
+  - Status: Future Enhancement
+  - Priority: Low
+  - Description: Allow piping content via stdin for Unix-style workflows
+  - Example: `cat article.md | python research-add.py create '{"metadata":{...}}'`
+  - Context: Currently supports `content` (inline) and `content_file` (file path)
+  - Use case: Chaining commands like `curl url | python research-add.py create`
+
 - [ ] Add Pydantic validation to workflow_ops.py
 - [ ] Implement structured error types
 - [ ] Add rate limiting for API calls

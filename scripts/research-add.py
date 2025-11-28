@@ -350,6 +350,14 @@ def cmd_create(json_str: str) -> None:
         metadata = data["metadata"]
         content = data.get("content", "")
 
+        # Support content_file as alternative to inline content
+        if not content and "content_file" in data:
+            content_path = Path(data["content_file"])
+            if content_path.exists():
+                content = content_path.read_text(encoding="utf-8")
+            else:
+                raise ValueError(f"content_file not found: {content_path}")
+
         # Validate required fields
         required = ["title", "source", "topic", "type"]
         missing = [f for f in required if not metadata.get(f)]

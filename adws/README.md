@@ -85,7 +85,8 @@ uv run adw_sdlc.py 123
 
 # Run individual phases
 uv run adw_plan.py 123     # Planning phase only
-uv run adw_build.py 123 <adw-id>   # Build phase only (requires existing plan)
+uv run adw_build.py specs/my-feature.md   # Build from spec file (standalone)
+uv run adw_build.py 123 <adw-id>   # Build phase (GitHub mode, requires adw_plan.py first)
 uv run adw_test.py 123 <adw-id>    # Test phase only
 uv run adw_review.py 123 <adw-id>  # Review phase only
 uv run adw_document.py 123 <adw-id>  # Documentation phase only
@@ -123,29 +124,39 @@ uv run adw_plan.py <issue-number> [adw-id]
 7. Outputs state JSON for chaining
 
 #### adw_build.py - Implementation Phase
-Implements solutions based on existing plans.
+Implements solutions based on existing plans. Supports two modes:
 
-**Requirements:**
-- Existing plan file (from `adw_plan.py` or manual)
-- Can receive state via stdin or find plan automatically
-
-**Usage:**
+**Standalone Mode (Preferred for spec files):**
 ```bash
-# Standalone (finds plan automatically)
-uv run adw_build.py
+# Build directly from a spec file
+uv run adw_build.py specs/my-feature.md
+
+# With explicit ADW ID
+uv run adw_build.py specs/my-feature.md MY-ADW-ID
+```
+- Extracts ADW ID from spec header (`**ADW ID**: XXX`)
+- Creates feature branch from filename
+- No GitHub issue required
+- Creates state in `agents/{adw_id}/` for resume capability
+
+**GitHub Mode (Issue-driven):**
+```bash
+# Requires prior adw_plan.py run
+uv run adw_build.py <issue-number> <adw-id>
 
 # With piped state
 uv run adw_plan.py 456 | uv run adw_build.py
-
-# With explicit arguments
-uv run adw_build.py <issue-number> <adw-id>
 ```
+- Requires existing state from `adw_plan.py`
+- Updates GitHub issue with progress
+- Creates/updates PR
 
 **What it does:**
-1. Locates existing plan file
-2. Implements solution per plan specifications
-3. Commits implementation changes
-4. Updates pull request
+1. Locates plan file (from argument or state)
+2. Creates/checkouts feature branch
+3. Implements solution per plan specifications
+4. Commits implementation changes
+5. Pushes branch (standalone) or updates PR (GitHub mode)
 
 #### adw_test.py - Testing Phase
 Runs test suites and handles test failures.
@@ -414,8 +425,11 @@ uv run adw_sdlc.py 789
 # Plan only
 uv run adw_plan.py 789
 
-# Build based on existing plan
-uv run adw_build.py
+# Build from spec file (standalone mode - preferred)
+uv run adw_build.py specs/my-feature.md
+
+# Build based on existing plan (GitHub mode)
+uv run adw_build.py 789 <adw-id>
 
 # Test the implementation
 uv run adw_test.py 789

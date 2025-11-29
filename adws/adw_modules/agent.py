@@ -6,6 +6,7 @@ import os
 import json
 import re
 import logging
+import shutil
 from typing import Optional, List, Dict, Any, Tuple, Final
 from dotenv import load_dotenv
 from adw_modules.data_types import (
@@ -25,8 +26,33 @@ from adw_modules.exceptions import (
 # Load environment variables
 load_dotenv()
 
-# Get Claude Code CLI path from environment
-CLAUDE_PATH = os.getenv("CLAUDE_CODE_PATH", "claude")
+# Get Claude Code CLI path
+# Priority: 1) Find in PATH, 2) Use CLAUDE_CODE_PATH env var, 3) Default to "claude"
+def _get_claude_path() -> str:
+    """Determine the path to Claude Code binary.
+
+    Tries in order:
+    1. shutil.which("claude") - finds claude in system PATH (normal install)
+    2. CLAUDE_CODE_PATH env var - explicit path override (unusual setups)
+    3. "claude" - fallback default (will fail at check_claude_installed)
+
+    Returns:
+        Path to claude binary
+    """
+    # Try to find claude in PATH first (normal install)
+    which_result = shutil.which("claude")
+    if which_result:
+        return which_result
+
+    # Fall back to env var if not in PATH
+    env_path = os.getenv("CLAUDE_CODE_PATH")
+    if env_path:
+        return env_path
+
+    # Final fallback
+    return "claude"
+
+CLAUDE_PATH = _get_claude_path()
 
 # Model selection mapping for slash commands
 # Maps slash command to preferred model

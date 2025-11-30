@@ -37,17 +37,16 @@ research/
 
 <!-- INDEX:videos:start -->
 | Source | Topic | File | Date Added |
-|-------- | ------- | ------ | ------------|
-| IndyDevDan | Git Worktree Parallelization for Claude Code | [Analysis](videos/idd-video-git-worktrees-f8RnRuaxee8-analysis.md) | 2025-11-21 |
+| ------ | ----- | ---- | ---------- |
+| *Coming soon* | | | |
 <!-- INDEX:videos:end -->
 
 ### Articles
 
 <!-- INDEX:articles:start -->
 | Source | Topic | File | Date Added |
-|-------- | ------- | ------ | ------------|
-| Technical Advisory | video-analysis-sota-pipeline | [Analysis](articles/video-analysis-sota-pipeline-technical-advisory.md) | 2025-11-23 |
-| Openai Quick Start | Developer quickstart | [Analysis](articles/openai_quick_start.md) | Unknown |
+| ------ | ----- | ---- | ---------- |
+| *Coming soon* | | | |
 <!-- INDEX:articles:end -->
 
 ### Implementations
@@ -61,6 +60,7 @@ research/
 | Claude Agent SDK Documentation, GitHub, Context7 | SDK Installation, Configuration, and Custom Agents | [Analysis](implementations/claude-agent-sdk-analysis.md) | 2025-11-24 |
 | Analysis compiled by Chad (ChatGPT) | Claude Code Slash Commands + Chaining Patterns | [Analysis](implementations/slash-commands-chaining-chad.md) | 2025-11-22 18:54 |
 | Chad (ChatGPT) & Gemini 3.0 | Agent Box v6.2: Supervisor Wrapper... | [Analysis](implementations/agent-box-supervisor-chad.md) | 2025-11-22 |
+| Mem0 Comprehensive Guide Full Mem0 Patterns | mem0 Deep Dive Analysis: mem0-comprehensive-gui... | [Analysis](implementations/mem0-comprehensive-guide-full-mem0-patterns.md) | Unknown |
 <!-- INDEX:implementations:end -->
 
 ### Papers
@@ -77,9 +77,8 @@ Valuable insights from conversations with AI assistants (Claude, ChatGPT, Gemini
 
 <!-- INDEX:llm-chats:start -->
 | AI Model | Topic | File | Date Added |
-|---------- | ------- | ------ | ------------|
-| Chad | Gemini File Search Repo Indexing | [Analysis](llm-chats/gemini-file-search-repo-indexi-chad.md) | 2025-11-28 |
-| Chad & Claude | Sandboxed Agent Architecture | [Analysis](llm-chats/sandboxed-agent-architecture-chad-claude.md) | 2025-11-27 |
+| -------- | ----- | ---- | ---------- |
+| *Coming soon* | | | |
 <!-- INDEX:llm-chats:end -->
 
 ## Adding New Research

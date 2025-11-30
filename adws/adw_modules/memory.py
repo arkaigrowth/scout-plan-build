@@ -103,6 +103,8 @@ class PersistentLearningsLayer:
         """
         self.project = project_name
         self.storage_path = storage_path or ".scout/qdrant"
+        # Use MEM0_PROJ_ID if set, otherwise fall back to project_name
+        self.mem0_project_id = os.getenv("MEM0_PROJ_ID", project_name)
         self._memory = None
         self._mode = _check_mem0_available()
         self._enabled = bool(self._mode)
@@ -118,7 +120,7 @@ class PersistentLearningsLayer:
                 from mem0 import MemoryClient
                 api_key = os.getenv("MEM0_API_KEY")
                 self._memory = MemoryClient(api_key=api_key)
-                logging.info(f"mem0 cloud initialized for project: {self.project}")
+                logging.info(f"mem0 cloud initialized (project_id: {self.mem0_project_id})")
 
             elif self._mode == "self-hosted":
                 # Self-hosted mode - needs OpenAI + local Qdrant
@@ -182,6 +184,7 @@ class PersistentLearningsLayer:
             results = self._memory.search(
                 f"Scout patterns for: {task}",
                 user_id=self.project,
+                project_id=self.mem0_project_id,
                 limit=5
             )
             return self._format_hints(results)
@@ -211,6 +214,7 @@ class PersistentLearningsLayer:
             self._memory.add(
                 messages=[{"role": "system", "content": content}],
                 user_id=self.project,
+                project_id=self.mem0_project_id,
                 metadata={
                     "type": "discovery_pattern",
                     "phase": "scout",
@@ -244,6 +248,7 @@ class PersistentLearningsLayer:
             results = self._memory.search(
                 f"Planning lessons for {task_type} tasks",
                 user_id=self.project,
+                project_id=self.mem0_project_id,
                 limit=5
             )
             return self._format_hints(results)
@@ -273,6 +278,7 @@ class PersistentLearningsLayer:
             self._memory.add(
                 messages=[{"role": "system", "content": content}],
                 user_id=self.project,
+                project_id=self.mem0_project_id,
                 metadata={
                     "type": "decision",
                     "phase": "plan",
@@ -309,6 +315,7 @@ class PersistentLearningsLayer:
             results = self._memory.search(
                 query,
                 user_id=self.project,
+                project_id=self.mem0_project_id,
                 limit=5
             )
             return self._format_hints(results)
@@ -332,6 +339,7 @@ class PersistentLearningsLayer:
             self._memory.add(
                 messages=[{"role": "system", "content": content}],
                 user_id=self.project,
+                project_id=self.mem0_project_id,
                 metadata={
                     "type": "pattern",
                     "phase": "build",
@@ -363,6 +371,7 @@ class PersistentLearningsLayer:
             self._memory.add(
                 messages=[{"role": "system", "content": content}],
                 user_id=self.project,
+                project_id=self.mem0_project_id,
                 metadata={
                     "type": "failure_recovery",
                     "priority": "high",
@@ -396,6 +405,7 @@ class PersistentLearningsLayer:
             results = self._memory.search(
                 query,
                 user_id=self.project,
+                project_id=self.mem0_project_id,
                 limit=limit
             )
             return self._format_hints(results)
@@ -424,6 +434,7 @@ class PersistentLearningsLayer:
             self._memory.add(
                 messages=[{"role": "system", "content": content}],
                 user_id=self.project,
+                project_id=self.mem0_project_id,
                 metadata={
                     "type": "hypothesis",
                     "confidence": CONFIDENCE_LEVELS["hypothesis"],
@@ -495,7 +506,10 @@ class PersistentLearningsLayer:
 
         try:
             # Get all memories for this project
-            all_memories = self._memory.get_all(user_id=self.project)
+            all_memories = self._memory.get_all(
+                user_id=self.project,
+                project_id=self.mem0_project_id
+            )
 
             stats = {
                 "enabled": True,

@@ -7,14 +7,19 @@ Key Insight: Gemini = code discovery ("where is auth?"),
              mem0 = agent memory ("what did we learn about auth in this project?")
 Together they create self-improving agents.
 
-Dependencies:
-    - mem0ai>=1.0.1
-    - openai>=1.0.0 (for embeddings)
-    - qdrant-client>=1.7.0 (local vector store)
+Supports TWO modes:
+1. **Cloud Mode** (recommended for getting started):
+   - Just set MEM0_API_KEY
+   - No local infrastructure needed
+   - Get key from: https://app.mem0.ai/
+
+2. **Self-Hosted Mode** (for privacy/control):
+   - Requires: OPENAI_API_KEY (embeddings) + local Qdrant
+   - pip install mem0ai openai qdrant-client
 
 Environment:
-    - OPENAI_API_KEY: Required for embeddings
-    - ANTHROPIC_API_KEY: For LLM extraction (already configured)
+    - MEM0_API_KEY: For cloud mode (preferred)
+    - OPENAI_API_KEY: For self-hosted embeddings
 """
 
 import logging
@@ -23,29 +28,44 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 # Lazy import to avoid hard dependency when not using memory features
-_mem0_available: Optional[bool] = None
+_mem0_mode: Optional[str] = None  # "cloud", "self-hosted", or None
 
 
-def _check_mem0_available() -> bool:
-    """Check if mem0 is available and properly configured."""
-    global _mem0_available
+def _check_mem0_available() -> str:
+    """Check mem0 availability and determine mode.
 
-    if _mem0_available is not None:
-        return _mem0_available
+    Returns:
+        "cloud" - MEM0_API_KEY set, use MemoryClient
+        "self-hosted" - OPENAI_API_KEY set, use local Memory
+        "" - Not configured
+    """
+    global _mem0_mode
 
-    try:
-        from mem0 import Memory  # noqa: F401
-        # Also check for OpenAI key (needed for embeddings)
-        if not os.getenv("OPENAI_API_KEY"):
-            logging.warning("OPENAI_API_KEY not set - mem0 embeddings won't work")
-            _mem0_available = False
-            return False
-        _mem0_available = True
-        return True
-    except ImportError:
-        logging.debug("mem0 not installed - memory features disabled")
-        _mem0_available = False
-        return False
+    if _mem0_mode is not None:
+        return _mem0_mode
+
+    # Check for cloud mode first (simpler)
+    if os.getenv("MEM0_API_KEY"):
+        try:
+            from mem0 import MemoryClient  # noqa: F401
+            _mem0_mode = "cloud"
+            logging.debug("mem0 cloud mode available")
+            return _mem0_mode
+        except ImportError:
+            logging.debug("mem0 package not installed")
+
+    # Check for self-hosted mode
+    if os.getenv("OPENAI_API_KEY"):
+        try:
+            from mem0 import Memory  # noqa: F401
+            _mem0_mode = "self-hosted"
+            logging.debug("mem0 self-hosted mode available")
+            return _mem0_mode
+        except ImportError:
+            logging.debug("mem0 package not installed")
+
+    _mem0_mode = ""
+    return _mem0_mode
 
 
 # Confidence thresholds for different memory types
@@ -84,44 +104,54 @@ class PersistentLearningsLayer:
         self.project = project_name
         self.storage_path = storage_path or ".scout/qdrant"
         self._memory = None
-        self._enabled = _check_mem0_available()
+        self._mode = _check_mem0_available()
+        self._enabled = bool(self._mode)
 
         if self._enabled:
             self._init_memory()
 
     def _init_memory(self) -> None:
-        """Initialize mem0 with configuration."""
+        """Initialize mem0 based on available mode (cloud or self-hosted)."""
         try:
-            from mem0 import Memory
+            if self._mode == "cloud":
+                # Cloud mode - simple, just needs MEM0_API_KEY
+                from mem0 import MemoryClient
+                api_key = os.getenv("MEM0_API_KEY")
+                self._memory = MemoryClient(api_key=api_key)
+                logging.info(f"mem0 cloud initialized for project: {self.project}")
 
-            # Ensure storage directory exists
-            os.makedirs(self.storage_path, exist_ok=True)
+            elif self._mode == "self-hosted":
+                # Self-hosted mode - needs OpenAI + local Qdrant
+                from mem0 import Memory
 
-            config = {
-                "llm": {
-                    "provider": "anthropic",
-                    "config": {
-                        "model": "claude-3-haiku-20240307",
-                        "temperature": 0.1,  # Low temp for consistent extraction
-                    }
-                },
-                "embedder": {
-                    "provider": "openai",
-                    "config": {
-                        "model": "text-embedding-3-small"
-                    }
-                },
-                "vector_store": {
-                    "provider": "qdrant",
-                    "config": {
-                        "path": self.storage_path,
-                        "collection_name": f"spb_{self.project}"
+                # Ensure storage directory exists
+                os.makedirs(self.storage_path, exist_ok=True)
+
+                config = {
+                    "llm": {
+                        "provider": "anthropic",
+                        "config": {
+                            "model": "claude-3-haiku-20240307",
+                            "temperature": 0.1,
+                        }
+                    },
+                    "embedder": {
+                        "provider": "openai",
+                        "config": {
+                            "model": "text-embedding-3-small"
+                        }
+                    },
+                    "vector_store": {
+                        "provider": "qdrant",
+                        "config": {
+                            "path": self.storage_path,
+                            "collection_name": f"spb_{self.project}"
+                        }
                     }
                 }
-            }
 
-            self._memory = Memory.from_config(config)
-            logging.debug(f"Memory layer initialized for project: {self.project}")
+                self._memory = Memory.from_config(config)
+                logging.info(f"mem0 self-hosted initialized for project: {self.project}")
 
         except Exception as e:
             logging.warning(f"Failed to initialize mem0: {e}")

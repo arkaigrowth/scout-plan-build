@@ -55,6 +55,9 @@ research/
 <!-- INDEX:implementations:start -->
 | Repository | Topic | File | Date Added |
 |------------ | ------- | ------ | ------------|
+| Mem0 Integration Patterns | Mem0 Integration Patterns for AI Agent Frameworks | [Analysis](implementations/mem0-integration-patterns.md) | November 29, 2025 |
+| Mem0 Api Patterns | Mem0 Direct API/SDK Usage Research | [Analysis](implementations/mem0-api-patterns.md) | 2025-11-29 |
+| Multi-agent research synthesis | Gemini File Search API for Scout-Plan-Build Framework | [Analysis](implementations/gemini-file-search-integration-research.md) | 2025-11-28 |
 | Claude Agent SDK Documentation, GitHub, Context7 | SDK Installation, Configuration, and Custom Agents | [Analysis](implementations/claude-agent-sdk-analysis.md) | 2025-11-24 |
 | Analysis compiled by Chad (ChatGPT) | Claude Code Slash Commands + Chaining Patterns | [Analysis](implementations/slash-commands-chaining-chad.md) | 2025-11-22 18:54 |
 | Chad (ChatGPT) & Gemini 3.0 | Agent Box v6.2: Supervisor Wrapper... | [Analysis](implementations/agent-box-supervisor-chad.md) | 2025-11-22 |
@@ -74,8 +77,9 @@ Valuable insights from conversations with AI assistants (Claude, ChatGPT, Gemini
 
 <!-- INDEX:llm-chats:start -->
 | AI Model | Topic | File | Date Added |
-| -------- | ----- | ---- | ---------- |
-| *Coming soon* | | | |
+|---------- | ------- | ------ | ------------|
+| Chad | Gemini File Search Repo Indexing | [Analysis](llm-chats/gemini-file-search-repo-indexi-chad.md) | 2025-11-28 |
+| Chad & Claude | Sandboxed Agent Architecture | [Analysis](llm-chats/sandboxed-agent-architecture-chad-claude.md) | 2025-11-27 |
 <!-- INDEX:llm-chats:end -->
 
 ## Adding New Research

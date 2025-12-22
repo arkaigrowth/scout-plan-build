@@ -1,13 +1,19 @@
 # Portability Documentation
 
-## Quick Links
-- **New to the system?** → Read [EXECUTIVE_SUMMARY.md](EXECUTIVE_SUMMARY.md)
-- **Installing to new repo?** → Read [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md)
-- **Quick commands & troubleshooting?** → Read [Quick Reference](../QUICK_REFERENCE.md) ⭐
-- **Need code locations?** → Read [IMPLEMENTATION_GUIDE.md](IMPLEMENTATION_GUIDE.md)
+## ⚠️ Documentation Consolidated
 
-## Portability Score
-- **Functional Portability:** 85% (code works across repos)
-- **Operational Portability:** 6.2/10 (setup has friction points)
+**Most installation docs have moved to `/INSTALL.md`** (repository root).
 
-See EXECUTIVE_SUMMARY.md for scoring methodology.
+See [/INSTALL.md](/INSTALL.md) for:
+- Quick install instructions
+- What gets installed
+- Environment variables
+- Post-install validation
+- Troubleshooting
+
+## Archived Files
+
+Previous files from this directory have been moved to:
+`/archive/deprecated-install-docs/`
+
+See that directory's README for details on what was archived and why.

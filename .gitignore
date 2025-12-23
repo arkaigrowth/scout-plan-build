@@ -1,5 +1,20 @@
 __pycache__/
 *.pyc
+*.egg-info/
+
+# Scout temporary directories
+.scout/
+*/.scout/
+
+# Logs (transient)
+logs/
+*/logs/
+adws/logs/
+adws/run_log.md
+
+# State files (regenerated)
+.gemini_index_state.json
+*/.gemini_index_state.json
 
 # Agent outputs (should use canonical paths instead)
 /*_REPORT.md

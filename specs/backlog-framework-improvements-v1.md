@@ -1024,6 +1024,61 @@ Everything is written by AI now. The distinction is WHO READS IT:
 | Add `_ai/memory/` | Separate cross-session memory (mem0) from per-task workflow state |
 | Add `ai_docs/decisions/` | ADRs are a proven pattern for documenting "why X over Y" |
 | Keep `analyses/` name | "Assessments" is lateral, not better. 29 existing files. |
+| Gitignore `_ai/` | Transient data shouldn't be committed (regenerable) |
+
+### Greenfield Projects (New Repos Without Existing ADW)
+
+**Greenfield** = A brand new project with no existing codebase or tooling to maintain compatibility with. (Like building on an empty "green field" vs renovating an existing building.)
+
+For greenfield projects, use this **enhanced structure with spec lifecycle directories**:
+
+```
+project/
+├── _ai/                         # Transient (gitignored)
+│   ├── scout/
+│   ├── agents/
+│   ├── memory/
+│   ├── traces/
+│   └── cache/
+│
+├── ai_docs/                     # Persistent (committed)
+│   ├── architecture/
+│   ├── analyses/
+│   ├── decisions/               # ADRs
+│   ├── research/
+│   └── sessions/
+│
+├── specs/                       # 🆕 With lifecycle subdirectories
+│   ├── active/                  # Currently being implemented
+│   ├── completed/               # Done, archived for reference
+│   └── backlog/                 # Future work, not started
+│
+├── docs/                        # Human documentation
+└── scripts/                     # Utilities
+```
+
+**Why lifecycle subdirectories for greenfield?**
+- Visual clarity: instantly see what's active vs done
+- No legacy tooling to break (no existing `adw_state.json` paths)
+- Matches Kanban-style workflow (backlog → active → completed)
+- Easy cleanup: archive completed specs without deleting
+
+**NOT recommended for existing SPB repos** because:
+- `adw_state.json` stores `plan_file: "specs/xxx.md"` paths
+- Moving files would break these references
+- Would require tooling updates to handle path changes
+
+### Gitignore Configuration
+
+Add to `.gitignore` for new projects:
+
+```gitignore
+# AI operational data (transient, regenerable)
+_ai/
+
+# But DO commit curated AI docs
+!ai_docs/
+```
 
 ### Deep-Dive Steps
 

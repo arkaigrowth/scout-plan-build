@@ -89,7 +89,7 @@ What's your task?
 ### How Tools Work Together
 
 ```
-dependency-tracer → Identifies broken imports (95% token savings)
+dependency-tracer → Identifies broken imports (compact summaries)
         ↓
 Coach Mode → Shows transparent analysis process (~15% overhead)
         ↓
@@ -100,10 +100,10 @@ Coach Mode → Shows transparent analysis process (~15% overhead)
 
 ### dependency-tracer: Token-Efficient Dependency Analysis
 
-Trace Python imports and file references with **95% token savings** using intelligent summary modes:
+Trace Python imports and file references with compact, context-friendly summary modes:
 
 ```bash
-# Trace all dependencies (100 tokens instead of 50K+)
+# Trace all dependencies (compact summary instead of a raw dump)
 CONTEXT_MODE=minimal bash scripts/dependency-tracer/scripts/trace_all.sh
 
 # Generate ASCII dependency diagrams
@@ -364,7 +364,7 @@ Grep "user_auth" --type py
 ### Analyzing Dependencies
 
 ```bash
-# Trace all dependencies with minimal context (95% token savings)
+# Trace all dependencies with minimal context (compact summaries instead of full graph dumps)
 CONTEXT_MODE=minimal bash scripts/dependency-tracer/scripts/trace_all.sh
 
 # Generate visual ASCII diagrams
@@ -397,10 +397,10 @@ python scripts/dependency-tracer/scripts/adw_spawn_fix_agents.py \
 | Parallel execution | ✅ Working | 40-50% speedup confirmed |
 | Session continuity | ✅ Working | `/session:resume` functional |
 | Coach Mode | ✅ Working | Transparent workflows with 3 levels |
-| dependency-tracer | ✅ Working | 95% token reduction, ASCII diagrams |
+| dependency-tracer | ✅ Working | Compact summaries, ASCII diagrams |
 | Portability | 🟡 85% | Some paths hardcoded, improving |
 
-> **Note**: The `/scout` slash commands are partially broken. Use native Grep/Glob tools for file discovery instead. Natural language interface is the recommended starting point for all tasks.
+> **Note**: The `/scout` slash commands are deprecated in favor of native Grep/Glob tools for file discovery. Natural language interface is the recommended starting point for all tasks.
 
 ---
 
@@ -426,10 +426,10 @@ python scripts/dependency-tracer/scripts/adw_spawn_fix_agents.py \
 |-------|---------|
 | [adw-scout](/.claude/skills/adw-scout.md) | Intelligent scout with memory |
 | [adw-complete](/.claude/skills/adw-complete.md) | Complete workflow orchestrator |
-| [dependency-tracer](scripts/dependency-tracer/) | Trace imports and file refs (95% token savings) |
+| [dependency-tracer](scripts/dependency-tracer/) | Trace imports and file refs with compact summaries |
 | [video-download](.claude/skills/) | Download from 1000+ platforms (user skill) |
 
 ---
 
-**Version**: MVP
-**Last Updated**: 2025-11-24
+**Status**: Actively developed
+**Last Updated**: 2026-07-19

@@ -176,7 +176,7 @@ def check_claude_code() -> CheckResult:
             "-p",
             test_prompt,
             "--model",
-            "claude-3-5-haiku-20241022",
+            "claude-haiku-4-5-20251001",
             "--output-format",
             "stream-json",
             "--verbose",

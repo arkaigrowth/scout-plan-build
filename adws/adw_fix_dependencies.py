@@ -32,8 +32,8 @@ Output:
   - fix_003_typo_in_module_name.md
 
 Agent Selection:
-  - Simple fixes (typos, missing packages): claude-3-sonnet
-  - Complex fixes (circular deps, architecture): claude-3-opus
+  - Simple fixes (typos, missing packages): claude-sonnet-5
+  - Complex fixes (circular deps, architecture): claude-opus-5
 
 Token Efficiency:
   Main context: ~100 tokens (summary only)
@@ -123,9 +123,9 @@ def categorize_fix_complexity(ref: Dict) -> tuple[str, str]:
     ]
 
     if any(complex_indicators):
-        return 'complex', 'claude-3-opus-20240229'
+        return 'complex', 'claude-opus-5'
     else:
-        return 'simple', 'claude-3.5-sonnet-20241022'
+        return 'simple', 'claude-sonnet-5'
 
 
 def build_fix_prompt(ref: Dict, index: int, total: int) -> str:
@@ -315,7 +315,7 @@ def spawn_fix_agents(broken_refs: List[Dict], output_dir: Path,
 
         logger.info(f"  {i}/{len(broken_refs)}: {ref_name}")
         logger.info(f"    - Complexity: {complexity}")
-        logger.info(f"    - Model: {model.split('-')[-1]}")
+        logger.info(f"    - Model: {model}")
         logger.info(f"    - Output: {fix_file.name}")
 
     # Write summary for main agent to track

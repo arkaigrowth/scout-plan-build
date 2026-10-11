@@ -214,10 +214,10 @@ print("=" * 50)
 
 # Use the working plan command with our scout results
 if DOCS_URL:
-    plan_command = f'/plan_w_docs "{TASK}" "{DOCS_URL}" "{scout_file}"'
+    plan_command = f'/plan_w_docs_improved "{TASK}" "{DOCS_URL}" "{scout_file}"'
 else:
     # No docs provided, create basic plan
-    plan_command = f'/plan_w_docs "{TASK}" "" "{scout_file}"'
+    plan_command = f'/plan_w_docs_improved "{TASK}" "" "{scout_file}"'
 
 print(f"Executing: {plan_command}")
 plan_result = SlashCommand(plan_command)
@@ -269,7 +269,7 @@ if is_worktree_available():
     print(f"🌳 Created worktree: {worktree_name}")
 
 # Execute build
-build_command = f'/build_adw "{plan_file}"'
+build_command = f'/build "{plan_file}"'
 print(f"Executing: {build_command}")
 
 try:

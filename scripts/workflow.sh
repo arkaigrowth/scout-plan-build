@@ -53,7 +53,7 @@ plan() {
     # Create specs directory
     mkdir -p specs
 
-    echo "/plan_w_docs \"$task\" \"$docs\" \"$scout_file\""
+    echo "/plan_w_docs_improved \"$task\" \"$docs\" \"$scout_file\""
 
     echo -e "${GREEN}Plan saved to specs/${NC}"
 }
@@ -72,7 +72,7 @@ build() {
     # Create output directories
     mkdir -p ai_docs/build_reports
 
-    echo "/build_adw \"$plan_file\""
+    echo "/build \"$plan_file\""
 
     echo -e "${GREEN}Build report saved to ai_docs/build_reports/${NC}"
 }

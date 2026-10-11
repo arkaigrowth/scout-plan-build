@@ -285,11 +285,11 @@ Task(subagent_type="explore", prompt="Find OAuth files")
 ./scripts/worktree_manager.sh checkpoint "scout complete"
 
 # 3. Plan phase
-/plan_w_docs "OAuth implementation" "..." "..."
+/plan_w_docs_improved "OAuth implementation" "..." "..."
 ./scripts/worktree_manager.sh checkpoint "plan complete"
 
 # 4. Build phase
-/build_adw "specs/issue-$ISSUE.md"
+/build "specs/issue-$ISSUE.md"
 ./scripts/worktree_manager.sh checkpoint "build complete"
 
 # 5. Test phase

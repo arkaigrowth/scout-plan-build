@@ -10,7 +10,7 @@ argument-hint: <feature_name> [num_agents]
 
 Create N parallel git worktrees for concurrent agent development.
 
-**Pattern Source:** [IndyDevDan Git Worktree Parallelization](../../ai_docs/research/videos/idd-video-git-worktrees-f8RnRuaxee8-analysis.md)
+**Pattern Source:** [IndyDevDan Git Worktree Parallelization](https://www.youtube.com/watch?v=f8RnRuaxee8)
 
 ## Arguments
 

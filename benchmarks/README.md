@@ -358,12 +358,6 @@ If resource monitoring fails:
 await monitor.start(interval_seconds=1.0)  # 1 second instead of 0.5s
 ```
 
-## References
-
-- [PARALLELIZATION_IMPACT_ANALYSIS.md](../ai_docs/analyses/PARALLELIZATION_IMPACT_ANALYSIS.md) - Full performance analysis
-- [AGENTS_SDK_ARCHITECTURE.md](../ai_docs/architecture/AGENTS_SDK_ARCHITECTURE.md) - SDK design for parallelization
-- [agents-sdk-implementation-plan.md](../specs/agents-sdk-implementation-plan.md) - Implementation roadmap
-
 ## Contributing
 
 To add new benchmarks:

@@ -300,7 +300,7 @@ git tag -a "auth-mvp-v1" -m "OAuth implementation MVP"
 Automatic if changes exist
 
 # Event-based (before operations)
-/build_adw     → auto-checkpoint
+/build     → auto-checkpoint
 pytest         → auto-checkpoint
 /worktree_merge → auto-checkpoint
 

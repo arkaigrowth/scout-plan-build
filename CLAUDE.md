@@ -15,7 +15,7 @@ What do you need?
 ├─ 📋 PLAN A FEATURE ────→ Have files? → /plan_w_docs_improved
 │                           └─ Need files? → Native tools first
 │
-├─ 🔨 BUILD CODE ────────→ Have spec? → /build_adw
+├─ 🔨 BUILD CODE ────────→ Have spec? → /build
 │                           └─ No spec? → /plan_w_docs_improved first
 │
 ├─ 🧪 TEST/ANALYZE ──────→ /sc:test (runs pytest)
@@ -46,7 +46,7 @@ What do you need?
 | Command | Purpose | Example |
 |---------|---------|---------|
 | `/plan_w_docs_improved` | Create spec | `/plan_w_docs_improved "Add auth" "" "files.json"` |
-| `/build_adw` | Build from spec | `/build_adw "specs/auth.md"` |
+| `/build` | Build from spec | `/build "specs/auth.md"` |
 | `/sc:implement` | Implement feature | `/sc:implement` |
 | `/sc:test` | Run tests | `/sc:test` |
 | `/init-parallel-worktrees` | Create branches | `/init-parallel-worktrees feature 3` |
@@ -91,7 +91,7 @@ Grep "pattern" → Glob "**/*.py"
 /plan_w_docs_improved "Feature description" "" "scout_outputs/relevant_files.json"
 
 # 3. Build
-/build_adw "specs/feature.md"
+/build "specs/feature.md"
 ```
 
 ### Pattern 3: Complex/Uncertain Feature
@@ -153,7 +153,7 @@ export GITHUB_REPO_URL="https://github.com/owner/repo"
 
 1. **How many files?**
    - 1-3 → Just do it
-   - 4-10 → Use `/plan_w_docs_improved` → `/build_adw`
+   - 4-10 → Use `/plan_w_docs_improved` → `/build`
    - 11+ → Use parallel worktrees
 
 2. **How clear is the requirements?**
@@ -194,7 +194,7 @@ Grep "relevant_pattern" > temp_results
 /plan_w_docs_improved "Feature description" "https://docs.example.com" "scout_outputs/relevant_files.json"
 
 # Then build
-/build_adw "specs/issue-001-adw-XXX-feature.md"
+/build "specs/issue-001-adw-XXX-feature.md"
 ```
 
 ### "Try multiple approaches"

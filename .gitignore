@@ -63,3 +63,14 @@ adws/run_log.md
 venv/
 .venv/
 /trees/
+
+# Local-only files that must never be committed
+CLAUDE.local.md
+run_log.md
+**/run_log.md
+scout_outputs/
+agents/*/
+ai_docs/
+specs/
+logs/
+*.pyc

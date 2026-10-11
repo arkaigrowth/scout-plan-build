@@ -272,11 +272,11 @@ Task(subagent_type="explore", prompt="Find OAuth files")
 
 # 3. Plan with checkpoints
 /worktree_checkpoint "scout complete"
-/plan_w_docs "OAuth implementation" "..." "..."
+/plan_w_docs_improved "OAuth implementation" "..." "..."
 
 # 4. Build safely
 /worktree_checkpoint "plan complete"
-/build_adw "specs/issue-123.md"
+/build "specs/issue-123.md"
 
 # 5. Test and merge
 pytest

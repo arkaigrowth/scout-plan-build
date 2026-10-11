@@ -332,18 +332,18 @@ Task(subagent_type="explore", prompt="...")
 /worktree_checkpoint "scout complete"
 
 # Plan phase
-/plan_w_docs "..." "..." "..."
+/plan_w_docs_improved "..." "..." "..."
 /worktree_checkpoint "plan complete"
 
 # Build phase (experimental)
-/build_adw "specs/issue-123.md"
+/build "specs/issue-123.md"
 # Doesn't work as expected...
 
 # Instant rollback
 /worktree_undo  # Back to plan phase
 
 # Try different approach
-/build_adw "specs/issue-123-v2.md"
+/build "specs/issue-123-v2.md"
 /worktree_checkpoint "build complete"
 ```
 

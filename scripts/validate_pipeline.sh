@@ -16,7 +16,7 @@ fi
 
 # Test 2: Scout output exists
 echo -n "2. Scout creates output... "
-if [ -f "ai_docs/scout/relevant_files.json" ]; then
+if [ -f "scout_outputs/relevant_files.json" ]; then
     echo "✅ Yes"
 else
     echo "❌ No"
@@ -24,7 +24,7 @@ fi
 
 # Test 3: Plan command exists
 echo -n "3. Plan command exists... "
-if [ -f ".claude/commands/plan_w_docs.md" ]; then
+if [ -f ".claude/commands/planning/plan_w_docs_improved.md" ]; then
     echo "✅ Yes"
 else
     echo "❌ No"
@@ -32,7 +32,7 @@ fi
 
 # Test 4: Build command exists
 echo -n "4. Build command exists... "
-if [ -f ".claude/commands/build_adw.md" ]; then
+if [ -f ".claude/commands/workflow/build.md" ]; then
     echo "✅ Yes"
 else
     echo "❌ No"
@@ -41,5 +41,5 @@ fi
 echo ""
 echo "Ready to use:"
 echo "  /scout 'your task' '3'"
-echo "  /plan_w_docs 'task' '' 'ai_docs/scout/relevant_files.json'"
-echo "  /build_adw 'specs/your-spec.md'"
+echo "  /plan_w_docs_improved 'task' '' 'scout_outputs/relevant_files.json'"
+echo "  /build 'specs/your-spec.md'"

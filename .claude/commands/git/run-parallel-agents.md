@@ -10,7 +10,7 @@ argument-hint: <spec_file> <feature_name>
 
 Execute N Claude agents in parallel, each implementing the same spec in their own worktree.
 
-**Pattern Source:** [IndyDevDan Git Worktree Parallelization](../../ai_docs/research/videos/idd-video-git-worktrees-f8RnRuaxee8-analysis.md)
+**Pattern Source:** [IndyDevDan Git Worktree Parallelization](https://www.youtube.com/watch?v=f8RnRuaxee8)
 
 ## Arguments
 

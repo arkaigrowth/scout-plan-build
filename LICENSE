@@ -19,3 +19,8 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+Scope: this license covers the files in this repository, written by Alex Kamysz.
+Earlier versions of the repository also contained files from IndyDevDan's
+Tactical Agentic Coding course. Those files were removed from the repository
+and its history, are not covered by this license, and are not distributed here.

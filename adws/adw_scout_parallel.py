@@ -237,7 +237,7 @@ Scale: {scale} parallel agents
 ║        ✨ SCOUT COMPLETE ✨               ║
 ╚══════════════════════════════════════════╝
 
-Ready for: /plan_w_docs "{task}" "[docs]" "{output_path}"
+Ready for: /plan_w_docs_improved "{task}" "[docs]" "{output_path}"
 """)
 
     return report

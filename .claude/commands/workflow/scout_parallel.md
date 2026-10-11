@@ -65,13 +65,13 @@ Saves to standard locations:
 /plan_w_docs_improved "implement user authentication" "https://docs.auth0.com" "scout_outputs/relevant_files.json"
 
 # 3. Build
-/build_adw "specs/issue-XXX-adw-YYY-auth.md"
+/build "specs/issue-XXX-adw-YYY-auth.md"
 ```
 
 ## The Complete Pipeline
 
 ```
-/scout_parallel → /plan_w_docs → /build_adw → [test||review||document]
+/scout_parallel → /plan_w_docs_improved → /build → [test||review||document]
      ⚡              →     📋      →    🔨     →         ⚡
 
 Total speedup: 60-70% (vs 40-50% without parallel scout)

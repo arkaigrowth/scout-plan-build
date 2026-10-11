@@ -448,7 +448,7 @@ parallel_build() {
         # Launch build in background
         (
             cd "$WORKTREE_DIR/$worktree_name"
-            /build_adw "$spec"
+            /build "$spec"
             worktree_checkpoint "build complete: $spec"
         ) &
 
